@@ -5,11 +5,10 @@ export async function onRequestPost(context) {
   const rawBody = await request.text();
   const headers = request.headers;
 
-  // 1. Verify Signature
   if (headers.get('x-razorpay-signature')) {
     const signature = headers.get('x-razorpay-signature');
     const secret = env.RAZORPAY_WEBHOOK_SECRET;
-    
+
     const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
     const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(rawBody));
@@ -21,22 +20,33 @@ export async function onRequestPost(context) {
 
     const payload = JSON.parse(rawBody);
 
-    // 2. Handle BOTH "Captured" and "Authorized" events (Test Mode uses Authorized!)
     if (payload.event === 'payment.captured' || payload.event === 'payment.authorized') {
       const supabase = createClient(env.VITE_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-      
-      // Check the ORDER notes first, then the PAYMENT notes
-      const accountId = payload.payload.order?.entity?.notes?.account_id || payload.payload.payment?.entity?.notes?.account_id;
 
-      if (accountId) {
-        const { error } = await supabase.from('accounts').delete().eq('id', accountId);
-        if (error) {
-          console.error('Delete Error:', error.message);
-        } else {
-          console.log('Account deleted successfully:', accountId);
+      const notes = payload.payload.payment?.entity?.notes || payload.payload.order?.entity?.notes;
+      const accountId = notes?.account_id;
+      const buyerId = notes?.buyer_id;
+
+      if (accountId && buyerId) {
+        // 1. Fetch the account details (to deliver to the buyer)
+        const { data: accountData } = await supabase.from('accounts').select('*').eq('id', accountId).single();
+
+        if (accountData) {
+          // 2. Create the order for the buyer (Delivered status)
+          await supabase.from('orders').insert({
+            buyer_id: buyerId,
+            account_id: accountId,
+            payment_id: payload.payload.payment.entity.id,
+            status: 'delivered',
+          });
+
+          // 3. Delete the account from the store
+          await supabase.from('accounts').delete().eq('id', accountId);
+
+          console.log('Order created for buyer:', buyerId, 'Account:', accountId);
         }
       } else {
-        console.log('No Account ID found in notes');
+        console.log('Missing account_id or buyer_id in notes');
       }
     }
     return new Response('OK', { status: 200 });
