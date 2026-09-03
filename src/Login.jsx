@@ -10,7 +10,7 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/my-orders'
+        redirectTo: 'https://clash-vault.pages.dev/my-orders'
       }
     })
     if (error) setMessage('Error: ' + error.message)
