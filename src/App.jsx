@@ -15,30 +15,26 @@ function App() {
   }, [])
 
   const handleBuyNow = async (account) => {
-    // 1. Check if user is logged in FIRST
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-      alert('Please login first to buy an account!');
-      window.location.href = '/login';
-      return;
+      alert('Please login first to buy an account!')
+      window.location.href = '/login'
+      return
     }
 
-    const buyerId = user.id;
-
-    // 2. Load Razorpay script
+    const buyerId = user.id
     const script = document.createElement('script')
     script.src = 'https://checkout.razorpay.com/v1/checkout.js'
     script.onload = () => {
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Uses your public Key ID
-        amount: account.price * 100, // Convert to paise
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: account.price * 100,
         currency: 'INR',
         name: 'Clash Vault',
         description: account.title,
-        notes: { account_id: account.id, buyer_id: buyerId }, // <--- UPDATED LINE
+        notes: { account_id: account.id, buyer_id: buyerId },
         handler: async (response) => {
-          alert('Payment Successful! Check My Orders for your login details.');
+          alert('Payment Successful! Check My Orders for your login details.')
           setTimeout(() => window.location.href = '/my-orders', 2000)
         },
         prefill: {
@@ -46,9 +42,7 @@ function App() {
           email: 'customer@example.com',
           contact: '7717618181'
         },
-        theme: {
-          color: '#ff4757',
-        },
+        theme: { color: '#ffd700' },
       }
       const rzp = new window.Razorpay(options)
       rzp.open()
@@ -57,18 +51,44 @@ function App() {
   }
 
   return (
-    <div className="marketplace">
-      <h1>Clash Vault Marketplace</h1>
-      <div className="grid">
-        {accounts.map((account) => (
-          <div key={account.id} className="account-card">
-            <h2>{account.title}</h2>
-            <p>Townhall Level: {account.town_hall_level}</p>
-            <p className="price">₹{account.price}</p>
-            <button onClick={() => handleBuyNow(account)}>Buy Now</button>
-          </div>
-        ))}
-      </div>
+    <div>
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar-logo">⚔️ CLASH VAULT</div>
+        <div className="navbar-links">
+          <a href="/">Home</a>
+          <a href="#accounts">Accounts</a>
+          <a href="https://wa.me/917717618181" target="_blank" rel="noopener noreferrer">Support</a>
+          <a href="/login">Login</a>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header className="hero">
+        <h1>Own The Ultimate Base</h1>
+        <p>Hand-levelled, war-ready villages. Premium accounts delivered instantly.</p>
+      </header>
+
+      {/* Marketplace */}
+      <main className="marketplace" id="accounts">
+        <h2>Available Accounts</h2>
+        <div className="grid">
+          {accounts.map((account) => (
+            <div key={account.id} className="account-card">
+              <h2>{account.title}</h2>
+              <p>Townhall Level: {account.town_hall_level}</p>
+              <p className="price">₹{account.price}</p>
+              <button className="buy-btn" onClick={() => handleBuyNow(account)}>Buy Now</button>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>© 2026 Clash Vault. All rights reserved.</p>
+        <a href="/admin">Admin Login</a>
+      </footer>
     </div>
   )
 }
