@@ -5,7 +5,7 @@ export async function onRequestPost(context) {
   const rawBody = await request.text();
   const headers = request.headers;
 
-  // 1. Verify Razorpay Signature (Security check)
+  // 1. Verify Signature
   if (headers.get('x-razorpay-signature')) {
     const signature = headers.get('x-razorpay-signature');
     const secret = env.RAZORPAY_WEBHOOK_SECRET;
@@ -21,18 +21,22 @@ export async function onRequestPost(context) {
 
     const payload = JSON.parse(rawBody);
 
-    // 2. Handle the "Payment Captured" event
+    // 2. Handle Payment Captured
     if (payload.event === 'payment.captured') {
-      // Create a SuperAdmin client using your Secret Key
       const supabase = createClient(env.VITE_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
       
-      // Read the account ID from the notes we will send from App.jsx
-      const accountId = payload.payload.payment.entity.notes?.account_id;
+      // CRITICAL FIX: Check the ORDER notes first, then the PAYMENT notes!
+      const accountId = payload.payload.order?.entity?.notes?.account_id || payload.payload.payment?.entity?.notes?.account_id;
 
       if (accountId) {
-        // Delete the account from the database!
-        await supabase.from('accounts').delete().eq('id', accountId);
-        console.log('Account deleted:', accountId);
+        const { error } = await supabase.from('accounts').delete().eq('id', accountId);
+        if (error) {
+          console.error('Delete Error:', error.message);
+        } else {
+          console.log('Account deleted successfully:', accountId);
+        }
+      } else {
+        console.log('No Account ID found in notes');
       }
     }
     return new Response('OK', { status: 200 });
