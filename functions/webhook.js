@@ -22,7 +22,7 @@ export async function onRequestPost(context) {
     const payload = JSON.parse(rawBody);
 
     // 2. Handle Payment Captured
-    if (payload.event === 'payment.captured') {
+    // if (payload.event === 'payment.captured' || payload.event === 'payment.authorized') {
       const supabase = createClient(env.VITE_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
       
       // CRITICAL FIX: Check the ORDER notes first, then the PAYMENT notes!
