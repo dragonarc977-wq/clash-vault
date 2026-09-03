@@ -25,6 +25,7 @@ function App() {
         currency: 'INR',
         name: 'Clash Vault',
         description: account.title,
+        notes: { account_id: account.id },
         handler: async (response) => {
           alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id)
           // Future step: Send this to your webhook to deliver the account
