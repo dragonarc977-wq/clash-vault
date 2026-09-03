@@ -69,6 +69,46 @@ function App() {
         <p>Hand-levelled, war-ready villages. Premium accounts delivered instantly.</p>
       </header>
 
+      {/* Trust & Safety Section */}
+      <section className="trust-section">
+        <h2 className="trust-title">Why Choose Clash Vault?</h2>
+        <p className="trust-subtitle">Your safety is our #1 priority. Here is how we protect you.</p>
+        
+        <div className="trust-grid">
+          <div className="trust-card">
+            <div className="trust-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3H9z"/></svg>
+            </div>
+            <h3>Secure Google Login</h3>
+            <p>Access your orders with a verified Google account. No passwords stored on our servers.</p>
+          </div>
+
+          <div className="trust-card">
+            <div className="trust-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+            </div>
+            <h3>Instant Delivery</h3>
+            <p>Your account details appear in your "My Orders" page the moment your payment is confirmed.</p>
+          </div>
+
+          <div className="trust-card">
+            <div className="trust-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 5v6c0 5.55 4.78 10.29 10 12 5.22-1.71 10-6.45 10-12V5L12 2z"/></svg>
+            </div>
+            <h3>Buyer Protection</h3>
+            <p>Every purchase is backed by our 24/7 support. Get help instantly via WhatsApp.</p>
+          </div>
+
+          <div className="trust-card">
+            <div className="trust-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Not sure? Talk to a real human directly on WhatsApp before or after your purchase.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Marketplace */}
       <main className="marketplace" id="accounts">
         <h2>Available Accounts</h2>
