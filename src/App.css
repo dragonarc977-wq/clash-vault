@@ -1,27 +1,116 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700&display=swap');
 
-:root { --bg: #0d1b2a; --card: #1b263b; --gold: #ffd700; --muted: #a0b0c0; }
-body { background: var(--bg); color: white; font-family: 'Montserrat', sans-serif; margin: 0; }
-.navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #0a1626; border-bottom: 2px solid var(--gold); }
-.navbar-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 24px; font-weight: 900; }
-.navbar-links a { color: white; text-decoration: none; margin-left: 20px; font-weight: 600; }
-.search-bar { flex: 1; max-width: 500px; margin: 0 20px; }
-.search-bar input { width: 100%; padding: 10px 15px; border-radius: 50px; border: 1px solid var(--gold); background: var(--card); color: white; }
-.hero { text-align: center; padding: 80px 20px; background: #0a1626; border-bottom: 2px solid var(--gold); }
-.hero h1 { font-family: 'Cinzel', serif; font-size: 48px; color: var(--gold); }
-.trust-section, .how-it-works, .marketplace { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
-.trust-title, .how-title, .marketplace h2 { text-align: center; font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 30px; }
-.trust-grid, .how-grid, .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.trust-card, .how-step { background: var(--card); padding: 30px; border-radius: 12px; border: 1px solid var(--gold); }
-/* Premium Cards */
-.account-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 2px solid var(--gold); }
-.card-image { width: 100%; height: 200px; background-size: cover; background-position: center; }
-.card-content { padding: 20px; }
-.card-content h2 { color: var(--gold); margin: 0 0 10px; }
-.card-badge { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
-.card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-.card-price { font-size: 24px; font-weight: bold; color: white; }
-.buy-btn { background: var(--gold); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 18px; }
-.footer { background: #0a1626; padding: 40px; text-align: center; margin-top: 60px; border-top: 2px solid var(--gold); }
-.footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
-.footer-links a { color: var(--muted); text-decoration: none; }
+:root { 
+  --bg: #0d1b2a; 
+  --card: #1b263b; 
+  --gold: #ffd700; 
+  --muted: #a0b0c0; 
+}
+
+body { 
+  background: var(--bg); 
+  color: white; 
+  font-family: 'Montserrat', sans-serif; 
+  margin: 0; 
+}
+
+/* Navbar */
+.navbar { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 20px 40px; 
+  background: #0a1626; 
+  border-bottom: 2px solid var(--gold); 
+}
+.navbar-logo { 
+  font-family: 'Cinzel', serif; 
+  color: var(--gold); 
+  font-size: 24px; 
+  font-weight: 900; 
+}
+.navbar-links a { 
+  color: white; 
+  text-decoration: none; 
+  margin-left: 20px; 
+  font-weight: 600; 
+}
+
+/* Hero */
+.hero { 
+  text-align: center; 
+  padding: 80px 20px; 
+  background: #0a1626; 
+  border-bottom: 2px solid var(--gold); 
+}
+.hero h1 { 
+  font-family: 'Cinzel', serif; 
+  font-size: 48px; 
+  color: var(--gold); 
+}
+
+/* Marketplace & Cards */
+.marketplace { 
+  max-width: 1200px; 
+  margin: 60px auto; 
+  padding: 0 20px; 
+}
+.marketplace h2 { 
+  text-align: center; 
+  font-family: 'Cinzel', serif; 
+  color: var(--gold); 
+  margin-bottom: 30px; 
+}
+.grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 20px; 
+}
+.account-card { 
+  background: var(--card); 
+  border-radius: 12px; 
+  overflow: hidden; 
+  border: 2px solid var(--gold); 
+}
+.card-image { 
+  width: 100%; 
+  height: 200px; 
+  background-size: cover; 
+  background-position: center; 
+}
+.card-content { 
+  padding: 20px; 
+}
+.card-content h2 { 
+  color: var(--gold); 
+  margin: 0 0 10px; 
+}
+.card-bottom { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-top: 15px; 
+}
+.card-price { 
+  font-size: 24px; 
+  font-weight: bold; 
+  color: white; 
+}
+.buy-btn { 
+  background: var(--gold); 
+  border: none; 
+  border-radius: 50%; 
+  width: 40px; 
+  height: 40px; 
+  cursor: pointer; 
+  font-size: 18px; 
+}
+
+/* Footer */
+.footer { 
+  background: #0a1626; 
+  padding: 40px; 
+  text-align: center; 
+  margin-top: 60px; 
+  border-top: 2px solid var(--gold); 
+}

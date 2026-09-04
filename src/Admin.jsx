@@ -62,15 +62,6 @@ function App() {
         <p>Hand-levelled, war-ready villages. Premium accounts delivered instantly.</p>
       </header>
 
-      <section className="trust-section">
-        <h2 className="trust-title">Why Choose Clash Vault?</h2>
-        <div className="trust-grid">
-          <div className="trust-card"><h3>🔒 Secure Login</h3><p>Access orders with verified Google account.</p></div>
-          <div className="trust-card"><h3>⚡ Instant Delivery</h3><p>Credentials appear in "My Orders" instantly.</p></div>
-          <div className="trust-card"><h3>🛡️ Buyer Protection</h3><p>24/7 support via WhatsApp.</p></div>
-        </div>
-      </section>
-
       <main className="marketplace" id="accounts">
         <h2>Available Accounts</h2>
         <div className="grid">
@@ -78,7 +69,6 @@ function App() {
             <div key={account.id} className="account-card">
               <div className="card-image" style={{ backgroundImage: `url(${account.image_url || 'https://via.placeholder.com/300'})` }}></div>
               <div className="card-content">
-                <div className="card-badge"><span>{account.platform || 'iOS'}</span><span>⏱ {account.delivery_time || 'Instant'}</span></div>
                 <h2>{account.title}</h2>
                 <div className="card-bottom">
                   <p className="card-price">₹{account.price}</p>
@@ -91,12 +81,8 @@ function App() {
       </main>
 
       <footer className="footer">
-        <div className="footer-links">
-          <a href="/terms">Terms</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/admin">Admin</a>
-        </div>
         <p>© 2026 Clash Vault. All rights reserved.</p>
+        <a href="/terms">Terms</a> | <a href="/privacy">Privacy</a>
       </footer>
     </div>
   )
