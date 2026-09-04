@@ -13,6 +13,11 @@ export default function Admin() {
   const [accountEmail, setAccountEmail] = useState('')
   const [accountPassword, setAccountPassword] = useState('')
 
+  const [imageUrl, setImageUrl] = useState('')
+const [platform, setPlatform] = useState('')
+const [deliveryTime, setDeliveryTime] = useState('')
+const [stock, setStock] = useState('')
+
   const handleLogin = (e) => {
     e.preventDefault()
     if (passwordInput === import.meta.env.VITE_ADMIN_PASSWORD) {
@@ -61,6 +66,10 @@ export default function Admin() {
         <input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
         <input placeholder="Account Email (for buyer)" value={accountEmail} onChange={(e) => setAccountEmail(e.target.value)} />
         <input placeholder="Account Password (for buyer)" value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} />
+        <input placeholder="Image URL (Paste link here)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+        <input placeholder="Platform (iOS / AND)" value={platform} onChange={(e) => setPlatform(e.target.value)} />
+        <input placeholder="Delivery Time (e.g. 1 Hour)" value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} />
+        <input placeholder="Stock (e.g. 20)" type="number" value={stock} onChange={(e) => setStock(e.target.value)} />
         <button type="submit">Add Account</button>
       </form>
       <br />
