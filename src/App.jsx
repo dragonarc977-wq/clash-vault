@@ -124,7 +124,7 @@ function App() {
         </div>
       </main>
 
-            {/* Footer */}
+      {/* Footer */}
       <footer className="footer">
         <p>© 2026 Clash Vault. All rights reserved.</p>
         <div style={{ marginBottom: '10px' }}>
@@ -133,5 +133,8 @@ function App() {
         </div>
         <a href="/admin" style={{ color: '#a0b0c0', fontSize: '12px' }}>Admin Login</a>
       </footer>
+    </div>
+  )
+}
 
 export default App
