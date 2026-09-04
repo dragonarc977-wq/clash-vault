@@ -46,83 +46,162 @@ function App() {
     document.body.appendChild(script)
   }
 
+  // Display INR currency
+  const formatINR = (value) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(value)
+  }
+
   return (
     <div>
-      <nav className="navbar">
-        <div className="navbar-logo">⚔️ CLASH VAULT</div>
-        <div className="navbar-links">
-          <a href="/">Home</a>
-          <a href="#accounts">Accounts</a>
-          <a href="https://wa.me/917717618181" target="_blank" rel="noopener noreferrer">Support</a>
-          <a href="/login">Login</a>
-        </div>
-      </nav>
-
-      <header className="hero">
-        <div className="hero-badge">⭐ PREMIUM COC MARKETPLACE</div>
-        <h1>Own A Legend.<br/>Buy Maxed Accounts.</h1>
-        <p>Hand-picked TH17, TH16 and TH15 bases with maxed heroes and rare skins. Secure Google login, instant delivery, and 24/7 support.</p>
-        <div className="hero-stats">
-          <div><strong>500+</strong><br/>Accounts Sold</div>
-          <div><strong>24/7</strong><br/>Support</div>
-          <div><strong>100%</strong><br/>Secure Payments</div>
+      {/* Site Header */}
+      <header className="site-header">
+        <div className="header-inner">
+          <a href="/" className="logo">🛡️ Clash Vault</a>
+          <nav className="nav-links">
+            <a href="#accounts">TH17</a>
+            <a href="#accounts">TH16</a>
+            <a href="#accounts">TH15</a>
+          </nav>
+          <div className="search-bar">
+            <input type="search" placeholder="Search Townhall level..." />
+          </div>
+          <a href="/login" className="login-btn">Login with Google</a>
         </div>
       </header>
 
-      <section className="trust-section">
-        <h2 className="trust-title">Why Choose Clash Vault?</h2>
-        <div className="trust-grid">
-          <div className="trust-card">
-            <div className="trust-icon-box">🔒</div>
-            <h3>Secure Google Login</h3>
-            <p>Access your orders with verified Google account.</p>
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-bg">
+          <img src="https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?q=80&w=1500&auto=format&fit=crop" alt="CoC Village" />
+          <div className="hero-overlay"></div>
+        </div>
+        <div className="hero-content">
+          <span className="hero-badge">✨ Premium CoC Marketplace</span>
+          <h1>Own a Legend.<span>Buy Maxed Accounts.</span></h1>
+          <p>Hand-picked TH17, TH16 and TH15 bases with maxed heroes and rare skins. Secure Google login, instant delivery, and buyer protection on every purchase.</p>
+          <div className="hero-buttons">
+            <a href="#accounts" className="btn btn-gold">Browse Accounts ➡️</a>
+            <a href="#how" className="btn btn-outline">How It Works</a>
           </div>
-          <div className="trust-card">
-            <div className="trust-icon-box">⚡</div>
+          <div className="hero-stats">
+            <div><strong>500+</strong><p>Accounts Sold</p></div>
+            <div><strong>24/7</strong><p>WhatsApp Support</p></div>
+            <div><strong>100%</strong><p>Secure Delivery</p></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose */}
+      <section className="why-choose">
+        <h2>Why Choose <span>Clash Vault?</span></h2>
+        <div className="feature-grid">
+          <div className="feature-card">
+            <span className="icon-box">🔒</span>
+            <h3>Secure Login</h3>
+            <p>Access your orders with a verified Google account. We never store passwords.</p>
+          </div>
+          <div className="feature-card">
+            <span className="icon-box">⚡</span>
             <h3>Instant Delivery</h3>
-            <p>Account details appear in "My Orders" instantly.</p>
+            <p>Account credentials appear in "My Orders" the moment your payment is confirmed.</p>
           </div>
-          <div className="trust-card">
-            <div className="trust-icon-box">🛡️</div>
+          <div className="feature-card">
+            <span className="icon-box">💬</span>
             <h3>Buyer Protection</h3>
-            <p>Every purchase backed by 24/7 support via WhatsApp.</p>
+            <p>Every purchase is backed by real 24/7 human support over WhatsApp.</p>
           </div>
         </div>
       </section>
 
-      <section className="how-it-works">
-        <h2 className="how-title">How It Works</h2>
-        <div className="how-grid">
-          <div className="how-step"><h3>1. Browse</h3><p>Find your perfect Townhall level.</p></div>
-          <div className="how-step"><h3>2. Login & Pay</h3><p>Pay securely using Razorpay.</p></div>
-          <div className="how-step"><h3>3. Get Credentials</h3><p>Details appear in "My Orders".</p></div>
+      {/* How It Works */}
+      <section id="how" className="how-it-works">
+        <h2>How It Works</h2>
+        <div className="steps-grid">
+          <div className="step">
+            <span className="step-number">1</span>
+            <h3>Browse</h3>
+            <p>Look through available accounts and use the search bar to find your perfect Townhall level.</p>
+          </div>
+          <div className="step">
+            <span className="step-number">2</span>
+            <h3>Login & Pay</h3>
+            <p>Sign in with Google and pay securely using Razorpay — UPI, Cards or Netbanking.</p>
+          </div>
+          <div className="step">
+            <span className="step-number">3</span>
+            <h3>Get Credentials</h3>
+            <p>Your login details appear instantly on your "My Orders" dashboard.</p>
+          </div>
         </div>
       </section>
 
-      <main className="marketplace" id="accounts">
-        <h2>Available Accounts</h2>
-        <div className="grid">
+      {/* Accounts */}
+      <section id="accounts" className="accounts-section">
+        <div className="section-header">
+          <h2>Available Accounts</h2>
+          <p>Every base is verified and ready for instant delivery after payment.</p>
+        </div>
+        <div className="account-grid">
           {accounts.map((account) => (
-            <div key={account.id} className="v0-card">
-              <img src={account.image_url || 'https://via.placeholder.com/300'} alt={account.title} className="v0-card-image" />
-              <div className="v0-card-content">
+            <div key={account.id} className="account-card">
+              <div className="card-image">
+                <span className="townhall-badge">👑 TH{account.town_hall_level}</span>
+                <img src={account.image_url || 'https://via.placeholder.com/300'} alt={account.title} />
+              </div>
+              <div className="card-content">
                 <h3>{account.title}</h3>
-                <p>TH: {account.town_hall_level}</p>
-                <div className="v0-card-bottom">
-                  <p className="price">₹{account.price}</p>
-                  <button className="buy-btn-circle" onClick={() => handleBuyNow(account)}>🛒</button>
+                <div className="card-stats">
+                  <span>🛡️ Max Heroes</span>
+                  <span>📈 Lvl {account.town_hall_level}</span>
+                </div>
+                <div className="card-bottom">
+                  <div className="price-block">
+                    <p className="price">{formatINR(account.price)}</p>
+                  </div>
+                  <button className="buy-btn" onClick={() => handleBuyNow(account)}>Buy Now</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </main>
+      </section>
 
-      <footer className="footer">
-        <p>© 2026 Clash Vault. All rights reserved.</p>
-        <a href="/terms">Terms</a> | <a href="/privacy">Privacy</a>
-        <br />
-        <a href="/admin">Admin Login</a>
+      {/* Site Footer */}
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <div className="logo">🛡️ Clash Vault</div>
+            <p>The trusted marketplace for premium Clash of Clans accounts. Secure, instant and backed by real human support.</p>
+          </div>
+          <div className="footer-columns">
+            <div className="footer-col">
+              <h4>Accounts</h4>
+              <a href="#accounts">TH17 Bases</a>
+              <a href="#accounts">TH16 Bases</a>
+              <a href="#accounts">TH15 Bases</a>
+            </div>
+            <div className="footer-col">
+              <h4>Company</h4>
+              <a href="#">About</a>
+              <a href="#how">How It Works</a>
+              <a href="#">Reviews</a>
+            </div>
+            <div className="footer-col">
+              <h4>Support</h4>
+              <a href="https://wa.me/917717618181" target="_blank">WhatsApp Chat</a>
+              <a href="/my-orders">My Orders</a>
+              <a href="#">Refund Policy</a>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© {new Date().getFullYear()} Clash Vault. Not affiliated with Supercell.</p>
+          <p>Payments secured by Razorpay</p>
+        </div>
       </footer>
     </div>
   )
