@@ -422,3 +422,76 @@ body {
   position: relative;
   z-index: 1;
 }
+/* --- LEGAL PAGES (Terms & Privacy) --- */
+.legal-container {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 20px;
+  background-color: var(--bg-card);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+}
+
+.legal-container h1 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.legal-container h2 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.legal-container p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 15px;
+}
+
+.legal-container ul {
+  color: var(--muted);
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+/* --- COOKIE BANNER --- */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1b263b;
+  border-top: 2px solid var(--gold);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2000;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cookie-banner p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.cookie-banner a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.cookie-btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #0d1b2a;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
