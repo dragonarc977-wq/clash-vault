@@ -1,79 +1,105 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import supabase from './lib/supabase'
+import './App.css'
 
-export default function Admin() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [passwordInput, setPasswordInput] = useState('')
-  const [error, setError] = useState('')
+function App() {
+  const [accounts, setAccounts] = useState([])
 
-  const [title, setTitle] = useState('')
-  const [townHall, setTownHall] = useState('')
-  const [price, setPrice] = useState('')
-  const [description, setDescription] = useState('')
-  const [accountEmail, setAccountEmail] = useState('')
-  const [accountPassword, setAccountPassword] = useState('')
-
-  const [imageUrl, setImageUrl] = useState('')
-const [platform, setPlatform] = useState('')
-const [deliveryTime, setDeliveryTime] = useState('')
-const [stock, setStock] = useState('')
-
-  const handleLogin = (e) => {
-    e.preventDefault()
-    if (passwordInput === import.meta.env.VITE_ADMIN_PASSWORD) {
-      setIsLoggedIn(true)
-      setError('')
-    } else {
-      setError('Wrong password! Try again.')
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const { data, error } = await supabase.from('accounts').select('*')
+      if (error) console.log('Error fetching data:', error)
+      else setAccounts(data)
     }
-  }
+    fetchAccounts()
+  }, [])
 
-  const addAccount = async (e) => {
-    e.preventDefault()
-    const { error } = await supabase
-      .from('accounts')
-      .insert([{ title, town_hall_level: townHall, price, description, account_email: accountEmail, account_password: accountPassword }])
-
-    if (error) alert('Error: ' + error.message)
-    else {
-      alert('Account added successfully!')
-      setTitle(''); setTownHall(''); setPrice(''); setDescription(''); setAccountEmail(''); setAccountPassword('')
+  const handleBuyNow = async (account) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      alert('Please login first to buy an account!')
+      window.location.href = '/login'
+      return
     }
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <div className="admin-container">
-        <h1>Admin Login</h1>
-        <form onSubmit={handleLogin}>
-          <input type="password" placeholder="Enter Secret Password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} required />
-          <button type="submit">Login</button>
-        </form>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <br />
-        <a href="/" className="admin-link">← Back to Store</a>
-      </div>
-    )
+    const buyerId = user.id
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => {
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: account.price * 100,
+        currency: 'INR',
+        name: 'Clash Vault',
+        description: account.title,
+        notes: { account_id: account.id, buyer_id: buyerId },
+        handler: async (response) => {
+          alert('Payment Successful! Check My Orders for your login details.')
+          setTimeout(() => window.location.href = '/my-orders', 2000)
+        },
+        prefill: { name: 'Customer', email: 'customer@example.com', contact: '7717618181' },
+        theme: { color: '#ffd700' },
+      }
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+    }
+    document.body.appendChild(script)
   }
 
   return (
-    <div className="admin-container">
-      <h1>Add New Account</h1>
-      <form onSubmit={addAccount}>
-        <input placeholder="Title (e.g. TH17 Max)" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <input placeholder="Town Hall Level (e.g. 17)" type="number" value={townHall} onChange={(e) => setTownHall(e.target.value)} required />
-        <input placeholder="Price (e.g. 4999)" type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
-        <input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <input placeholder="Account Email (for buyer)" value={accountEmail} onChange={(e) => setAccountEmail(e.target.value)} />
-        <input placeholder="Account Password (for buyer)" value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} />
-        <input placeholder="Image URL (Paste link here)" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-        <input placeholder="Platform (iOS / AND)" value={platform} onChange={(e) => setPlatform(e.target.value)} />
-        <input placeholder="Delivery Time (e.g. 1 Hour)" value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} />
-        <input placeholder="Stock (e.g. 20)" type="number" value={stock} onChange={(e) => setStock(e.target.value)} />
-        <button type="submit">Add Account</button>
-      </form>
-      <br />
-      <a href="/" className="admin-link">← Back to Store</a>
+    <div>
+      <nav className="navbar">
+        <div className="navbar-logo">⚔️ CLASH VAULT</div>
+        <div className="navbar-links">
+          <a href="/">Home</a>
+          <a href="#accounts">Accounts</a>
+          <a href="https://wa.me/917717618181" target="_blank">Support</a>
+          <a href="/login">Login</a>
+        </div>
+      </nav>
+
+      <header className="hero">
+        <h1>Own The Ultimate Base</h1>
+        <p>Hand-levelled, war-ready villages. Premium accounts delivered instantly.</p>
+      </header>
+
+      <section className="trust-section">
+        <h2 className="trust-title">Why Choose Clash Vault?</h2>
+        <div className="trust-grid">
+          <div className="trust-card"><h3>🔒 Secure Login</h3><p>Access orders with verified Google account.</p></div>
+          <div className="trust-card"><h3>⚡ Instant Delivery</h3><p>Credentials appear in "My Orders" instantly.</p></div>
+          <div className="trust-card"><h3>🛡️ Buyer Protection</h3><p>24/7 support via WhatsApp.</p></div>
+        </div>
+      </section>
+
+      <main className="marketplace" id="accounts">
+        <h2>Available Accounts</h2>
+        <div className="grid">
+          {accounts.map((account) => (
+            <div key={account.id} className="account-card">
+              <div className="card-image" style={{ backgroundImage: `url(${account.image_url || 'https://via.placeholder.com/300'})` }}></div>
+              <div className="card-content">
+                <div className="card-badge"><span>{account.platform || 'iOS'}</span><span>⏱ {account.delivery_time || 'Instant'}</span></div>
+                <h2>{account.title}</h2>
+                <div className="card-bottom">
+                  <p className="card-price">₹{account.price}</p>
+                  <button className="buy-btn" onClick={() => handleBuyNow(account)}>🛒</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      <footer className="footer">
+        <div className="footer-links">
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/admin">Admin</a>
+        </div>
+        <p>© 2026 Clash Vault. All rights reserved.</p>
+      </footer>
     </div>
   )
 }
+
+export default App
