@@ -47,10 +47,11 @@ function App() {
     document.body.appendChild(script)
   }
 
-  // Search Filter Logic
+  
+    // Search Filter Logic (Safe against null values)
   const filteredAccounts = accounts.filter(account => 
-    account.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    account.town_hall_level.toString().includes(searchTerm)
+    (account.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (account.town_hall_level || '').toString().includes(searchTerm)
   )
 
   return (
