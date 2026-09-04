@@ -47,8 +47,7 @@ function App() {
     document.body.appendChild(script)
   }
 
-  
-    // Search Filter Logic (Safe against null values)
+  // Search Filter Logic (Safe against null values)
   const filteredAccounts = accounts.filter(account => 
     (account.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (account.town_hall_level || '').toString().includes(searchTerm)
@@ -92,7 +91,6 @@ function App() {
       <section className="trust-section">
         <h2 className="trust-title">Why Choose Clash Vault?</h2>
         <p className="trust-subtitle">Your safety is our #1 priority. Here is how we protect you.</p>
-        
         <div className="trust-grid">
           <div className="trust-card">
             <div className="trust-icon-box"><svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3H9z"/></svg></div>
@@ -112,7 +110,7 @@ function App() {
         </div>
       </section>
 
-      {/* How It Works Section (Information for Buyers) */}
+      {/* How It Works Section */}
       <section className="how-it-works">
         <h2 className="how-title">How It Works</h2>
         <div className="how-grid">
@@ -131,16 +129,29 @@ function App() {
         </div>
       </section>
 
-      {/* Marketplace */}
+      {/* Marketplace - Premium Cards */}
       <main className="marketplace" id="accounts">
         <h2>Available Accounts</h2>
         <div className="grid">
           {filteredAccounts.map((account) => (
-            <div key={account.id} className="account-card">
-              <h2>{account.title}</h2>
-              <p>Townhall Level: {account.town_hall_level}</p>
-              <p className="price">₹{account.price}</p>
-              <button className="buy-btn" onClick={() => handleBuyNow(account)}>Buy Now</button>
+            <div key={account.id} className="premium-card">
+              <div className="premium-badges">
+                <span className="badge-platform">{account.platform || 'iOS'}</span>
+                <span className="badge-time">⏱ {account.delivery_time || 'Instant'}</span>
+              </div>
+              
+              <div className="premium-img-box">
+                <img src={account.image_url || 'https://via.placeholder.com/300'} alt={account.title} className="premium-img" />
+              </div>
+
+              <div className="premium-content">
+                <h2>{account.title}</h2>
+                <p className="stock-text">Stock: {account.stock || 1}</p>
+                <div className="premium-bottom">
+                  <p className="price">₹{account.price}</p>
+                  <button className="buy-btn-circle" onClick={() => handleBuyNow(account)}>🛒</button>
+                </div>
+              </div>
             </div>
           ))}
           {filteredAccounts.length === 0 && <p style={{ color: 'var(--muted)' }}>No accounts found. Please check back later!</p>}
