@@ -14,45 +14,45 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ paddingTop: '80px', minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <style>{`
-        .home-hero { text-align: center; padding: 80px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--gold-border); }
-        .home-badge { display: inline-block; border: 1px solid var(--gold-border); color: var(--gold-primary); padding: 5px 15px; border-radius: 20px; font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; }
-        .home-title { font-size: 56px; font-weight: 800; margin-bottom: 15px; line-height: 1.1; }
-        .home-title span { color: var(--gold-primary); }
-        .home-subtitle { color: var(--text-secondary); font-size: 18px; max-width: 600px; margin: 0 auto 40px; line-height: 1.6; }
-        .home-cta { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ffd700, #e6c200); color: #0a0a0f; font-weight: 700; padding: 15px 30px; border-radius: 12px; text-decoration: none; }
-        .home-trust { display: flex; justify-content: center; gap: 40px; margin-top: 50px; flex-wrap: wrap; }
-        .home-trust div { display: flex; flex-direction: column; }
-        .home-trust strong { color: var(--gold-primary); font-size: 30px; }
-        .home-trust span { color: var(--text-muted); font-size: 14px; }
-        .home-section { max-width: 1200px; margin: 60px auto; padding: 0 24px; }
-        .home-section-title { font-size: 32px; font-weight: 800; margin-bottom: 30px; text-align: center; }
-        .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-        @media (max-width: 768px) { .home-title { font-size: 40px; } .home-trust { gap: 20px; } }
-      `}</style>
-
-      <div className="home-hero">
-        <span className="home-badge">⚡ PREMIUM COC MARKETPLACE</span>
-        <h1 className="home-title">Own a Legend.<br /><span>Buy Maxed Accounts.</span></h1>
-        <p className="home-subtitle">Hand-picked TH17, TH16 and TH15 bases with maxed heroes. Instant delivery and 24/7 support.</p>
-        <a href="/shop" className="home-cta">Browse Accounts 🛒</a>
-        
-        <div className="home-trust">
-          <div><strong>500+</strong><span>Accounts Sold</span></div>
-          <div><strong>24/7</strong><span>Support</span></div>
-          <div><strong>100%</strong><span>Secure</span></div>
+    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans pt-20">
+      {/* Hero Section */}
+      <section className="text-center px-6 py-20 bg-gradient-to-b from-yellow-500/10 to-transparent">
+        <span className="inline-block border border-yellow-500/40 text-yellow-400 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+          ⚡ Premium CoC Marketplace
+        </span>
+        <h1 className="text-5xl md:text-7xl font-black leading-tight mb-6">
+          OWN A LEGEND.<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
+            BUY MAXED ACCOUNTS.
+          </span>
+        </h1>
+        <p className="text-zinc-400 text-lg max-w-2xl mx-auto mb-8">
+          Hand-picked TH17, TH16 and TH15 bases with maxed heroes. Instant delivery, 24/7 support, and buyer protection on every purchase.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="/shop" className="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all shadow-xl shadow-yellow-500/20">
+            Browse Accounts 🛒
+          </a>
+          <a href="/faq" className="border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/10 font-bold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all">
+            How It Works
+          </a>
         </div>
-      </div>
+        <div className="mt-14 flex flex-wrap justify-center gap-12">
+          <div><div className="text-5xl font-black text-yellow-400">500+</div><div className="text-sm text-zinc-500 mt-1">Accounts Sold</div></div>
+          <div><div className="text-5xl font-black text-yellow-400">24/7</div><div className="text-sm text-zinc-500 mt-1">Support</div></div>
+          <div><div className="text-5xl font-black text-yellow-400">100%</div><div className="text-sm text-zinc-500 mt-1">Secure</div></div>
+        </div>
+      </section>
 
-      <div className="home-section">
-        <h2 className="home-section-title">Featured Accounts</h2>
-        <div className="home-grid">
+      {/* Featured Accounts */}
+      <main className="max-w-7xl mx-auto px-6 pb-20">
+        <h2 className="text-3xl md:text-4xl font-black mb-10">Featured Accounts</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {accounts.map((account) => (
             <AccountCard key={account.id} account={account} />
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
