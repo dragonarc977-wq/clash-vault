@@ -137,6 +137,76 @@ export default function Home() {
         </div>
       </section>
       {/* ========== END TRUST SECTION ========== */}
+
+      {/* ========== HOMEPAGE FAQ SECTION ========== */}
+      <section className="bg-[#0a0a0f] py-20 border-t border-zinc-800">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black mb-3">
+              Frequently Asked <span className="text-yellow-400">Questions</span>
+            </h2>
+            <p className="text-zinc-400">
+              Quick answers to the most common questions.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {/* Question 1 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-2">
+                How fast will I receive the account?
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Most accounts are delivered within 5–15 minutes after payment. You’ll receive the login details instantly on the website and via email.
+              </p>
+            </div>
+
+            {/* Question 2 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-2">
+                Is it safe to buy accounts here?
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Yes. Every account is verified before listing. We only sell clean accounts with no ban history. Payments are secured through Razorpay.
+              </p>
+            </div>
+
+            {/* Question 3 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-2">
+                What if the account gets banned?
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                We provide a replacement guarantee if the account is banned due to previous owner activity within the warranty period.
+              </p>
+            </div>
+
+            {/* Question 4 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-2">
+                Can I change email & password after buying?
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Yes. We strongly recommend changing both immediately after receiving the account for better security.
+              </p>
+            </div>
+          </div>
+
+          {/* View all button */}
+          <div className="text-center mt-10">
+            <a
+              href="/faq"
+              className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 font-semibold transition"
+            >
+              View all questions
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+      {/* ========== END HOMEPAGE FAQ ========== */}
     </div>
   );
 }
