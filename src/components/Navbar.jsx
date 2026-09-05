@@ -12,7 +12,6 @@ export default function Navbar() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
-        
         let storedTag = localStorage.getItem(`gamer_tag_${session.user.id}`);
         if (!storedTag) {
           const adjectives = ['Elite', 'Shadow', 'Apex', 'Titan', 'Viper', 'Ghost', 'Rogue'];
