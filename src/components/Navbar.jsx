@@ -13,7 +13,6 @@ export default function Navbar() {
       if (session?.user) {
         setUser(session.user);
         
-        // Generate or load random professional gamer tag
         let storedTag = localStorage.getItem(`gamer_tag_${session.user.id}`);
         if (!storedTag) {
           const adjectives = ['Elite', 'Shadow', 'Apex', 'Titan', 'Viper', 'Ghost', 'Rogue'];
@@ -27,7 +26,6 @@ export default function Navbar() {
     };
     getUserData();
 
-    // Close dropdown when clicking outside
     const handleClickOutside = (e) => {
       if (!e.target.closest('#profile-dropdown-container')) {
         setDropdownOpen(false);
@@ -72,49 +70,70 @@ export default function Navbar() {
 
             {dropdownOpen && (
               <div style={styles.dropdownMenu}>
-                {/* User Identity / Gamer Tag Header */}
+                
+                {/* User Info Header */}
                 <div style={styles.dropHeader}>
-                  <div style={styles.dropGamerTag}>{gamerTag}</div>
-                  <div style={styles.dropEmail}>{user.email}</div>
-                  <div style={styles.badgeRow}>
-                    <span style={styles.verifiedBadge}>Verified</span>
-                    <span style={styles.langBadge}>🇬🇧 English</span>
+                  <div style={styles.avatarLarge}>
+                    {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div style={{ overflow: 'hidden' }}>
+                    <div style={styles.dropGamerTag}>{gamerTag}</div>
+                    <div style={styles.dropEmail}>{user.email}</div>
+                    <span style={styles.verifiedBadge}>Verified Member</span>
                   </div>
                 </div>
 
-                {/* Currency Switcher inside dropdown */}
+                {/* Account Section */}
                 <div style={styles.dropSection}>
-                  <span style={styles.dropLabel}>Currency</span>
-                  <div style={styles.currencyToggle}>
-                    <button 
-                      onClick={() => setCurrency('INR')} 
-                      style={{ ...styles.currBtn, ...(currency === 'INR' ? styles.currBtnActive : {}) }}
-                    >
-                      ₹ INR
-                    </button>
-                    <button 
-                      onClick={() => setCurrency('CRYPTO')} 
-                      style={{ ...styles.currBtn, ...(currency === 'CRYPTO' ? styles.currBtnActive : {}) }}
-                    >
-                      🪙 Crypto
-                    </button>
+                  <div style={styles.sectionTitle}>Account</div>
+                  <a href="/my-orders" style={styles.dropItem}>
+                    <span>📦 My Orders & Vault</span>
+                    <span style={styles.arrow}>›</span>
+                  </a>
+                  <a href="/support" style={styles.dropItem}>
+                    <span>💬 Live Chat & Support</span>
+                    <span style={styles.arrow}>›</span>
+                  </a>
+                </div>
+
+                {/* Preferences Section */}
+                <div style={styles.dropSection}>
+                  <div style={styles.sectionTitle}>Preferences</div>
+                  
+                  <div style={styles.prefRow}>
+                    <span>Language</span>
+                    <span style={styles.langTag}>🇬🇧 English</span>
+                  </div>
+
+                  <div style={styles.prefRow}>
+                    <span>Currency</span>
+                    <div style={styles.currencyToggle}>
+                      <button 
+                        onClick={() => setCurrency('INR')} 
+                        style={{ ...styles.currBtn, ...(currency === 'INR' ? styles.currBtnActive : {}) }}
+                        type="button"
+                      >
+                        ₹ INR
+                      </button>
+                      <button 
+                        onClick={() => setCurrency('CRYPTO')} 
+                        style={{ ...styles.currBtn, ...(currency === 'CRYPTO' ? styles.currBtnActive : {}) }}
+                        type="button"
+                      >
+                        🪙 Crypto
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <div style={styles.dropDivider}></div>
+                {/* Logout Action */}
+                <div style={{ paddingTop: '8px' }}>
+                  <button onClick={handleSignOut} style={styles.signOutBtn} type="button">
+                    <span>🚪 Sign Out</span>
+                    <span>›</span>
+                  </button>
+                </div>
 
-                <a href="/my-orders" style={styles.dropItem}>
-                  📦 My Orders & Vault
-                </a>
-                <a href="/support" style={styles.dropItem}>
-                  💬 Live Chat & Support
-                </a>
-
-                <div style={styles.dropDivider}></div>
-
-                <button onClick={handleSignOut} style={styles.signOutBtn} type="button">
-                  🚪 Sign Out
-                </button>
               </div>
             )}
           </div>
@@ -132,25 +151,26 @@ const styles = {
   crown: { fontSize: '18px' },
   logoText: { fontSize: '18px', fontWeight: '900', letterSpacing: '1px', color: '#ffffff', textDecoration: 'none' },
   navLinks: { display: 'flex', gap: '30px' },
-  link: { color: '#9ca3af', textDecoration: 'none', fontSize: '13px', fontWeight: '800', letterSpacing: '0.5px', transition: 'color 0.2s' },
+  link: { color: '#9ca3af', textDecoration: 'none', fontSize: '13px', fontWeight: '800', letterSpacing: '0.5px' },
   rightSection: { display: 'flex', alignItems: 'center' },
   profileBtn: { display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#121214', border: '1px solid #27272a', borderRadius: '30px', padding: '6px 14px 6px 6px', cursor: 'pointer', color: '#ffffff' },
   avatarMini: { width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#eab308', color: '#111827', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '12px' },
+  avatarLarge: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eab308', color: '#111827', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '16px', flexShrink: 0 },
   emailDisplay: { fontSize: '12px', fontWeight: '600', color: '#e5e7eb', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-  dropdownMenu: { position: 'absolute', right: 0, top: 'calc(100% + 10px)', width: '280px', backgroundColor: '#121214', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '16px', boxShadow: '0 15px 35px rgba(0,0,0,0.8)', padding: '12px', boxSizing: 'border-box', zIndex: 1100 },
-  dropHeader: { padding: '8px 8px 12px 8px', borderBottom: '1px solid #1f1f22' },
-  dropGamerTag: { fontSize: '15px', fontWeight: '900', color: '#ffffff', marginBottom: '2px' },
-  dropEmail: { fontSize: '11px', color: '#9ca3af', marginBottom: '8px', overflow: 'hidden', textOverflow: 'ellipsis' },
-  badgeRow: { display: 'flex', gap: '6px' },
+  dropdownMenu: { position: 'absolute', right: 0, top: 'calc(100% + 12px)', width: '320px', backgroundColor: '#121214', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '16px', boxShadow: '0 20px 50px rgba(0,0,0,0.9)', padding: '16px', boxSizing: 'border-box', zIndex: 1100 },
+  dropHeader: { display: 'flex', alignItems: 'center', gap: '14px', paddingBottom: '14px', borderBottom: '1px solid #27272a' },
+  dropGamerTag: { fontSize: '14px', fontWeight: '900', color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+  dropEmail: { fontSize: '11px', color: '#9ca3af', marginBottom: '6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
   verifiedBadge: { backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80', fontSize: '9px', fontWeight: '800', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' },
-  langBadge: { backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid #27272a', color: '#9ca3af', fontSize: '9px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px' },
-  dropSection: { padding: '10px 8px' },
-  dropLabel: { display: 'block', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#9ca3af', marginBottom: '6px', letterSpacing: '0.5px' },
-  currencyToggle: { display: 'flex', backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '10px', padding: '3px' },
-  currBtn: { flex: 1, background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '11px', fontWeight: '700', padding: '6px', borderRadius: '8px', cursor: 'pointer', textAlign: 'center' },
-  currBtnActive: { backgroundColor: '#eab308', color: '#111827', boxShadow: '0 2px 6px rgba(234, 179, 8, 0.3)' },
-  dropDivider: { height: '1px', backgroundColor: '#1f1f22', margin: '6px 0' },
-  dropItem: { display: 'block', padding: '10px 8px', color: '#e5e7eb', textDecoration: 'none', fontSize: '12px', fontWeight: '700', borderRadius: '8px', transition: 'background 0.2s' },
-  signOutBtn: { width: '100%', textAlign: 'left', background: 'transparent', border: 'none', padding: '10px 8px', color: '#f87171', fontSize: '12px', fontWeight: '800', cursor: 'pointer', borderRadius: '8px' },
+  dropSection: { padding: '12px 0', borderBottom: '1px solid #27272a' },
+  sectionTitle: { fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#6b7280', marginBottom: '8px', paddingLeft: '8px', letterSpacing: '0.5px' },
+  dropItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 8px', color: '#e5e7eb', textDecoration: 'none', fontSize: '12px', fontWeight: '700', borderRadius: '10px' },
+  arrow: { color: '#6b7280', fontSize: '14px' },
+  prefRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', fontSize: '12px', fontWeight: '700', color: '#e5e7eb' },
+  langTag: { fontSize: '11px', color: '#9ca3af', backgroundColor: '#18181b', border: '1px solid #27272a', padding: '4px 8px', borderRadius: '8px' },
+  currencyToggle: { display: 'flex', backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px', padding: '2px' },
+  currBtn: { background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '10px', fontWeight: '700', padding: '5px 10px', borderRadius: '6px', cursor: 'pointer' },
+  currBtnActive: { backgroundColor: '#eab308', color: '#111827' },
+  signOutBtn: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'transparent', border: 'none', padding: '10px 8px', color: '#f87171', fontSize: '12px', fontWeight: '800', cursor: 'pointer', borderRadius: '10px' },
   loginBtn: { backgroundColor: '#eab308', color: '#111827', padding: '8px 18px', borderRadius: '12px', fontWeight: '800', fontSize: '12px', textDecoration: 'none' }
 };
