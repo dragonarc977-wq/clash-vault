@@ -7,6 +7,7 @@ import Checkout from './pages/Checkout';
 import Login from './Login';
 import MyOrders from './MyOrders';
 import Admin from './Admin';
+import FAQ from './pages/FAQ';          // ← added
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/faq" element={<FAQ />} />   {/* ← added */}
+        
         {/* Catch-all: redirect unknown paths to home */}
         <Route path="*" element={<Home />} />
       </Routes>
