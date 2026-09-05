@@ -30,17 +30,32 @@ export default function Home() {
           Hand-picked TH17, TH16 and TH15 bases with maxed heroes. Instant delivery, 24/7 support, and buyer protection on every purchase.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <a href="/shop" className="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all shadow-xl shadow-yellow-500/20">
+          <a
+            href="/shop"
+            className="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all shadow-xl shadow-yellow-500/20"
+          >
             Browse Accounts 🛒
           </a>
-          <a href="/faq" className="border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/10 font-bold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all">
+          <a
+            href="/faq"
+            className="border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/10 font-bold py-4 px-10 rounded-xl text-lg uppercase tracking-wide transition-all"
+          >
             How It Works
           </a>
         </div>
         <div className="mt-14 flex flex-wrap justify-center gap-12">
-          <div><div className="text-5xl font-black text-yellow-400">500+</div><div className="text-sm text-zinc-500 mt-1">Accounts Sold</div></div>
-          <div><div className="text-5xl font-black text-yellow-400">24/7</div><div className="text-sm text-zinc-500 mt-1">Support</div></div>
-          <div><div className="text-5xl font-black text-yellow-400">100%</div><div className="text-sm text-zinc-500 mt-1">Secure</div></div>
+          <div>
+            <div className="text-5xl font-black text-yellow-400">500+</div>
+            <div className="text-sm text-zinc-500 mt-1">Accounts Sold</div>
+          </div>
+          <div>
+            <div className="text-5xl font-black text-yellow-400">24/7</div>
+            <div className="text-sm text-zinc-500 mt-1">Support</div>
+          </div>
+          <div>
+            <div className="text-5xl font-black text-yellow-400">100%</div>
+            <div className="text-sm text-zinc-500 mt-1">Secure</div>
+          </div>
         </div>
       </section>
 
@@ -53,6 +68,75 @@ export default function Home() {
           ))}
         </div>
       </main>
+
+      {/* ========== TRUST SECTION ========== */}
+      <section className="bg-zinc-950 py-20 border-t border-zinc-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              Why Players Trust <span className="text-yellow-400">Clash Vault</span>
+            </h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">
+              We built Clash Vault for serious Clash of Clans players who want safe, fast, and reliable account delivery.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 hover:border-yellow-500/40 transition">
+              <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Secure Transactions</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                All payments are processed through trusted gateways. Your money is protected until delivery is confirmed.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 hover:border-yellow-500/40 transition">
+              <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Instant Delivery</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Most accounts are delivered within minutes after payment. No waiting for days.
+              </p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 hover:border-yellow-500/40 transition">
+              <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Verified Accounts</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Every account is checked for legitimacy, progress, and no ban history before listing.
+              </p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 hover:border-yellow-500/40 transition">
+              <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">24/7 Support</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Live chat and support ready whenever you need help before or after purchase.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ========== END TRUST SECTION ========== */}
     </div>
   );
 }
