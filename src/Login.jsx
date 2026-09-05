@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import supabase from '../lib/supabase'; // Points to your default export
+import supabase from './lib/supabase'; // Points to your default export
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
