@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import supabase from './lib/supabase'; // CHANGE: Corrected path!
+import supabase from './lib/supabase';
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -13,7 +13,7 @@ const Login = () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/my-orders` }
+        options: { redirectTo: `${window.location.origin}/` }
       });
       if (error) throw error;
     } catch (error) {
@@ -32,7 +32,7 @@ const Login = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/my-orders` }
+          options: { emailRedirectTo: `${window.location.origin}/` }
         });
         if (error) throw error;
         
@@ -44,7 +44,7 @@ const Login = () => {
           password,
         });
         if (error) throw error;
-        window.location.href = '/my-orders';
+        window.location.href = '/';
       }
     } catch (error) {
       setErrorMessage(error.message);
