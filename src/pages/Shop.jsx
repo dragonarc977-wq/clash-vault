@@ -18,14 +18,15 @@ export default function Shop() {
       .from('accounts')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     setAccounts(data || []);
     setLoading(false);
   };
 
-  const filtered = accounts.filter(acc => {
+  const filtered = accounts.filter((acc) => {
     const matchesTH = filterTH === 'all' || acc.town_hall?.toString() === filterTH;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch =
+      !searchQuery ||
       acc.town_hall?.toString().includes(searchQuery) ||
       acc.price?.toString().includes(searchQuery);
     return matchesTH && matchesSearch;
@@ -34,51 +35,53 @@ export default function Shop() {
   const thLevels = [17, 16, 15, 14, 13];
 
   return (
-    <div className="shop-page">
-      <style>{`
-        .shop-page { padding-top: 100px; min-height: 100vh; background: #0a0a0f; color: #ffffff; font-family: 'Inter', sans-serif; }
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-        .shop-hero { text-align: center; padding: 60px 0 40px; }
-        .shop-hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
-        .shop-filters { display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; align-items: center; }
-        .search-box { flex: 1; min-width: 250px; position: relative; }
-        .search-box input { width: 100%; padding: 12px 16px; background: #111118; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #ffffff; font-size: 14px; outline: none; }
-        .search-box input:focus { border-color: #ffd700; }
-        .th-filters { display: flex; gap: 8px; flex-wrap: wrap; }
-        .th-filter-btn { padding: 8px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #111118; color: #a0a0b0; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-        .th-filter-btn.active { background: rgba(255,215,0,0.1); border-color: #ffd700; color: #ffd700; }
-        .th-filter-btn:hover { border-color: rgba(255,215,0,0.3); }
-        .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; padding-bottom: 80px; }
-        .empty-state { text-align: center; padding: 80px 20px; color: #6b6b7b; }
-      `}</style>
-
-      <div className="container">
-        <div className="shop-hero">
-          <h1>Premium COC Accounts</h1>
-          <p className="section-subtitle">Hand-picked maxed bases. Instant delivery. 100% secure.</p>
+    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-black mb-3">
+            Premium <span className="text-yellow-400">COC Accounts</span>
+          </h1>
+          <p className="text-zinc-400 text-lg">
+            Hand-picked maxed bases. Instant delivery. 100% secure.
+          </p>
         </div>
 
-        <div className="shop-filters">
-          <div className="search-box">
-            <input 
-              type="text" 
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-12 items-center justify-between">
+          {/* Search */}
+          <div className="w-full md:w-80">
+            <input
+              type="text"
               placeholder="Search by TH level or price..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-500 rounded-xl px-5 py-3.5 focus:outline-none focus:border-yellow-500/50 transition"
             />
           </div>
-          <div className="th-filters">
-            <button 
-              className={`th-filter-btn ${filterTH === 'all' ? 'active' : ''}`}
+
+          {/* TH Filters */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <button
               onClick={() => setFilterTH('all')}
+              className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                filterTH === 'all'
+                  ? 'bg-yellow-400 text-black'
+                  : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-yellow-500/40'
+              }`}
             >
               All
             </button>
-            {thLevels.map(th => (
-              <button 
+
+            {thLevels.map((th) => (
+              <button
                 key={th}
-                className={`th-filter-btn ${filterTH === th.toString() ? 'active' : ''}`}
                 onClick={() => setFilterTH(th.toString())}
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  filterTH === th.toString()
+                    ? 'bg-yellow-400 text-black'
+                    : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-yellow-500/40'
+                }`}
               >
                 TH{th}
               </button>
@@ -86,31 +89,33 @@ export default function Shop() {
           </div>
         </div>
 
+        {/* Accounts Grid */}
         {loading ? (
-          <div className="accounts-grid">
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="account-card">
-                <div className="shimmer" style={{height: '200px'}} />
-                <div style={{padding: '20px'}}>
-                  <div className="shimmer" style={{height: '20px', width: '60%', marginBottom: '10px', borderRadius: '4px'}} />
-                  <div className="shimmer" style={{height: '14px', width: '40%', marginBottom: '16px', borderRadius: '4px'}} />
-                  <div className="shimmer" style={{height: '40px', borderRadius: '4px'}} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden animate-pulse"
+              >
+                <div className="h-48 bg-zinc-800"></div>
+                <div className="p-5 space-y-3">
+                  <div className="h-5 bg-zinc-800 rounded w-2/3"></div>
+                  <div className="h-4 bg-zinc-800 rounded w-1/3"></div>
+                  <div className="h-10 bg-zinc-800 rounded"></div>
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="accounts-grid">
-            {filtered.map(account => (
+        ) : filtered.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((account) => (
               <AccountCard key={account.id} account={account} />
             ))}
           </div>
-        )}
-
-        {!loading && filtered.length === 0 && (
-          <div className="empty-state">
-            <h3>No accounts found</h3>
-            <p>Try adjusting your filters</p>
+        ) : (
+          <div className="text-center py-20">
+            <h3 className="text-xl font-semibold text-white mb-2">No accounts found</h3>
+            <p className="text-zinc-500">Try adjusting your filters</p>
           </div>
         )}
       </div>
