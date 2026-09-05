@@ -20,6 +20,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<Admin />} />
+        {/* Catch-all: redirect unknown paths to home */}
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );
