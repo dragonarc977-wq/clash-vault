@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 
-const formatTime = (value) => new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(value));
+const formatTime = (value) =>
+  new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(value));
 
 export default function Support() {
   const navigate = useNavigate();
@@ -17,65 +18,128 @@ export default function Support() {
   const [subject, setSubject] = useState('');
   const [selectedOrder, setSelectedOrder] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // ← new
   const [creating, setCreating] = useState(false);
   const [sending, setSending] = useState(false);
   const [notice, setNotice] = useState('');
 
-  const active = useMemo(() => tickets.find((ticket) => ticket.id === activeTicket) || null, [tickets, activeTicket]);
+  const active = useMemo(
+    () => tickets.find((ticket) => ticket.id === activeTicket) || null,
+    [tickets, activeTicket]
+  );
 
   useEffect(() => {
     let channel;
     const boot = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const currentUser = session?.user;
-      if (!currentUser) { navigate('/login'); return; }
+      if (!currentUser) {
+        navigate('/login');
+        return;
+      }
       setUser(currentUser);
       setAccessToken(session.access_token);
       const [{ data: ticketData }, { data: orderData }] = await Promise.all([
-        supabase.from('support_tickets').select('*').eq('buyer_id', currentUser.id).order('last_message_at', { ascending: false }),
-        supabase.from('orders').select('id, amount, status, accounts(town_hall)').eq('buyer_id', currentUser.id).order('created_at', { ascending: false }),
+        supabase
+          .from('support_tickets')
+          .select('*')
+          .eq('buyer_id', currentUser.id)
+          .order('last_message_at', { ascending: false }),
+        supabase
+          .from('orders')
+          .select('id, amount, status, accounts(town_hall)')
+          .eq('buyer_id', currentUser.id)
+          .order('created_at', { ascending: false }),
       ]);
       const nextTickets = ticketData || [];
       setTickets(nextTickets);
       setOrders(orderData || []);
       setActiveTicket(nextTickets[0]?.id || null);
       setLoading(false);
-      channel = supabase.channel(`buyer-support-${currentUser.id}`)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets', filter: `buyer_id=eq.${currentUser.id}` }, () => refreshTickets(currentUser.id))
+      channel = supabase
+        .channel(`buyer-support-${currentUser.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'support_tickets',
+            filter: `buyer_id=eq.${currentUser.id}`,
+          },
+          () => refreshTickets(currentUser.id)
+        )
         .subscribe();
     };
     boot();
-    return () => { if (channel) supabase.removeChannel(channel); };
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [navigate]);
 
   useEffect(() => {
-    if (!activeTicket) { setMessages([]); return; }
+    if (!activeTicket) {
+      setMessages([]);
+      return;
+    }
     let channel;
     const loadMessages = async () => {
-      const { data } = await supabase.from('support_messages').select('*').eq('ticket_id', activeTicket).order('created_at');
+      const { data } = await supabase
+        .from('support_messages')
+        .select('*')
+        .eq('ticket_id', activeTicket)
+        .order('created_at');
       setMessages(data || []);
-      channel = supabase.channel(`support-messages-${activeTicket}`)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages', filter: `ticket_id=eq.${activeTicket}` }, (payload) => {
-          setMessages((current) => current.some((message) => message.id === payload.new.id) ? current : [...current, payload.new]);
-          refreshTickets(user?.id);
-        }).subscribe();
+      channel = supabase
+        .channel(`support-messages-${activeTicket}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'support_messages',
+            filter: `ticket_id=eq.${activeTicket}`,
+          },
+          (payload) => {
+            setMessages((current) =>
+              current.some((message) => message.id === payload.new.id)
+                ? current
+                : [...current, payload.new]
+            );
+            refreshTickets(user?.id);
+          }
+        )
+        .subscribe();
     };
     loadMessages();
-    return () => { if (channel) supabase.removeChannel(channel); };
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [activeTicket, user?.id]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   async function refreshTickets(buyerId) {
     if (!buyerId) return;
-    const { data } = await supabase.from('support_tickets').select('*').eq('buyer_id', buyerId).order('last_message_at', { ascending: false });
-    if (data) { setTickets(data); setActiveTicket((current) => current || data[0]?.id || null); }
+    const { data } = await supabase
+      .from('support_tickets')
+      .select('*')
+      .eq('buyer_id', buyerId)
+      .order('last_message_at', { ascending: false });
+    if (data) {
+      setTickets(data);
+      setActiveTicket((current) => current || data[0]?.id || null);
+    }
   }
 
   async function createTicket(event) {
     event.preventDefault();
     if (!subject.trim() || !user) return;
-    setCreating(true); setNotice('');
+    setCreating(true);
+    setNotice('');
     try {
       if (!accessToken) throw new Error('Your session has expired. Please sign in again.');
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`, {
@@ -86,14 +150,26 @@ export default function Support() {
           'Content-Type': 'application/json',
           Prefer: 'return=minimal',
         },
-        body: JSON.stringify({ buyer_id: user.id, buyer_email: user.email, subject: subject.trim(), order_id: selectedOrder || null }),
+        body: JSON.stringify({
+          buyer_id: user.id,
+          buyer_email: user.email,
+          subject: subject.trim(),
+          order_id: selectedOrder || null,
+        }),
         signal: AbortSignal.timeout(15000),
       });
-      if (!response.ok) throw new Error((await response.text()) || 'Unable to create this conversation.');
+      if (!response.ok)
+        throw new Error((await response.text()) || 'Unable to create this conversation.');
       await refreshTickets(user.id);
-      setSubject(''); setSelectedOrder('');
+      setSubject('');
+      setSelectedOrder('');
+      setShowModal(false); // close modal after success
     } catch (error) {
-      setNotice(error.name === 'TimeoutError' ? 'Support is taking too long to respond. Please try again.' : error.message);
+      setNotice(
+        error.name === 'TimeoutError'
+          ? 'Support is taking too long to respond. Please try again.'
+          : error.message
+      );
     } finally {
       setCreating(false);
     }
@@ -102,30 +178,177 @@ export default function Support() {
   async function sendMessage(event) {
     event.preventDefault();
     if (!text.trim() || !activeTicket || !user) return;
-    setSending(true); setNotice('');
-    const body = text.trim(); setText('');
-    const { error } = await supabase.from('support_messages').insert({ ticket_id: activeTicket, sender_id: user.id, sender_role: 'buyer', body });
-    if (error) { setText(body); setNotice(error.message); }
+    setSending(true);
+    setNotice('');
+    const body = text.trim();
+    setText('');
+    const { error } = await supabase
+      .from('support_messages')
+      .insert({ ticket_id: activeTicket, sender_id: user.id, sender_role: 'buyer', body });
+    if (error) {
+      setText(body);
+      setNotice(error.message);
+    }
     setSending(false);
   }
 
-  return <main className="support-page">
-    <style>{styles}</style>
-    <section className="support-shell">
-      <header className="support-header"><div><p className="eyebrow">CLASH VAULT CARE</p><h1>Buyer Support</h1><p className="muted">Private help from our verified support team.</p></div><div className="online"><i /> Support team online</div></header>
-      {notice && <div className="notice">{notice}</div>}
-      {loading ? <div className="loading">Loading your support centre…</div> : <div className="support-grid">
-        <aside className="sidebar"><button className="new-ticket" onClick={() => setCreating(true)}>+ Start a conversation</button><p className="section-label">YOUR CONVERSATIONS</p>
-          {tickets.length ? tickets.map((ticket) => <button key={ticket.id} className={`ticket ${activeTicket === ticket.id ? 'selected' : ''}`} onClick={() => setActiveTicket(ticket.id)}><span className="ticket-title">{ticket.subject}</span><span className="ticket-meta"><b className={ticket.status === 'open' ? 'open' : ''}>{ticket.status}</b> · {formatTime(ticket.last_message_at)}</span></button>) : <p className="empty-list">No conversations yet.</p>}
-        </aside>
-        <section className="conversation">{active ? <><div className="conversation-head"><div><h2>{active.subject}</h2><p>{active.status === 'open' ? 'Our team will reply here.' : 'This conversation is resolved.'}</p></div><span className={`status ${active.status}`}>{active.status}</span></div>
-          <div className="messages">{messages.length === 0 && <div className="welcome"><span>✦</span><h3>How can we help?</h3><p>Send a message and our support team will respond in this private conversation.</p></div>}{messages.map((message) => <div key={message.id} className={`message ${message.sender_role === 'buyer' ? 'mine' : 'agent'}`}><div className="bubble">{message.body}</div><small>{message.sender_role === 'buyer' ? 'You' : 'Clash Vault Support'} · {formatTime(message.created_at)}</small></div>)}<div ref={bottomRef} /></div>
-          <form className="composer" onSubmit={sendMessage}><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Write a message…" maxLength="2000" disabled={active.status !== 'open'} /><button disabled={sending || active.status !== 'open'}>{sending ? 'Sending…' : 'Send'}</button></form>
-        </> : <div className="no-ticket"><span>💬</span><h2>Welcome to buyer support</h2><p>Start a private conversation whenever you need help with an order.</p><button className="new-ticket" onClick={() => setCreating(true)}>Start a conversation</button></div>}</section>
-      </div>}
-    </section>
-    {creating && <div className="modal-backdrop" onMouseDown={() => setCreating(false)}><form className="modal" onSubmit={createTicket} onMouseDown={(event) => event.stopPropagation()}><button type="button" className="close" onClick={() => setCreating(false)}>×</button><p className="eyebrow">NEW CONVERSATION</p><h2>Tell us what you need</h2><p className="muted">Your message and purchase details stay private.</p><label>Subject<input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Example: Help with my account delivery" maxLength="120" autoFocus /></label><label>Related order <select value={selectedOrder} onChange={(event) => setSelectedOrder(event.target.value)}><option value="">General question</option>{orders.map((order) => <option value={order.id} key={order.id}>TH{order.accounts?.town_hall || '?'} · ₹{order.amount} · #{order.id.slice(0, 8)}</option>)}</select></label><button className="new-ticket" disabled={creating}>{creating ? 'Creating…' : 'Create conversation'}</button></form></div>}
-  </main>;
+  return (
+    <main className="support-page">
+      <style>{styles}</style>
+      <section className="support-shell">
+        <header className="support-header">
+          <div>
+            <p className="eyebrow">CLASH VAULT CARE</p>
+            <h1>Buyer Support</h1>
+            <p className="muted">Private help from our verified support team.</p>
+          </div>
+          <div className="online">
+            <i /> Support team online
+          </div>
+        </header>
+        {notice && <div className="notice">{notice}</div>}
+        {loading ? (
+          <div className="loading">Loading your support centre…</div>
+        ) : (
+          <div className="support-grid">
+            <aside className="sidebar">
+              <button className="new-ticket" onClick={() => setShowModal(true)}>
+                + Start a conversation
+              </button>
+              <p className="section-label">YOUR CONVERSATIONS</p>
+              {tickets.length ? (
+                tickets.map((ticket) => (
+                  <button
+                    key={ticket.id}
+                    className={`ticket ${activeTicket === ticket.id ? 'selected' : ''}`}
+                    onClick={() => setActiveTicket(ticket.id)}
+                  >
+                    <span className="ticket-title">{ticket.subject}</span>
+                    <span className="ticket-meta">
+                      <b className={ticket.status === 'open' ? 'open' : ''}>{ticket.status}</b> ·{' '}
+                      {formatTime(ticket.last_message_at)}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <p className="empty-list">No conversations yet.</p>
+              )}
+            </aside>
+            <section className="conversation">
+              {active ? (
+                <>
+                  <div className="conversation-head">
+                    <div>
+                      <h2>{active.subject}</h2>
+                      <p>
+                        {active.status === 'open'
+                          ? 'Our team will reply here.'
+                          : 'This conversation is resolved.'}
+                      </p>
+                    </div>
+                    <span className={`status ${active.status}`}>{active.status}</span>
+                  </div>
+                  <div className="messages">
+                    {messages.length === 0 && (
+                      <div className="welcome">
+                        <span>✦</span>
+                        <h3>How can we help?</h3>
+                        <p>
+                          Send a message and our support team will respond in this private
+                          conversation.
+                        </p>
+                      </div>
+                    )}
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`message ${
+                          message.sender_role === 'buyer' ? 'mine' : 'agent'
+                        }`}
+                      >
+                        <div className="bubble">{message.body}</div>
+                        <small>
+                          {message.sender_role === 'buyer' ? 'You' : 'Clash Vault Support'} ·{' '}
+                          {formatTime(message.created_at)}
+                        </small>
+                      </div>
+                    ))}
+                    <div ref={bottomRef} />
+                  </div>
+                  <form className="composer" onSubmit={sendMessage}>
+                    <input
+                      value={text}
+                      onChange={(event) => setText(event.target.value)}
+                      placeholder="Write a message…"
+                      maxLength="2000"
+                      disabled={active.status !== 'open'}
+                    />
+                    <button disabled={sending || active.status !== 'open'}>
+                      {sending ? 'Sending…' : 'Send'}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="no-ticket">
+                  <span>💬</span>
+                  <h2>Welcome to buyer support</h2>
+                  <p>Start a private conversation whenever you need help with an order.</p>
+                  <button className="new-ticket" onClick={() => setShowModal(true)}>
+                    Start a conversation
+                  </button>
+                </div>
+              )}
+            </section>
+          </div>
+        )}
+      </section>
+
+      {showModal && (
+        <div className="modal-backdrop" onMouseDown={() => setShowModal(false)}>
+          <form
+            className="modal"
+            onSubmit={createTicket}
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button type="button" className="close" onClick={() => setShowModal(false)}>
+              ×
+            </button>
+            <p className="eyebrow">NEW CONVERSATION</p>
+            <h2>Tell us what you need</h2>
+            <p className="muted">Your message and purchase details stay private.</p>
+            <label>
+              Subject
+              <input
+                value={subject}
+                onChange={(event) => setSubject(event.target.value)}
+                placeholder="Example: Help with my account delivery"
+                maxLength="120"
+                autoFocus
+              />
+            </label>
+            <label>
+              Related order{' '}
+              <select
+                value={selectedOrder}
+                onChange={(event) => setSelectedOrder(event.target.value)}
+              >
+                <option value="">General question</option>
+                {orders.map((order) => (
+                  <option value={order.id} key={order.id}>
+                    TH{order.accounts?.town_hall || '?'} · ₹{order.amount} · #
+                    {order.id.slice(0, 8)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button className="new-ticket" disabled={creating}>
+              {creating ? 'Creating…' : 'Create conversation'}
+            </button>
+          </form>
+        </div>
+      )}
+    </main>
+  );
 }
 
 const styles = `
