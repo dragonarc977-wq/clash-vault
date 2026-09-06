@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import  supabase  from './lib/supabase';
+import AdminSupport from './pages/AdminSupport'; // <--- ADDED IMPORT
 // ===== INLINE SVG ICONS (no packages needed) =====
 const IconPackage = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -738,6 +739,12 @@ export default function Admin() {
           >
             Orders ({orders.length})
           </button>
+          <button 
+            className={`admin-tab ${activeTab === 'support' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('support')}
+          >
+            Support
+          </button>
         </div>
         {/* ===== INVENTORY TAB ===== */}
         {activeTab === 'accounts' && (
@@ -913,6 +920,10 @@ export default function Admin() {
               </div>
             )}
           </div>
+        )}
+        {/* ===== SUPPORT TAB ===== */}
+        {activeTab === 'support' && (
+          <AdminSupport />
         )}
       </div>
       {/* ===== ADD ACCOUNT MODAL ===== */}
