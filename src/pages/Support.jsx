@@ -8,6 +8,7 @@ export default function Support() {
   const navigate = useNavigate();
   const bottomRef = useRef(null);
   const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState('');
   const [tickets, setTickets] = useState([]);
   const [orders, setOrders] = useState([]);
   const [activeTicket, setActiveTicket] = useState(null);
@@ -25,9 +26,11 @@ export default function Support() {
   useEffect(() => {
     let channel;
     const boot = async () => {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user;
       if (!currentUser) { navigate('/login'); return; }
       setUser(currentUser);
+      setAccessToken(session.access_token);
       const [{ data: ticketData }, { data: orderData }] = await Promise.all([
         supabase.from('support_tickets').select('*').eq('buyer_id', currentUser.id).order('last_message_at', { ascending: false }),
         supabase.from('orders').select('id, amount, status, accounts(town_hall)').eq('buyer_id', currentUser.id).order('created_at', { ascending: false }),
@@ -74,13 +77,12 @@ export default function Support() {
     if (!subject.trim() || !user) return;
     setCreating(true); setNotice('');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Your session has expired. Please sign in again.');
+      if (!accessToken) throw new Error('Your session has expired. Please sign in again.');
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`, {
         method: 'POST',
         headers: {
           apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           Prefer: 'return=minimal',
         },
