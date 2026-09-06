@@ -8,6 +8,8 @@ import Login from './Login';
 import MyOrders from './MyOrders';
 import Admin from './Admin';
 import FAQ from './pages/FAQ';          // ← added
+import Support from './pages/Support';
+import SupportInbox from './pages/SupportInbox';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/faq" element={<FAQ />} />   {/* ← added */}
+        <Route path="/support" element={<Support />} />
+        <Route path="/admin/support" element={<SupportInbox />} />
         
         {/* Catch-all: redirect unknown paths to home */}
         <Route path="*" element={<Home />} />

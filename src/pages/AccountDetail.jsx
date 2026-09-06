@@ -59,9 +59,7 @@ export default function AccountDetail() {
   };
 
   const openChat = () => {
-    if (window.Tawk_API?.maximize) {
-      window.Tawk_API.maximize();
-    }
+    navigate('/support');
   };
 
   if (loading) {

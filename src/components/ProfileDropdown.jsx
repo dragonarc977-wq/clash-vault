@@ -78,7 +78,7 @@ export default function ProfileDropdown({ user, onLogout }) {
 
   const menuItems = [
     { label: 'My Orders & Vault', icon: <IconOrders />, path: '/my-orders' },
-    { label: 'Live Chat & Support', icon: <IconChat />, action: () => window.Tawk_API?.maximize?.() },
+    { label: 'Live Chat & Support', icon: <IconChat />, path: '/support' },
   ];
 
   const avatarLetter = user?.email?.charAt(0).toUpperCase() || 'U';

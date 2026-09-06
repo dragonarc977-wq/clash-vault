@@ -30,7 +30,7 @@ const faqs = [
   {
     question: "How do I contact support?",
     answer:
-      "You can use the live chat button on the bottom right of the website anytime. We also respond quickly to emails. Our support is available 24/7.",
+      "Sign in and open Live Chat & Support from your profile. You can start a private conversation, link it to an order, and see every reply in your Support Centre.",
   },
 ];
 
