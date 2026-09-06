@@ -1,20 +1,28 @@
-import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import AccountDetail from './pages/AccountDetail';
-import Checkout from './pages/Checkout';
-import Login from './Login';
-import MyOrders from './MyOrders';
-import Admin from './Admin';
-import FAQ from './pages/FAQ';          // ← added
-import Support from './pages/Support';
-import SupportInbox from './pages/SupportInbox';
+import { Routes, Route, useLocation } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
+import AccountDetail from "./pages/AccountDetail";
+import Checkout from "./pages/Checkout";
+import Login from "./Login";
+import MyOrders from "./MyOrders";
+import Admin from "./Admin";
+import FAQ from "./pages/FAQ";
+import Support from "./pages/Support";
+import AdminSupport from "./pages/AdminSupport"; // ✅ FIXED
 
 function App() {
+  const location = useLocation();
+
+  // ✅ Hide navbar on admin pages (SaaS style)
+  const hideNavbar = location.pathname.startsWith("/admin");
+
   return (
     <div className="app-wrapper">
-      <Navbar />
+      
+      {!hideNavbar && <Navbar />}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
@@ -23,11 +31,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/faq" element={<FAQ />} />   {/* ← added */}
+        <Route path="/faq" element={<FAQ />} />
         <Route path="/support" element={<Support />} />
-        <Route path="/admin/support" element={<SupportInbox />} />
-        
-        {/* Catch-all: redirect unknown paths to home */}
+
+        {/* ✅ ADMIN SUPPORT */}
+        <Route path="/admin/support" element={<AdminSupport />} />
+
+        {/* ✅ Catch-all */}
         <Route path="*" element={<Home />} />
       </Routes>
     </div>
