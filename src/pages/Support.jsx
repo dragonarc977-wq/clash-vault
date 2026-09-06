@@ -73,11 +73,11 @@ export default function Support() {
     event.preventDefault();
     if (!subject.trim() || !user) return;
     setCreating(true); setNotice('');
-    const { data, error } = await supabase.from('support_tickets').insert({
+    const { error } = await supabase.from('support_tickets').insert({
       buyer_id: user.id, buyer_email: user.email, subject: subject.trim(), order_id: selectedOrder || null,
-    }).select().single();
+    });
     if (error) setNotice(error.message);
-    else { setTickets((current) => [data, ...current]); setActiveTicket(data.id); setSubject(''); setSelectedOrder(''); }
+    else { await refreshTickets(user.id); setSubject(''); setSelectedOrder(''); }
     setCreating(false);
   }
 
