@@ -148,7 +148,7 @@ export default function AdminSupport() {
   }
 
   return (
-    <div className="h-screen flex bg-[#0b0b0f] text-white font-sans">
+    <div className="h-[calc(100vh-160px)] flex bg-[#0b0b0f] text-white font-sans">
 
       {/* SIDEBAR */}
       <aside className="w-[320px] border-r border-white/5 bg-[#0f0f14] flex flex-col">
