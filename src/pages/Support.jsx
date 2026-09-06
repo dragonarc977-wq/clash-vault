@@ -73,12 +73,28 @@ export default function Support() {
     event.preventDefault();
     if (!subject.trim() || !user) return;
     setCreating(true); setNotice('');
-    const { error } = await supabase.from('support_tickets').insert({
-      buyer_id: user.id, buyer_email: user.email, subject: subject.trim(), order_id: selectedOrder || null,
-    });
-    if (error) setNotice(error.message);
-    else { await refreshTickets(user.id); setSubject(''); setSelectedOrder(''); }
-    setCreating(false);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Your session has expired. Please sign in again.');
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`, {
+        method: 'POST',
+        headers: {
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ buyer_id: user.id, buyer_email: user.email, subject: subject.trim(), order_id: selectedOrder || null }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok) throw new Error((await response.text()) || 'Unable to create this conversation.');
+      await refreshTickets(user.id);
+      setSubject(''); setSelectedOrder('');
+    } catch (error) {
+      setNotice(error.name === 'TimeoutError' ? 'Support is taking too long to respond. Please try again.' : error.message);
+    } finally {
+      setCreating(false);
+    }
   }
 
   async function sendMessage(event) {
