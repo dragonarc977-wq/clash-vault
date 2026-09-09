@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import supabase from './lib/supabase';   // ← FIXED (single dot)
+import supabase from '../lib/supabase';   // ← FIXED (single dot)
 import AccountCard from '../components/AccountCard';
 
 // ============================================================
