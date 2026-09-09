@@ -7,7 +7,6 @@ const GAMES = [
     id: 'clash-of-clans',
     name: 'Clash of Clans',
     shortName: 'CoC',
-    emoji: '🏰',
     description: 'Accounts & Gems',
     filters: {
       levels: [17, 16, 15, 14, 13],
@@ -20,7 +19,6 @@ const GAMES = [
     id: 'brawl-stars',
     name: 'Brawl Stars',
     shortName: 'Brawl',
-    emoji: '🤖',
     description: 'Accounts & Coins',
     filters: {
       levels: [70, 65, 60, 55, 50],
@@ -34,7 +32,6 @@ const GAMES = [
     id: 'valorant',
     name: 'Valorant',
     shortName: 'Valorant',
-    emoji: '🎯',
     description: 'Accounts & Points',
     filters: {
       levels: ['Immortal', 'Diamond', 'Platinum', 'Gold', 'Silver'],
@@ -47,7 +44,6 @@ const GAMES = [
     id: 'clash-royale',
     name: 'Clash Royale',
     shortName: 'CR',
-    emoji: '👑',
     description: 'Accounts & Chests',
     filters: {
       levels: [15, 14, 13, 12, 11],
@@ -60,7 +56,6 @@ const GAMES = [
     id: 'pokemon-go',
     name: 'Pokémon GO',
     shortName: 'PoGo',
-    emoji: '⚡',
     description: 'Accounts & Items',
     filters: {
       levels: [50, 45, 40, 35, 30],
@@ -73,7 +68,6 @@ const GAMES = [
     id: 'fortnite',
     name: 'Fortnite',
     shortName: 'Fortnite',
-    emoji: '🪂',
     description: 'Accounts & V-Bucks',
     filters: {
       levels: ['Champion', 'Unreal', 'Diamond', 'Platinum', 'Gold'],
@@ -86,7 +80,6 @@ const GAMES = [
     id: 'mobile-legends',
     name: 'Mobile Legends',
     shortName: 'MLBB',
-    emoji: '⚔️',
     description: 'Accounts & Diamonds',
     filters: {
       levels: ['Mythic', 'Legend', 'Epic', 'Elite', 'Warrior'],
@@ -99,7 +92,6 @@ const GAMES = [
     id: 'hay-day',
     name: 'Hay Day',
     shortName: 'Hay Day',
-    emoji: '🌾',
     description: 'Accounts & Coins',
     filters: {
       levels: [300, 250, 200, 150, 100],
@@ -112,7 +104,6 @@ const GAMES = [
     id: 'squad-busters',
     name: 'Squad Busters',
     shortName: 'Squad',
-    emoji: '💥',
     description: 'Accounts & Gold',
     filters: {
       levels: [50, 45, 40, 35, 30],
@@ -125,7 +116,6 @@ const GAMES = [
     id: 'free-fire',
     name: 'Free Fire',
     shortName: 'FF',
-    emoji: '🔥',
     description: 'Accounts & Diamonds',
     filters: {
       levels: [80, 70, 60, 50, 40],
@@ -147,7 +137,6 @@ export default function Shop() {
   const [filterPrice, setFilterPrice] = useState([]);
   const [filterFeatures, setFilterFeatures] = useState([]);
   const [sortBy, setSortBy] = useState('newest');
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const enterGameShop = async (game) => {
     setSelectedGame(game);
@@ -232,7 +221,7 @@ export default function Shop() {
     if (filterFeatures.length > 0) {
       result = result.filter((acc) =>
         filterFeatures.every((feat) => {
-          if (feat === 'Maxed only' || feat.includes('Maxed')) return acc.is_maxed === true;
+          if (feat.includes('Maxed')) return acc.is_maxed === true;
           if (feat === 'Instant delivery') return acc.instant_delivery === true;
           if (feat === 'Full email access') return acc.full_email_access === true;
           return true;
@@ -269,7 +258,7 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen bg-[#07070b] text-white font-sans relative overflow-hidden">
-      {/* Ambient Golden Glow */}
+      {/* Ambient Glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[1000px] h-[700px] bg-yellow-500/10 blur-[180px] rounded-full" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[500px] bg-amber-600/5 blur-[140px] rounded-full" />
@@ -298,7 +287,7 @@ export default function Shop() {
                   Instant delivery • Verified accounts • Trusted by thousands of players worldwide
                 </p>
 
-                {/* Premium Search */}
+                {/* Search */}
                 <div className="relative max-w-2xl mx-auto">
                   <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500/25 to-amber-500/15 rounded-2xl blur-lg opacity-70" />
                   <div className="relative flex items-center bg-[#12121a] border border-zinc-700/80 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
@@ -329,7 +318,7 @@ export default function Shop() {
               </div>
             </section>
 
-            {/* Games Grid */}
+            {/* Games Grid - New Image Cards */}
             <section className="px-6 pb-28">
               <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-10">
@@ -342,15 +331,27 @@ export default function Shop() {
                     <button
                       key={game.id}
                       onClick={() => enterGameShop(game)}
-                      className="group relative bg-[#12121a] border border-zinc-800 rounded-2xl p-6 text-center transition-all duration-300 hover:border-yellow-400/50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/10 overflow-hidden"
+                      className="group relative aspect-[3/4] bg-[#12121a] border border-zinc-800 rounded-2xl overflow-hidden transition-all duration-300 hover:border-yellow-400/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/15"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="relative">
-                        <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                          {game.emoji}
-                        </div>
-                        <h3 className="font-bold text-[15px] mb-1">{game.name}</h3>
-                        <p className="text-xs text-zinc-500">{game.description}</p>
+                      {/* Game Image */}
+                      <img
+                        src={`/games/${game.id}.png`}
+                        alt={game.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+
+                      {/* Dark gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                      {/* Text */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
+                        <h3 className="font-bold text-sm sm:text-base text-white mb-0.5 drop-shadow-lg">
+                          {game.name}
+                        </h3>
+                        <p className="text-xs text-zinc-300">{game.description}</p>
                       </div>
                     </button>
                   ))}
@@ -371,7 +372,6 @@ export default function Shop() {
         {/* ==================== GAME SHOP VIEW ==================== */}
         {view === 'game' && selectedGame && (
           <>
-            {/* Header */}
             <section className="pt-24 pb-8 px-6">
               <div className="max-w-7xl mx-auto">
                 <div className="flex items-center gap-3 mb-6 text-sm">
@@ -388,20 +388,17 @@ export default function Shop() {
                   <span className="text-zinc-400">{selectedGame.name}</span>
                 </div>
 
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                  <div className="flex items-center gap-5">
-                    <div className="text-5xl">{selectedGame.emoji}</div>
-                    <div>
-                      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black">
-                        {selectedGame.name}{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
-                          Accounts
-                        </span>
-                      </h1>
-                      <p className="text-zinc-500 mt-1">
-                        Hand-picked accounts • Instant delivery • 100% secure
-                      </p>
-                    </div>
+                <div className="flex items-center gap-5">
+                  <div>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+                      {selectedGame.name}{' '}
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
+                        Accounts
+                      </span>
+                    </h1>
+                    <p className="text-zinc-500 mt-1">
+                      Hand-picked accounts • Instant delivery • 100% secure
+                    </p>
                   </div>
                 </div>
               </div>
@@ -460,7 +457,7 @@ export default function Shop() {
             {/* Main Content */}
             <section className="px-6 pb-28">
               <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-                {/* Sidebar Filters */}
+                {/* Sidebar */}
                 <aside className="hidden lg:block w-64 shrink-0">
                   <div className="bg-[#12121a] border border-zinc-800 rounded-2xl p-5 sticky top-24">
                     <div className="flex items-center justify-between mb-5">
@@ -523,7 +520,7 @@ export default function Shop() {
                   </div>
                 </aside>
 
-                {/* Accounts */}
+                {/* Accounts Grid */}
                 <main className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-6">
                     <span className="text-sm text-zinc-500">
