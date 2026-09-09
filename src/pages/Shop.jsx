@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import AccountCard from '../components/AccountCard';
 
@@ -128,20 +127,17 @@ const GAMES = [
 ];
 
 export default function Shop() {
-  const location = useLocation();
   const [view, setView] = useState('hub');
   const [selectedGame, setSelectedGame] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const hubSearch = '';
+  const [hubSearch, setHubSearch] = useState('');
   const [gameSearch, setGameSearch] = useState('');
   const [filterLevel, setFilterLevel] = useState('all');
   const [filterPrice, setFilterPrice] = useState([]);
   const [filterFeatures, setFilterFeatures] = useState([]);
   const [sortBy, setSortBy] = useState('newest');
 
-  const headerSearch = new URLSearchParams(location.search).get('q') || '';
-  const showingHub = location.pathname === '/' || view === 'hub';
 
   const enterGameShop = async (game) => {
     setSelectedGame(game);
@@ -171,16 +167,15 @@ export default function Shop() {
   };
 
   const filteredGames = useMemo(() => {
-    const query = hubSearch || headerSearch;
-    if (!query.trim()) return GAMES;
-    const q = query.toLowerCase();
+    if (!hubSearch.trim()) return GAMES;
+    const q = hubSearch.toLowerCase();
     return GAMES.filter(
       (g) =>
         g.name.toLowerCase().includes(q) ||
         g.shortName.toLowerCase().includes(q) ||
         g.description.toLowerCase().includes(q)
     );
-  }, [hubSearch, headerSearch]);
+  }, [hubSearch]);
 
   const togglePrice = (range) => {
     setFilterPrice((prev) =>
@@ -272,13 +267,44 @@ export default function Shop() {
 
       <div className="relative z-10">
         {/* ==================== HUB VIEW ==================== */}
-        {showingHub && (
+        {view === 'hub' && (
           <>
-            <section className="px-6 pb-28 pt-28 sm:pt-32">
+            <section className="pt-28 pb-16 px-6">
+              <div className="max-w-4xl mx-auto text-center">
+                <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/25 text-yellow-400 text-xs font-bold tracking-[0.2em] uppercase px-5 py-2 rounded-full mb-8">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
+                  Premium Gaming Marketplace
+                </div>
+
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] mb-6 tracking-tight">
+                  Find Your
+                  <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400">
+                    Perfect Account
+                  </span>
+                </h1>
+
+                <p className="text-zinc-400 text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
+                  Instant delivery • Verified accounts • Trusted by thousands of players worldwide
+                </p>
+
+                <div className="relative max-w-2xl mx-auto">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500/25 to-amber-500/15 rounded-2xl blur-lg opacity-70" />
+                  <div className="relative flex items-center bg-[#12121a] border border-zinc-700/80 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+                    <span className="pl-5 text-zinc-500"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0 1 12 0z" /></svg></span>
+                    <input type="text" placeholder="Search Clash of Clans, Valorant, Brawl Stars..." value={hubSearch} onChange={(e) => setHubSearch(e.target.value)} className="w-full bg-transparent py-5 px-4 text-base outline-none placeholder-zinc-500" />
+                    {hubSearch && <button onClick={() => setHubSearch('')} className="pr-3 text-zinc-500 hover:text-zinc-300"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>}
+                    <button className="m-2 bg-yellow-400 hover:bg-yellow-300 text-black font-bold text-sm px-6 py-3 rounded-xl transition-all">Search</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="px-6 pb-28">
               <div className="max-w-6xl mx-auto">
-                <div className="mb-10 flex items-end justify-between border-b border-white/[0.08] pb-5">
-                  <div><p className="text-xs font-bold uppercase tracking-[0.22em] text-yellow-300">Marketplace</p><h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Choose your game</h1></div>
-                  <span className="text-sm text-zinc-500">{filteredGames.length} games</span>
+                <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-2xl font-bold">Popular Games</h2>
+                  <span className="text-sm text-zinc-500">{filteredGames.length} games available</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
@@ -325,7 +351,7 @@ export default function Shop() {
         )}
 
         {/* ==================== GAME SHOP VIEW ==================== */}
-        {!showingHub && view === 'game' && selectedGame && (
+        {view === 'game' && selectedGame && (
           <>
             <section className="pt-24 pb-8 px-6">
               <div className="max-w-7xl mx-auto">

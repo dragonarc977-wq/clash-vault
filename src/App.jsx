@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import AccountDetail from "./pages/AccountDetail";
 import Checkout from "./pages/Checkout";
@@ -23,7 +24,7 @@ function App() {
       {!hideNavbar && <Navbar />}
 
       <Routes>
-        <Route path="/" element={<Shop />} />
+        <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/account/:id" element={<AccountDetail />} />
         <Route path="/checkout/:id" element={<Checkout />} />
@@ -37,7 +38,7 @@ function App() {
         <Route path="/admin/support" element={<AdminSupport />} />
 
         {/* ✅ Catch-all */}
-        <Route path="*" element={<Shop />} />
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );
