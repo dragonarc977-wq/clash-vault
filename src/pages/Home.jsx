@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const games = [
   ['Clash of Clans', 'clash-of-clans', 'Strategy & progression', 'COC', 'from-amber-500/30 via-orange-500/10'],
@@ -25,12 +26,19 @@ const protections = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+
   return (
-    <main className="min-h-screen bg-[#07070b] pb-16 pt-28 text-white sm:pt-24">
+    <main className="min-h-screen bg-[#07070b] pb-16 pt-40 text-white sm:pt-44">
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"><div className="absolute left-[8%] top-16 h-80 w-80 rounded-full bg-yellow-400/[0.055] blur-[130px]" /><div className="absolute right-[5%] top-[30rem] h-96 w-96 rounded-full bg-amber-500/[0.04] blur-[140px]" /></div>
 
       <section className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        <div className="flex flex-col justify-between gap-5 border-b border-white/[0.08] pb-8 sm:flex-row sm:items-end">
+        <form onSubmit={(event) => { event.preventDefault(); navigate('/shop'); }} className="mx-auto max-w-5xl rounded-2xl border border-white/[0.1] bg-[#121217] p-2 shadow-2xl shadow-black/40 transition duration-300 focus-within:border-yellow-400/45 focus-within:shadow-yellow-400/[0.06]">
+          <div className="flex flex-col gap-2 sm:flex-row"><div className="flex min-w-0 flex-1 items-center gap-3 px-3"><svg className="h-5 w-5 shrink-0 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m21 21-4.35-4.35M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" /></svg><input value={search} onChange={(event) => setSearch(event.target.value)} className="min-w-0 flex-1 bg-transparent py-3 text-sm text-white outline-none placeholder:text-zinc-600" placeholder="Search accounts, items, top-ups, game coins, services…" /></div><div className="flex items-center gap-2"><div className="hidden rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-3 text-xs font-bold text-zinc-400 sm:block">All categories <span className="ml-1 text-zinc-600">⌄</span></div><button className="rounded-xl bg-yellow-400 px-6 py-3.5 text-sm font-black text-[#151105] transition hover:bg-yellow-300">Search</button></div></div>
+        </form>
+        <div className="mx-auto mt-3 flex max-w-5xl flex-wrap items-center gap-2 text-xs text-zinc-500"><span>Popular:</span><Link to="/shop" className="rounded-full border border-white/[0.08] px-3 py-1.5 transition hover:border-yellow-400/35 hover:text-yellow-300">Accounts</Link><Link to="/shop" className="rounded-full border border-white/[0.08] px-3 py-1.5 transition hover:border-yellow-400/35 hover:text-yellow-300">Top-ups</Link><Link to="/shop" className="rounded-full border border-white/[0.08] px-3 py-1.5 transition hover:border-yellow-400/35 hover:text-yellow-300">Gaming services</Link></div>
+        <div className="mt-12 flex flex-col justify-between gap-5 border-b border-white/[0.08] pb-8 sm:flex-row sm:items-end">
           <div><p className="text-xs font-black uppercase tracking-[0.2em] text-yellow-300">Explore the marketplace</p><h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Find your next game account.</h1><p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400">Browse premium accounts, ranked progress, and rare collections across the games you play.</p></div>
           <Link to="/shop" className="inline-flex w-fit items-center gap-2 rounded-xl bg-yellow-400 px-5 py-3 text-sm font-black text-[#151105] transition hover:bg-yellow-300">Explore all games <span>→</span></Link>
         </div>
