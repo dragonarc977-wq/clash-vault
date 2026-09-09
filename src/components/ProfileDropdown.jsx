@@ -27,8 +27,8 @@ export default function ProfileDropdown({ user, onLogout }) {
   return <div>
     <button onClick={() => setOpen(true)} aria-label="Open profile menu" className="relative grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206] transition hover:scale-[1.04]">{avatarLetter}<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" /></button>
     {open && <div className="fixed inset-0 z-[1200] flex justify-end">
-      <button onClick={() => setOpen(false)} className="absolute inset-0 cursor-default bg-zinc-950/50 backdrop-blur-[2px]" aria-label="Close profile menu" />
-      <aside className="relative flex h-full w-full max-w-[390px] flex-col bg-white p-5 shadow-2xl sm:p-6" aria-label="Buyer account menu">
+      <button onClick={() => setOpen(false)} className="absolute inset-0 z-0 cursor-default bg-zinc-950/50 backdrop-blur-[2px]" aria-label="Close profile menu" />
+      <aside className="relative z-10 flex min-h-full w-full max-w-[390px] flex-col bg-white p-5 opacity-100 shadow-2xl sm:p-6" aria-label="Buyer account menu">
         <div className="flex justify-end"><button onClick={() => setOpen(false)} className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-900" aria-label="Close profile menu"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" /></svg></button></div>
         <div className="mt-4 flex items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-base font-black text-white">{avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs text-zinc-500">Buyer account</p></div></div>
         <p className="mt-6 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Account</p>
