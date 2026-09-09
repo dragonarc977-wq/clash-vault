@@ -10,7 +10,6 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [language, setLanguage] = useState(() => localStorage.getItem('clashvault_language') || 'EN');
   const [currency, setCurrency] = useState(() => localStorage.getItem('clashvault_currency') || 'INR');
   const [search, setSearch] = useState('');
@@ -31,7 +30,7 @@ export default function Navbar() {
     return () => window.removeEventListener('clashvault-preferences', syncPreferences);
   }, []);
 
-  const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); setNotificationsOpen(false); };
+  const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); };
   const submitSearch = (event) => { event.preventDefault(); navigate('/shop'); };
 
   return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white/95 backdrop-blur-xl">
@@ -46,7 +45,7 @@ export default function Navbar() {
 
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <Link to="/support" aria-label="Support inbox" className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950"><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 5.5h16v13H4v-13Zm0 8.5h4.4l1.6 2.25h4L15.6 14H20" /></svg></Link>
-        <div className="relative hidden sm:block"><IconButton label="Notifications" onClick={() => { setNotificationsOpen((value) => !value); setLanguageOpen(false); setCurrencyOpen(false); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg></IconButton>{notificationsOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl"><p className="text-sm font-bold text-zinc-950">Notifications</p><p className="mt-3 rounded-xl bg-zinc-50 p-3 text-sm leading-6 text-zinc-500">You are all caught up.</p></div>}</div>
+        <div className="relative hidden sm:block"><IconButton label="Notifications" onClick={() => { closeMenus(); navigate('/notifications'); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg></IconButton></div>
         <div className="relative hidden md:block"><button onClick={() => { setLanguageOpen((value) => !value); setCurrencyOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600 transition hover:bg-zinc-50"><span className="text-[#c68d00]">◎</span>{language}</button>{languageOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-28 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button onClick={() => { setLanguage('EN'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">English</button><button onClick={() => { setLanguage('HI'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">Hindi</button></div>}</div>
         <div className="relative hidden lg:block"><button onClick={() => { setCurrencyOpen((value) => !value); setLanguageOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600"><span className="text-[#c68d00]">{currency === 'INR' ? '₹' : '$'}</span>{currency}</button>{currencyOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-24 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button onClick={() => { setCurrency('INR'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">₹ INR</button><button onClick={() => { setCurrency('USD'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">$ USD</button></div>}</div>
         {user ? <ProfileDropdown user={user} onLogout={async () => { closeMenus(); await supabase.auth.signOut(); navigate('/login'); }} /> : <Link to="/login" className="grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206]">→</Link>}

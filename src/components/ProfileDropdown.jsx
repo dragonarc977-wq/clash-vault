@@ -37,7 +37,7 @@ export default function ProfileDropdown({ user, onLogout }) {
           <button onClick={() => goTo('/dashboard')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><WalletIcon /></span><span className="flex-1">My balance</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><OrdersIcon /></span><span className="flex-1">My orders</span><span className="text-zinc-400"><ArrowIcon /></span></button>
-          <button onClick={() => setOpen(false)} className={itemClass}><span className="text-zinc-500"><BellIcon /></span><span className="flex-1">Notifications</span><span className="text-zinc-400"><ArrowIcon /></span></button>
+          <button onClick={() => goTo('/notifications')} className={itemClass}><span className="text-zinc-500"><BellIcon /></span><span className="flex-1">Notifications</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/support')} className={itemClass}><span className="text-zinc-500"><TicketIcon /></span><span className="flex-1">Ticket</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/shop')} className={itemClass}><span className="text-zinc-500"><StoreIcon /></span><span className="flex-1">Become a seller</span><span className="text-zinc-400"><ArrowIcon /></span></button>
         </div>
