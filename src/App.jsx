@@ -11,6 +11,7 @@ import Admin from "./Admin";
 import FAQ from "./pages/FAQ";
 import Support from "./pages/Support";
 import AdminSupport from "./pages/AdminSupport"; // ✅ FIXED
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/support" element={<Support />} />
+        <Route path="/dashboard" element={<Dashboard />} />
 
         {/* ✅ ADMIN SUPPORT */}
         <Route path="/admin/support" element={<AdminSupport />} />

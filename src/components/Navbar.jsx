@@ -11,8 +11,8 @@ export default function Navbar() {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [language, setLanguage] = useState('EN');
-  const [currency, setCurrency] = useState('INR');
+  const [language, setLanguage] = useState(() => localStorage.getItem('clashvault_language') || 'EN');
+  const [currency, setCurrency] = useState(() => localStorage.getItem('clashvault_currency') || 'INR');
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -20,6 +20,15 @@ export default function Navbar() {
     loadUser();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const syncPreferences = (event) => {
+      if (event.detail?.language) setLanguage(event.detail.language);
+      if (event.detail?.currency) setCurrency(event.detail.currency);
+    };
+    window.addEventListener('clashvault-preferences', syncPreferences);
+    return () => window.removeEventListener('clashvault-preferences', syncPreferences);
   }, []);
 
   const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); setNotificationsOpen(false); };

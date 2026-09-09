@@ -34,7 +34,7 @@ export default function ProfileDropdown({ user, onLogout }) {
         <div className="mt-4 flex items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-base font-black text-white">{avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs text-zinc-500">Buyer account</p></div></div>
         <p className="mt-6 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Account</p>
         <div className="mt-2 space-y-1">
-          <button onClick={() => goTo('/')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>
+          <button onClick={() => goTo('/dashboard')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><WalletIcon /></span><span className="flex-1">My balance</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><OrdersIcon /></span><span className="flex-1">My orders</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => setOpen(false)} className={itemClass}><span className="text-zinc-500"><BellIcon /></span><span className="flex-1">Notifications</span><span className="text-zinc-400"><ArrowIcon /></span></button>
