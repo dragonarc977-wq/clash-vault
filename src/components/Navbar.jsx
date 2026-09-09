@@ -17,6 +17,7 @@ export default function Navbar() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [language, setLanguage] = useState('EN');
   const [currency, setCurrency] = useState('INR');
+  const [marketSearch, setMarketSearch] = useState('');
 
   useEffect(() => {
     const getUserData = async () => {
@@ -29,6 +30,10 @@ export default function Navbar() {
   }, []);
 
   const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); setNotificationsOpen(false); };
+  const searchMarketplace = (event) => {
+    event.preventDefault();
+    navigate(marketSearch.trim() ? `/?q=${encodeURIComponent(marketSearch.trim())}` : '/');
+  };
 
   return (
     <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-white/[0.07] bg-[#08090d]/80 backdrop-blur-2xl">
@@ -37,6 +42,12 @@ export default function Navbar() {
           <span className="grid h-9 w-9 place-items-center rounded-[13px] border border-yellow-300/25 bg-gradient-to-br from-yellow-300 to-amber-500 text-[13px] font-black tracking-[-0.14em] text-[#171206] shadow-[0_0_28px_rgba(250,204,21,0.14)] transition duration-200 group-hover:scale-105">CV</span>
           <span className="hidden text-[17px] font-black tracking-[0.08em] text-white sm:block">CLASH<span className="text-yellow-300">VAULT</span></span>
         </Link>
+
+        <form onSubmit={searchMarketplace} className="mx-auto hidden w-full max-w-xl items-center rounded-full border border-white/[0.09] bg-white/[0.035] px-3 transition focus-within:border-yellow-300/45 focus-within:bg-white/[0.055] lg:flex">
+          <svg className="h-[17px] w-[17px] shrink-0 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m21 21-4.35-4.35M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" /></svg>
+          <input value={marketSearch} onChange={(event) => setMarketSearch(event.target.value)} className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-white outline-none placeholder:text-zinc-500" placeholder="Search games, accounts, items..." />
+          <button className="rounded-full bg-yellow-300 px-4 py-2 text-xs font-black text-[#171206] transition hover:bg-yellow-200">Search</button>
+        </form>
 
         <div className="ml-auto flex items-center gap-2">
           <Link to="/support" className="grid h-10 w-10 place-items-center rounded-full border border-white/[0.08] bg-white/[0.035] text-zinc-300 transition duration-200 hover:border-white/20 hover:bg-white/[0.08] hover:text-white" aria-label="Support inbox">
