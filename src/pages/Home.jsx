@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 
 const games = [
-  ['Clash of Clans', '🏰', 'Strategy & progression', 'COC', 'from-amber-500/30 via-orange-500/10'],
-  ['Brawl Stars', '⭐', 'Rare brawlers & progress', 'BRAWL', 'from-rose-500/30 via-orange-500/10'],
-  ['Valorant', '🎯', 'Ranks, skins & collections', 'VAL', 'from-red-500/30 via-fuchsia-500/10'],
-  ['Clash Royale', '👑', 'Decks, cards & progression', 'CR', 'from-sky-500/30 via-blue-500/10'],
-  ['Fortnite', '🪂', 'Rare skins & cosmetics', 'FN', 'from-violet-500/30 via-blue-500/10'],
-  ['Pokémon GO', '⚡', 'High-level collections', 'POGO', 'from-yellow-400/30 via-emerald-500/10'],
-  ['Mobile Legends', '⚔️', 'Ranks, heroes & diamonds', 'MLBB', 'from-cyan-500/30 via-blue-500/10'],
-  ['Free Fire', '🔥', 'Collections & diamonds', 'FF', 'from-orange-500/30 via-red-500/10'],
+  ['Clash of Clans', 'clash-of-clans', 'Strategy & progression', 'COC', 'from-amber-500/30 via-orange-500/10'],
+  ['Brawl Stars', 'brawl-stars', 'Rare brawlers & progress', 'BRAWL', 'from-rose-500/30 via-orange-500/10'],
+  ['Valorant', 'valorant', 'Ranks, skins & collections', 'VAL', 'from-red-500/30 via-fuchsia-500/10'],
+  ['Clash Royale', 'clash-royale', 'Decks, cards & progression', 'CR', 'from-sky-500/30 via-blue-500/10'],
+  ['Fortnite', 'fortnite', 'Rare skins & cosmetics', 'FN', 'from-violet-500/30 via-blue-500/10'],
+  ['Pokémon GO', 'pokemon-go', 'High-level collections', 'POGO', 'from-yellow-400/30 via-emerald-500/10'],
+  ['Mobile Legends', 'mobile-legends', 'Ranks, heroes & diamonds', 'MLBB', 'from-cyan-500/30 via-blue-500/10'],
+  ['Free Fire', 'free-fire', 'Collections & diamonds', 'FF', 'from-orange-500/30 via-red-500/10'],
 ];
 
 const accountTypes = [
@@ -36,7 +36,7 @@ export default function Home() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {games.map(([name, icon, detail, short, tone]) => <Link key={name} to="/shop" className="group relative min-h-36 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111116] p-5 transition duration-300 hover:-translate-y-1 hover:border-yellow-400/40 hover:shadow-xl hover:shadow-yellow-400/[0.06]"><div className={`absolute inset-0 bg-gradient-to-br ${tone} to-transparent opacity-70 transition-opacity group-hover:opacity-100`} /><div className="relative flex h-full flex-col justify-between"><div className="flex items-start justify-between"><span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/10 bg-black/20 text-2xl">{icon}</span><span className="text-xs font-black tracking-wider text-yellow-300">{short}</span></div><div><h2 className="font-black text-white">{name}</h2><p className="mt-1 text-sm text-zinc-400">{detail}</p></div></div></Link>)}
+          {games.map(([name, image, detail, short, tone]) => <Link key={name} to="/shop" className="group relative min-h-48 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111116] transition duration-300 hover:-translate-y-1 hover:border-yellow-400/40 hover:shadow-xl hover:shadow-yellow-400/[0.06]"><img src={`/games/${image}.png`} alt="" className="absolute inset-0 h-full w-full object-cover opacity-55 transition duration-500 group-hover:scale-105 group-hover:opacity-70" /><div className={`absolute inset-0 bg-gradient-to-br ${tone} to-transparent opacity-80`} /><div className="absolute inset-0 bg-gradient-to-t from-[#09090d] via-[#09090d]/30 to-black/10" /><div className="relative flex min-h-48 flex-col justify-between p-5"><div className="flex items-start justify-between"><span className="rounded-lg border border-white/15 bg-black/35 px-2.5 py-1 text-[10px] font-black tracking-[0.12em] text-white backdrop-blur">{short}</span><span className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-black/25 text-sm text-white opacity-0 backdrop-blur transition group-hover:opacity-100">→</span></div><div><h2 className="text-lg font-black text-white">{name}</h2><p className="mt-1 text-sm text-zinc-300">{detail}</p></div></div></Link>)}
         </div>
       </section>
 
