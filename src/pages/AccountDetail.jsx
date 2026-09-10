@@ -43,7 +43,7 @@ export default function AccountDetail() {
 
   if (loading) return <main className="min-h-screen bg-white px-5 pb-20 pt-28"><div className="mx-auto max-w-7xl animate-pulse"><div className="h-5 w-28 rounded bg-zinc-100" /><div className="mt-8 grid gap-10 lg:grid-cols-[1.15fr_0.85fr]"><div className="h-[560px] rounded-3xl bg-zinc-100" /><div className="h-[520px] rounded-3xl bg-zinc-100" /></div></div></main>;
 
-  if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This account is unavailable.</h1><Link to="/shop" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
+  if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This account is unavailable.</h1><Link to="/" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
 
   const gameName = gameNames[account.game_id] || 'Game account';
   const title = account.title || (account.game_id === 'clash-of-clans' && account.town_hall ? `TH${account.town_hall} Maxed Account` : `${gameName} Account`);

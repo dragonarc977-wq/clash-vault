@@ -57,7 +57,7 @@ export default function MyOrders() {
           <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">My orders</h1>
           <p className="mt-3 text-sm text-zinc-500 sm:text-base">Track purchases and access your order details in one place.</p>
         </div>
-        <Link to="/shop" className="inline-flex w-fit items-center rounded-full bg-zinc-950 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#b77e00]">Browse marketplace <span className="ml-2">→</span></Link>
+        <Link to="/#games" className="inline-flex w-fit items-center rounded-full bg-zinc-950 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#b77e00]">Browse games <span className="ml-2">→</span></Link>
       </div>
 
       <section className="mt-9 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8">
@@ -72,7 +72,7 @@ export default function MyOrders() {
           <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-zinc-100 text-zinc-500"><PackageIcon /></span>
           <h2 className="mt-5 text-2xl font-black tracking-tight">No orders yet</h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">Your purchases will appear here after you place your first order.</p>
-          <Link to="/shop" className="mt-6 inline-flex rounded-full bg-yellow-300 px-6 py-3 text-sm font-black text-zinc-950 transition hover:bg-yellow-400">Explore games</Link>
+          <Link to="/#games" className="mt-6 inline-flex rounded-full bg-yellow-300 px-6 py-3 text-sm font-black text-zinc-950 transition hover:bg-yellow-400">Explore games</Link>
         </div> : <div className="space-y-4 pt-6">
           {orders.map((order) => {
             const account = order.accounts || {};

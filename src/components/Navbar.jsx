@@ -98,10 +98,7 @@ export default function Navbar() {
   const submitSearch = (event) => {
     event.preventDefault();
     if (search.trim() && filteredGames.length) openGame(filteredGames[0].id);
-    else {
-      setSearchOpen(false);
-      navigate('/shop');
-    }
+    else openSearch();
   };
 
   return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white/95 backdrop-blur-xl">

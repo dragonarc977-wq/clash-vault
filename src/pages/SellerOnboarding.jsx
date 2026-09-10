@@ -11,7 +11,7 @@ export default function SellerOnboarding() {
         <h1 className="mx-auto mt-3 max-w-2xl text-4xl font-black tracking-[-0.05em] sm:text-6xl">Seller onboarding coming soon</h1>
         <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-zinc-500 sm:text-base">We are preparing a secure, simple way for trusted sellers to list accounts, items, top-ups, and gaming services.</p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link to="/shop" className="inline-flex w-full justify-center rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-black text-white transition hover:bg-[#b77e00] sm:w-auto">Back to marketplace</Link>
+          <Link to="/#games" className="inline-flex w-full justify-center rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-black text-white transition hover:bg-[#b77e00] sm:w-auto">Back to marketplace</Link>
           <Link to="/support" className="inline-flex w-full justify-center rounded-full border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950 sm:w-auto">Contact support</Link>
         </div>
       </div>

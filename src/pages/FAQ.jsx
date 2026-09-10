@@ -100,7 +100,7 @@ export default function FAQ() {
         <div className="mt-16 text-center">
           <p className="text-zinc-400 mb-6">Still have questions?</p>
           <Link
-            to="/shop"
+            to="/#games"
             className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-3.5 px-8 rounded-xl transition-all"
           >
             Browse Accounts

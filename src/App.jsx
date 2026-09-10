@@ -1,8 +1,7 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Shop from "./pages/Shop";
 import AccountDetail from "./pages/AccountDetail";
 import Checkout from "./pages/Checkout";
 import Login from "./Login";
@@ -30,7 +29,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop" element={<Navigate to="/" replace />} />
         <Route path="/account/:id" element={<AccountDetail />} />
         <Route path="/checkout/:id" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
