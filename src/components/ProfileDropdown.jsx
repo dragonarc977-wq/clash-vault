@@ -35,11 +35,11 @@ export default function ProfileDropdown({ user, onLogout }) {
         <p className="mt-6 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Account</p>
         <div className="mt-2 space-y-1">
           <button onClick={() => goTo('/dashboard')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>
-          <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><WalletIcon /></span><span className="flex-1">My balance</span><span className="text-zinc-400"><ArrowIcon /></span></button>
+          <button onClick={() => goTo('/balance')} className={itemClass}><span className="text-zinc-500"><WalletIcon /></span><span className="flex-1">My balance</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/my-orders')} className={itemClass}><span className="text-zinc-500"><OrdersIcon /></span><span className="flex-1">My orders</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/notifications')} className={itemClass}><span className="text-zinc-500"><BellIcon /></span><span className="flex-1">Notifications</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/support')} className={itemClass}><span className="text-zinc-500"><TicketIcon /></span><span className="flex-1">Ticket</span><span className="text-zinc-400"><ArrowIcon /></span></button>
-          <button onClick={() => goTo('/shop')} className={itemClass}><span className="text-zinc-500"><StoreIcon /></span><span className="flex-1">Become a seller</span><span className="text-zinc-400"><ArrowIcon /></span></button>
+          <button onClick={() => goTo('/become-a-seller')} className={itemClass}><span className="text-zinc-500"><StoreIcon /></span><span className="flex-1">Become a seller</span><span className="text-zinc-400"><ArrowIcon /></span></button>
         </div>
         <div className="mt-auto border-t border-zinc-200 pt-3"><button onClick={() => { setOpen(false); onLogout(); }} className="flex w-full items-center gap-4 rounded-xl px-3 py-3.5 text-left text-[15px] font-bold text-red-600 transition hover:bg-red-50"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14 8l4 4-4 4M18 12H7m4 8H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" /></svg>Log out</button></div>
       </aside>

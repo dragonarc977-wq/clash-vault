@@ -13,6 +13,8 @@ import Support from "./pages/Support";
 import AdminSupport from "./pages/AdminSupport"; // ✅ FIXED
 import Dashboard from "./pages/Dashboard";
 import Notifications from "./pages/Notifications";
+import Balance from "./pages/Balance";
+import SellerOnboarding from "./pages/SellerOnboarding";
 
 function App() {
   const location = useLocation();
@@ -37,6 +39,8 @@ function App() {
         <Route path="/support" element={<Support />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/balance" element={<Balance />} />
+        <Route path="/become-a-seller" element={<SellerOnboarding />} />
 
         {/* ✅ ADMIN SUPPORT */}
         <Route path="/admin/support" element={<AdminSupport />} />
