@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import supabase from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 import AccountCard from '../components/AccountCard';
 
 const GAMES = [
@@ -127,10 +127,11 @@ const GAMES = [
 ];
 
 export default function Shop() {
+  const navigate = useNavigate();
   const [view, setView] = useState('hub');
   const [selectedGame, setSelectedGame] = useState(null);
   const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [hubSearch, setHubSearch] = useState('');
   const [gameSearch, setGameSearch] = useState('');
   const [filterLevel, setFilterLevel] = useState('all');
@@ -139,24 +140,8 @@ export default function Shop() {
   const [sortBy, setSortBy] = useState('newest');
 
 
-  const enterGameShop = async (game) => {
-    setSelectedGame(game);
-    setView('game');
-    setLoading(true);
-    setFilterLevel('all');
-    setFilterPrice([]);
-    setFilterFeatures([]);
-    setGameSearch('');
-    setSortBy('newest');
-
-    const { data } = await supabase
-      .from('accounts')
-      .select('*')
-      .eq('game_id', game.id)
-      .order('created_at', { ascending: false });
-
-    setAccounts(data || []);
-    setLoading(false);
+  const enterGameShop = (game) => {
+    navigate(`/game/${game.id}`);
   };
 
   const goBackToHub = () => {
