@@ -224,21 +224,29 @@ export default function Admin() {
     }
 
     const payload = { ...fields, image_url: imageUrls[0], image_urls: imageUrls };
-    const { error } = await supabase.from('accounts').update(payload).eq('id', account.id);
-    if (error) {
+    const { data: updatedAccount, error } = await supabase
+      .from('accounts')
+      .update(payload)
+      .eq('id', account.id)
+      .select('*')
+      .maybeSingle();
+    if (error || !updatedAccount) {
       if (uploadedPaths.length) await supabase.storage.from('account-images').remove(uploadedPaths);
       setSaving(false);
-      setNotice(`Could not update listing: ${error.message}`);
+      setNotice(error
+        ? `Could not update listing: ${error.message}`
+        : 'The listing was not updated. Run the admin listing update policy in Supabase, then try again.');
       return;
     }
 
     const oldImages = Array.isArray(account.image_urls) && account.image_urls.length ? account.image_urls : [account.image_url].filter(Boolean);
     const removedPaths = oldImages.filter((url) => !imageUrls.includes(url)).map(storagePathFromUrl).filter(Boolean);
     if (removedPaths.length) await supabase.storage.from('account-images').remove(removedPaths);
+    setAccounts((current) => current.map((item) => (item.id === updatedAccount.id ? updatedAccount : item)));
     setSaving(false);
     setEditingAccount(null);
     setNotice('Listing updated successfully.');
-    fetchData();
+    await fetchData();
   }
 
   if (authorized === false) return <main className="grid min-h-screen place-items-center bg-zinc-50 px-5"><div className="max-w-md rounded-3xl border border-zinc-200 bg-white p-9 text-center shadow-sm"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-red-50 text-red-600"><Icon name="customers" /></span><h1 className="mt-5 text-2xl font-black">Admin access required</h1><p className="mt-2 text-sm leading-6 text-zinc-500">This account is not authorized to open ClashVault administration.</p><Link to="/" className="mt-6 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Return home</Link></div></main>;
