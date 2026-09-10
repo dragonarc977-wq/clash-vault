@@ -16,9 +16,9 @@ export default function SupportInbox() {
   async function boot() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setAllowed(false); return; }
-    const { data: access } = await supabase.from('support_agents').select('user_id').eq('user_id', user.id).maybeSingle();
-    setAgent(user); setAllowed(Boolean(access));
-    if (access) await loadTickets();
+    const { data: access, error: roleError } = await supabase.rpc('is_support_agent');
+    setAgent(user); setAllowed(!roleError && Boolean(access));
+    if (!roleError && access) await loadTickets();
     setLoading(false);
   }
   async function loadTickets() {

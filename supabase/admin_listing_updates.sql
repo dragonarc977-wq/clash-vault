@@ -1,5 +1,6 @@
 -- Run this once in the Supabase SQL Editor.
--- It allows the signed-in ClashVault administrator to edit account listings.
+-- It allows users with the Supabase admin role to edit account listings.
+-- Run admin_roles.sql first.
 
 alter table public.accounts enable row level security;
 
@@ -9,5 +10,5 @@ create policy "Admin can update account listings"
 on public.accounts
 for update
 to authenticated
-using ((auth.jwt() ->> 'email') = 'dragonarc977@gmail.com')
-with check ((auth.jwt() ->> 'email') = 'dragonarc977@gmail.com');
+using (public.is_admin())
+with check (public.is_admin());

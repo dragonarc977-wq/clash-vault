@@ -1,14 +1,8 @@
--- Run this once in Supabase Dashboard → SQL Editor.
--- Then add YOUR Supabase user ID to support_agents (see the final INSERT below).
-
-create table if not exists public.support_agents (
-  user_id uuid primary key references auth.users(id) on delete cascade,
-  created_at timestamptz not null default now()
-);
+-- Run admin_roles.sql first, then run this file in Supabase SQL Editor.
 
 create or replace function public.is_support_agent()
-returns boolean language sql stable security definer set search_path = public
-as $$ select exists (select 1 from public.support_agents where user_id = auth.uid()) $$;
+returns boolean language sql stable security definer set search_path = ''
+as $$ select public.has_role('admin') or public.has_role('support_agent') $$;
 
 create table if not exists public.support_tickets (
   id uuid primary key default gen_random_uuid(),
@@ -42,11 +36,9 @@ end $$;
 drop trigger if exists support_message_touch_ticket on public.support_messages;
 create trigger support_message_touch_ticket after insert on public.support_messages for each row execute function public.touch_support_ticket();
 
-alter table public.support_agents enable row level security;
 alter table public.support_tickets enable row level security;
 alter table public.support_messages enable row level security;
 
-create policy "agents can see agent list" on public.support_agents for select to authenticated using (user_id = auth.uid());
 create policy "buyers and agents read tickets" on public.support_tickets for select to authenticated using (buyer_id = auth.uid() or public.is_support_agent());
 create policy "buyers create their tickets" on public.support_tickets for insert to authenticated with check (buyer_id = auth.uid() and buyer_email = auth.jwt() ->> 'email');
 create policy "agents update tickets" on public.support_tickets for update to authenticated using (public.is_support_agent()) with check (public.is_support_agent());
@@ -57,5 +49,5 @@ create policy "agents send messages" on public.support_messages for insert to au
 alter publication supabase_realtime add table public.support_tickets;
 alter publication supabase_realtime add table public.support_messages;
 
--- Replace the UUID with your own id from Supabase Dashboard → Authentication → Users:
--- insert into public.support_agents (user_id) values ('YOUR-USER-ID');
+-- To add a support agent, use their UUID from Authentication → Users:
+-- insert into public.user_roles (user_id, role) values ('YOUR-USER-ID', 'support_agent');

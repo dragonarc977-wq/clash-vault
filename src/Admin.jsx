@@ -2,8 +2,6 @@ import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from './lib/supabase';
 import AdminSupport from './pages/AdminSupport';
-
-const ADMIN_EMAIL = 'dragonarc977@gmail.com';
 const games = [
   ['clash-of-clans', 'Clash of Clans'], ['brawl-stars', 'Brawl Stars'], ['valorant', 'Valorant'],
   ['clash-royale', 'Clash Royale'], ['fortnite', 'Fortnite'], ['pokemon-go', 'Pokémon GO'],
@@ -61,7 +59,8 @@ export default function Admin() {
         navigate('/login');
         return;
       }
-      if (session.user.email !== ADMIN_EMAIL) {
+      const { data: isAdmin, error: roleError } = await supabase.rpc('is_admin');
+      if (roleError || !isAdmin) {
         setAuthorized(false);
         setLoading(false);
         return;
