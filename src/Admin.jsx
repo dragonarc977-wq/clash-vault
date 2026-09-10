@@ -253,9 +253,27 @@ function AdminTableLoading({ loading }) {
 
 function AdminField({ label, children, className = '' }) {
   const isImageUpload = label === 'Image URL';
+  if (isImageUpload) return <ImageUploadInput className={className} />;
   const field = cloneElement(children, {
-    ...(isImageUpload ? { type: 'file', accept: 'image/jpeg,image/png,image/webp', multiple: true, required: true } : {}),
     className: `min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-950 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 ${children.type === 'textarea' ? 'resize-none' : ''}`,
   });
-  return <label className={`block ${className}`}><span className="mb-2 block text-xs font-bold text-zinc-700">{isImageUpload ? 'Listing images *' : label}</span>{field}{isImageUpload && <span className="mt-2 block text-[11px] leading-5 text-zinc-400">Choose up to 8 JPG, PNG, or WebP images. Maximum 5 MB each.</span>}</label>;
+  return <label className={`block ${className}`}><span className="mb-2 block text-xs font-bold text-zinc-700">{label}</span>{field}</label>;
+}
+
+function ImageUploadInput({ className = '' }) {
+  const [previews, setPreviews] = useState([]);
+
+  function previewImages(event) {
+    const files = Array.from(event.target.files || []).slice(0, 8);
+    Promise.all(files.map((file) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ name: file.name, url: reader.result });
+      reader.readAsDataURL(file);
+    }))).then(setPreviews);
+  }
+
+  return <div className={`sm:col-span-2 ${className}`}>
+    <label className="block"><span className="mb-2 block text-xs font-bold text-zinc-700">Listing images *</span><span className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 px-5 py-6 text-center transition hover:border-[#c68d00] hover:bg-yellow-50"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-950 text-white"><Icon name="plus" /></span><span className="mt-3 text-sm font-black">Choose multiple images</span><span className="mt-1 text-[11px] text-zinc-400">Up to 8 JPG, PNG, or WebP files · 5 MB each</span><input name="image" type="file" accept="image/jpeg,image/png,image/webp" multiple required onChange={previewImages} className="sr-only" /></span></label>
+    {previews.length > 0 && <div className="mt-3"><div className="mb-2 flex items-center justify-between"><span className="text-xs font-bold text-zinc-600">Selected pictures</span><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{previews.length} image{previews.length === 1 ? '' : 's'}</span></div><div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">{previews.map((preview, index) => <div key={`${preview.name}-${index}`} className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100"><img src={preview.url} alt="" className="h-full w-full object-cover" />{index === 0 && <span className="absolute bottom-1.5 left-1.5 rounded-full bg-zinc-950 px-2 py-1 text-[8px] font-black uppercase tracking-wider text-white">Cover</span>}</div>)}</div></div>}
+  </div>;
 }
