@@ -16,6 +16,46 @@ const SEARCH_GAMES = [
   { id: 'squad-busters', name: 'Squad Busters', aliases: 'squad busters', mark: 'SQUAD\nBUSTERS', markClass: 'from-fuchsia-500 to-violet-700' },
 ];
 
+const LANGUAGES = [
+  { value: 'EN', label: 'English', flag: 'US' },
+  { value: 'ES', label: 'Español (Spanish)', flag: 'ES' },
+  { value: 'PT', label: 'Português', flag: 'PT' },
+  { value: 'RU', label: 'Русский', flag: 'RU' },
+  { value: 'TR', label: 'Türkçe', flag: 'TR' },
+  { value: 'FR', label: 'Français', flag: 'FR' },
+  { value: 'DE', label: 'Deutsch', flag: 'DE' },
+  { value: 'ID', label: 'Bahasa Indonesia', flag: 'ID' },
+  { value: 'FI', label: 'Suomi', flag: 'FI' },
+  { value: 'KO', label: '한국어', flag: 'KR' },
+  { value: 'JA', label: '日本語', flag: 'JP' },
+  { value: 'AR', label: 'العربية', flag: 'SA' },
+  { value: 'HI', label: 'हिन्दी', flag: 'IN' },
+];
+
+const CURRENCIES = [
+  { value: 'USD', label: 'US Dollar', symbol: '$' },
+  { value: 'EUR', label: 'Euro', symbol: '€' },
+  { value: 'INR', label: 'Indian Rupee', symbol: '₹' },
+];
+
+function CountryFlag({ code, className = '' }) {
+  const base = `relative block h-4 w-6 shrink-0 overflow-hidden rounded-[4px] border border-zinc-200 shadow-sm ${className}`;
+  if (code === 'US') return <span className={`${base} bg-[repeating-linear-gradient(to_bottom,#d9292f_0_1.4px,#fff_1.4px_2.8px)]`}><span className="absolute left-0 top-0 h-[9px] w-[10px] bg-[#234a9f]" /></span>;
+  if (code === 'ES') return <span className={`${base} bg-[linear-gradient(to_bottom,#aa151b_0_25%,#f1bf00_25%_75%,#aa151b_75%)]`} />;
+  if (code === 'PT') return <span className={`${base} bg-[linear-gradient(to_right,#046a38_0_40%,#da291c_40%)]`} />;
+  if (code === 'RU') return <span className={`${base} bg-[linear-gradient(to_bottom,#fff_0_33%,#1753a4_33%_66%,#d52b1e_66%)]`} />;
+  if (code === 'TR') return <span className={`${base} bg-[#e30a17]`}><span className="absolute left-[5px] top-[-3px] text-[13px] text-white">☾</span></span>;
+  if (code === 'FR') return <span className={`${base} bg-[linear-gradient(to_right,#002654_0_33%,#fff_33%_66%,#ed2939_66%)]`} />;
+  if (code === 'DE') return <span className={`${base} bg-[linear-gradient(to_bottom,#000_0_33%,#dd0000_33%_66%,#ffce00_66%)]`} />;
+  if (code === 'ID') return <span className={`${base} bg-[linear-gradient(to_bottom,#e70011_0_50%,#fff_50%)]`} />;
+  if (code === 'FI') return <span className={`${base} bg-white`}><span className="absolute inset-y-0 left-[6px] w-[3px] bg-[#003580]" /><span className="absolute inset-x-0 top-[6px] h-[3px] bg-[#003580]" /></span>;
+  if (code === 'KR') return <span className={`${base} grid place-items-center bg-white`}><span className="h-2.5 w-2.5 rounded-full bg-[linear-gradient(to_bottom,#cd2e3a_0_50%,#0047a0_50%)]" /></span>;
+  if (code === 'JP') return <span className={`${base} grid place-items-center bg-white`}><span className="h-2.5 w-2.5 rounded-full bg-[#bc002d]" /></span>;
+  if (code === 'SA') return <span className={`${base} bg-[#006c35]`}><span className="absolute inset-x-1 top-[7px] h-px bg-white" /></span>;
+  if (code === 'IN') return <span className={`${base} bg-[radial-gradient(circle,#1a4f9c_0_11%,transparent_12%),linear-gradient(to_bottom,#ff9933_0_33%,#fff_33%_66%,#138808_66%)]`} />;
+  return <span className={`${base} bg-zinc-100`} />;
+}
+
 const IconButton = ({ children, label, className = '', onClick }) => <button type="button" onClick={onClick} aria-label={label} className={`grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950 ${className}`}>{children}</button>;
 
 function listingKind(listing) {
@@ -28,9 +68,9 @@ function listingKind(listing) {
 export default function Navbar() {
   const navigate = useNavigate();
   const searchAreaRef = useRef(null);
+  const preferencesRef = useRef(null);
   const [user, setUser] = useState(null);
-  const [languageOpen, setLanguageOpen] = useState(false);
-  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [language, setLanguage] = useState(() => localStorage.getItem('clashvault_language') || 'EN');
   const [currency, setCurrency] = useState(() => localStorage.getItem('clashvault_currency') || 'INR');
   const [search, setSearch] = useState('');
@@ -57,6 +97,7 @@ export default function Navbar() {
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
       if (!searchAreaRef.current?.contains(event.target)) setSearchOpen(false);
+      if (!preferencesRef.current?.contains(event.target)) setPreferencesOpen(false);
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
     return () => document.removeEventListener('mousedown', closeOnOutsideClick);
@@ -84,12 +125,21 @@ export default function Navbar() {
     return SEARCH_GAMES.filter((game) => `${game.name} ${game.aliases}`.toLowerCase().includes(query));
   }, [search]);
 
-  const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); setSearchOpen(false); };
+  const selectedLanguage = LANGUAGES.find((option) => option.value === language) || LANGUAGES[0];
+  const closeMenus = () => { setPreferencesOpen(false); setSearchOpen(false); };
   const openSearch = () => {
     setSearchOpen(true);
-    setLanguageOpen(false);
-    setCurrencyOpen(false);
+    setPreferencesOpen(false);
     loadInventory();
+  };
+  const savePreferences = async () => {
+    localStorage.setItem('clashvault_language', language);
+    localStorage.setItem('clashvault_currency', currency);
+    window.dispatchEvent(new CustomEvent('clashvault-preferences', { detail: { language, currency } }));
+    if (user) {
+      await supabase.auth.updateUser({ data: { ...user.user_metadata, language, currency } });
+    }
+    setPreferencesOpen(false);
   };
   const openGame = (gameId) => {
     setSearchOpen(false);
@@ -133,11 +183,38 @@ export default function Navbar() {
         </div>}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-        <Link to="/support" aria-label="Support inbox" className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950"><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 5.5h16v13H4v-13Zm0 8.5h4.4l1.6 2.25h4L15.6 14H20" /></svg></Link>
-        <div className="relative hidden sm:block"><IconButton label="Notifications" onClick={() => { closeMenus(); navigate('/notifications'); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg></IconButton></div>
-        <div className="relative hidden md:block"><button type="button" onClick={() => { setLanguageOpen((value) => !value); setCurrencyOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600 transition hover:bg-zinc-50"><span className="text-[#c68d00]">◎</span>{language}</button>{languageOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-28 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setLanguage('EN'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">English</button><button type="button" onClick={() => { setLanguage('HI'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">Hindi</button></div>}</div>
-        <div className="relative hidden lg:block"><button type="button" onClick={() => { setCurrencyOpen((value) => !value); setLanguageOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600"><span className="text-[#c68d00]">{currency === 'INR' ? '₹' : '$'}</span>{currency}</button>{currencyOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-24 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setCurrency('INR'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">₹ INR</button><button type="button" onClick={() => { setCurrency('USD'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">$ USD</button></div>}</div>
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+        <div ref={preferencesRef} className="relative">
+          <button type="button" onClick={() => { setPreferencesOpen((value) => !value); setSearchOpen(false); }} aria-expanded={preferencesOpen} aria-label="Choose language and currency" className="flex h-9 items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-2 text-[10px] font-bold text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50 sm:h-10 sm:gap-2 sm:px-3 sm:text-xs">
+            <CountryFlag code={selectedLanguage.flag} className="h-[14px] w-5 sm:h-4 sm:w-6" />
+            <span className="max-w-[46px] truncate sm:max-w-none">{selectedLanguage.label === 'English' ? 'English' : selectedLanguage.label}</span>
+            <svg className="hidden h-3 w-3 text-zinc-400 sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m7 10 5 5 5-5" /></svg>
+          </button>
+
+          {preferencesOpen && <div className="fixed inset-x-3 top-[4.5rem] max-h-[calc(100dvh-5.25rem)] overflow-y-auto rounded-3xl border border-zinc-200 bg-white p-5 shadow-2xl shadow-zinc-950/15 sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+12px)] sm:w-[430px] sm:max-h-[min(76vh,650px)] sm:p-6">
+            <div className="flex items-center gap-3 border-b border-zinc-100 pb-5">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-zinc-950 text-white"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" strokeWidth="1.7" /><path strokeLinecap="round" strokeWidth="1.7" d="M3.5 12h17M12 3c2.2 2.5 3.3 5.5 3.3 9S14.2 18.5 12 21c-2.2-2.5-3.3-5.5-3.3-9S9.8 5.5 12 3Z" /></svg></span>
+              <div><h2 className="text-lg font-black tracking-tight text-zinc-950">Language &amp; currency</h2><p className="mt-0.5 text-[11px] text-zinc-500">Personalize your ClashVault experience</p></div>
+            </div>
+
+            <p className="mb-2 mt-5 text-[9px] font-black uppercase tracking-[0.16em] text-zinc-400">Choose language</p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {LANGUAGES.map((option) => <button key={option.value} type="button" onClick={() => setLanguage(option.value)} className={`flex min-w-0 items-center gap-2 rounded-xl border px-2.5 py-2.5 text-left text-[11px] transition ${language === option.value ? 'border-zinc-950 bg-zinc-50 font-black text-zinc-950' : 'border-transparent text-zinc-700 hover:bg-zinc-50'}`}>
+                <CountryFlag code={option.flag} />
+                <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                {language === option.value && <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="m5 12 4 4L19 6" /></svg>}
+              </button>)}
+            </div>
+
+            <p className="mb-2 mt-5 text-[9px] font-black uppercase tracking-[0.16em] text-zinc-400">Choose currency</p>
+            <div className="grid grid-cols-3 gap-2">
+              {CURRENCIES.map((option) => <button key={option.value} type="button" onClick={() => setCurrency(option.value)} title={option.label} className={`rounded-xl border px-2 py-3 text-[11px] font-black transition ${currency === option.value ? 'border-zinc-950 bg-zinc-950 text-white' : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400'}`}>{option.symbol} {option.value}</button>)}
+            </div>
+            <button type="button" onClick={savePreferences} className="mt-5 w-full rounded-xl bg-yellow-300 px-4 py-3.5 text-xs font-black text-zinc-950 transition hover:bg-yellow-400">Save preferences</button>
+          </div>}
+        </div>
+
+        <div className="relative"><IconButton label="Notifications" className="relative rounded-xl sm:h-10 sm:w-10" onClick={() => { closeMenus(); navigate('/notifications'); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg><span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-red-500" /></IconButton></div>
         {user ? <ProfileDropdown user={user} onLogout={async () => { closeMenus(); await supabase.auth.signOut(); navigate('/login'); }} /> : <Link to="/login" className="grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206]">→</Link>}
       </div>
     </div>
