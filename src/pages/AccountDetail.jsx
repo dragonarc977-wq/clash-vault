@@ -20,18 +20,36 @@ export default function AccountDetail() {
   const [account, setAccount] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [purchaseError, setPurchaseError] = useState('');
 
   useEffect(() => {
     let active = true;
     const loadAccount = async () => {
-      const { data } = await supabase.from('accounts').select('*').eq('id', id).single();
+      const { data } = await supabase.from('accounts').select('*').eq('id', id).eq('status', 'available').maybeSingle();
       if (!active) return;
       setAccount(data);
       setActiveImage(0);
       setLoading(false);
     };
     loadAccount();
-    return () => { active = false; };
+
+    const channel = supabase
+      .channel(`listing-${id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts', filter: `id=eq.${id}` }, (payload) => {
+        if (payload.eventType === 'DELETE' || payload.new?.status !== 'available') {
+          setAccount(null);
+          setPurchaseError('This listing has just been purchased and is no longer available.');
+          return;
+        }
+        setAccount(payload.new);
+      })
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [id]);
 
   const images = useMemo(() => {
@@ -49,6 +67,26 @@ export default function AccountDetail() {
   const title = account.title || (account.game_id === 'clash-of-clans' && account.town_hall ? `TH${account.town_hall} Maxed Account` : `${gameName} Account`);
   const previousImage = () => setActiveImage((current) => current === 0 ? images.length - 1 : current - 1);
   const nextImage = () => setActiveImage((current) => current === images.length - 1 ? 0 : current + 1);
+  const beginCheckout = async () => {
+    if (checkingOut) return;
+    setCheckingOut(true);
+    setPurchaseError('');
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      navigate('/login');
+      return;
+    }
+
+    const { data, error } = await supabase.from('accounts').select('id').eq('id', id).eq('status', 'available').maybeSingle();
+    if (error || !data) {
+      setAccount(null);
+      setPurchaseError('This listing is no longer available. Please choose another account.');
+      setCheckingOut(false);
+      return;
+    }
+    navigate(`/checkout/${id}`);
+  };
   const stats = [
     { label: account.game_id === 'clash-of-clans' ? 'Town Hall' : 'Primary level', value: account.town_hall ? `${account.game_id === 'clash-of-clans' ? 'TH' : ''}${account.town_hall}` : 'High' },
     { label: 'Secondary level', value: account.builder_hall ? `BH${account.builder_hall}` : account.walls_level || '—' },
@@ -83,7 +121,8 @@ export default function AccountDetail() {
 
           <div className="mt-7 space-y-3"><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Purchase details shown before payment</div><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Private buyer support available</div><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Delivery status tracked in My Orders</div></div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2"><button onClick={() => navigate(`/checkout/${id}`)} className="rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#b77e00]">Buy now</button><button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
+          {purchaseError && <p className="mt-7 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{purchaseError}</p>}
+          <div className="mt-8 grid gap-3 sm:grid-cols-2"><button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#b77e00] disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button><button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
         </section>
       </div>
     </div>

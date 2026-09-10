@@ -79,14 +79,34 @@ export default function GamePage() {
       }
       setLoading(true);
       setError('');
-      const { data, error: loadError } = await supabase.from('accounts').select('*').eq('game_id', gameId).order('created_at', { ascending: false });
+      const { data, error: loadError } = await supabase.from('accounts').select('*').eq('game_id', gameId).eq('status', 'available').order('created_at', { ascending: false });
       if (!active) return;
       if (loadError) setError('We could not load these listings. Please try again.');
       else setAccounts(data || []);
       setLoading(false);
     };
     loadListings();
-    return () => { active = false; };
+
+    const channel = supabase
+      .channel(`available-listings-${gameId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts', filter: `game_id=eq.${gameId}` }, (payload) => {
+        const listingId = payload.old?.id || payload.new?.id;
+        if (!listingId) return;
+        if (payload.eventType === 'DELETE' || payload.new?.status !== 'available') {
+          setAccounts((current) => current.filter((listing) => listing.id !== listingId));
+          return;
+        }
+        setAccounts((current) => {
+          const exists = current.some((listing) => listing.id === listingId);
+          return exists ? current.map((listing) => listing.id === listingId ? payload.new : listing) : [payload.new, ...current];
+        });
+      })
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [game, gameId]);
 
   const filtered = useMemo(() => {
