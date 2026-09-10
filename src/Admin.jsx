@@ -104,9 +104,41 @@ export default function Admin() {
 
   async function addAccount(event) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const imageFiles = Array.from(form.image.files || []);
+    if (!imageFiles.length) {
+      setNotice('Select at least one listing image.');
+      return;
+    }
+    if (imageFiles.length > 8) {
+      setNotice('You can upload up to 8 images for one listing.');
+      return;
+    }
+    const invalidImage = imageFiles.find((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024);
+    if (invalidImage) {
+      setNotice('Use JPG, PNG, or WebP images smaller than 5 MB each.');
+      return;
+    }
     setSaving(true);
     setNotice('');
-    const form = event.currentTarget;
+    const uploadedPaths = [];
+    const imageUrls = [];
+
+    for (const file of imageFiles) {
+      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `${form.game.value}/${crypto.randomUUID()}.${extension}`;
+      const { error: uploadError } = await supabase.storage.from('account-images').upload(path, file, { cacheControl: '3600', upsert: false });
+      if (uploadError) {
+        if (uploadedPaths.length) await supabase.storage.from('account-images').remove(uploadedPaths);
+        setSaving(false);
+        setNotice(`Could not upload images: ${uploadError.message}`);
+        return;
+      }
+      uploadedPaths.push(path);
+      const { data: publicImage } = supabase.storage.from('account-images').getPublicUrl(path);
+      imageUrls.push(publicImage.publicUrl);
+    }
+
     const payload = {
       game_id: form.game.value,
       town_hall: Number(form.level.value),
@@ -117,13 +149,15 @@ export default function Admin() {
       walls_level: form.secondaryLevel.value || null,
       price: Number(form.price.value),
       original_price: Number(form.originalPrice.value) || null,
-      image_url: form.image.value || null,
+      image_url: imageUrls[0],
+      image_urls: imageUrls,
       description: form.description.value || null,
       status: 'available',
     };
     const { error } = await supabase.from('accounts').insert(payload);
     setSaving(false);
     if (error) {
+      await supabase.storage.from('account-images').remove(uploadedPaths);
       setNotice(`Could not add listing: ${error.message}`);
       return;
     }
@@ -135,9 +169,17 @@ export default function Admin() {
 
   async function deleteAccount(id) {
     if (!window.confirm('Delete this listing permanently? This cannot be undone.')) return;
+    const listing = accounts.find((account) => account.id === id);
     const { error } = await supabase.from('accounts').delete().eq('id', id);
     if (error) setNotice(`Could not delete listing: ${error.message}`);
-    else fetchData();
+    else {
+      const paths = (listing?.image_urls || []).map((url) => {
+        const marker = '/account-images/';
+        return url.includes(marker) ? decodeURIComponent(url.split(marker)[1]) : null;
+      }).filter(Boolean);
+      if (paths.length) await supabase.storage.from('account-images').remove(paths);
+      fetchData();
+    }
   }
 
   async function markDelivered(orderId) {
@@ -210,6 +252,10 @@ function AdminTableLoading({ loading }) {
 }
 
 function AdminField({ label, children, className = '' }) {
-  const field = cloneElement(children, { className: `min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 ${children.type === 'textarea' ? 'resize-none' : ''}` });
-  return <label className={`block ${className}`}><span className="mb-2 block text-xs font-bold text-zinc-700">{label}</span>{field}</label>;
+  const isImageUpload = label === 'Image URL';
+  const field = cloneElement(children, {
+    ...(isImageUpload ? { type: 'file', accept: 'image/jpeg,image/png,image/webp', multiple: true, required: true } : {}),
+    className: `min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition file:mr-4 file:rounded-lg file:border-0 file:bg-zinc-950 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 ${children.type === 'textarea' ? 'resize-none' : ''}`,
+  });
+  return <label className={`block ${className}`}><span className="mb-2 block text-xs font-bold text-zinc-700">{isImageUpload ? 'Listing images *' : label}</span>{field}{isImageUpload && <span className="mt-2 block text-[11px] leading-5 text-zinc-400">Choose up to 8 JPG, PNG, or WebP images. Maximum 5 MB each.</span>}</label>;
 }

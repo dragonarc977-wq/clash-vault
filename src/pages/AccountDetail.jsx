@@ -42,17 +42,21 @@ export default function AccountDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [account, setAccount] = useState(null);
+  const [activeImage, setActiveImage] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
+    const fetchAccount = async () => {
+      const { data } = await supabase.from('accounts').select('*').eq('id', id).single();
+      if (!active) return;
+      setAccount(data);
+      setActiveImage(data?.image_urls?.[0] || data?.image_url || '');
+      setLoading(false);
+    };
     fetchAccount();
+    return () => { active = false; };
   }, [id]);
-
-  const fetchAccount = async () => {
-    const { data } = await supabase.from('accounts').select('*').eq('id', id).single();
-    setAccount(data);
-    setLoading(false);
-  };
 
   const handleBuy = () => {
     navigate(`/checkout/${id}`);
@@ -326,12 +330,17 @@ export default function AccountDetail() {
         </button>
 
         <div className="detail-grid">
-          <div className="detail-image-wrap">
-            {account.image_url ? (
-              <img src={account.image_url} alt={`TH${account.town_hall} Account`} />
-            ) : (
-              <div className="detail-image-placeholder">🏰</div>
-            )}
+          <div>
+            <div className="detail-image-wrap">
+              {activeImage ? (
+                <img src={activeImage} alt={`TH${account.town_hall} Account`} />
+              ) : (
+                <div className="detail-image-placeholder">🏰</div>
+              )}
+            </div>
+            {(account.image_urls?.length > 1) && <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
+              {account.image_urls.map((image, index) => <button key={image} type="button" onClick={() => setActiveImage(image)} className={`aspect-square overflow-hidden rounded-xl border-2 bg-zinc-900 transition ${activeImage === image ? 'border-yellow-400' : 'border-transparent opacity-65 hover:opacity-100'}`} aria-label={`View image ${index + 1}`}><img src={image} alt="" className="h-full w-full object-cover" /></button>)}
+            </div>}
           </div>
 
           <div>
