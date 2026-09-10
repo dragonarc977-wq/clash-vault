@@ -1,1000 +1,215 @@
-import { useState, useEffect } from 'react';
-import  supabase  from './lib/supabase';
-import AdminSupport from './pages/AdminSupport'; // <--- ADDED IMPORT
-// ===== INLINE SVG ICONS (no packages needed) =====
-const IconPackage = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-    <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
-  </svg>
-);
-const IconTrending = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-  </svg>
-);
-const IconDollar = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-  </svg>
-);
-const IconUsers = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-  </svg>
-);
-const IconPlus = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14"/><path d="M12 5v14"/>
-  </svg>
-);
-const IconTrash = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-  </svg>
-);
-const IconX = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-  </svg>
-);
-const IconCheck = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-  </svg>
-);
-const IconShield = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-  </svg>
-);
-const IconSearch = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-  </svg>
-);
-const IconEmptyBox = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity: 0.3}}>
-    <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-    <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
-  </svg>
-);
-const IconEmptyDoc = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity: 0.3}}>
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-    <polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/>
-  </svg>
-);
-// ===== MAIN COMPONENT =====
+import { cloneElement, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import supabase from './lib/supabase';
+import AdminSupport from './pages/AdminSupport';
+
+const ADMIN_EMAIL = 'dragonarc977@gmail.com';
+const games = [
+  ['clash-of-clans', 'Clash of Clans'], ['brawl-stars', 'Brawl Stars'], ['valorant', 'Valorant'],
+  ['clash-royale', 'Clash Royale'], ['fortnite', 'Fortnite'], ['pokemon-go', 'Pokémon GO'],
+  ['mobile-legends', 'Mobile Legends'], ['free-fire', 'Free Fire'], ['hay-day', 'Hay Day'], ['squad-busters', 'Squad Busters'],
+];
+
+const Icon = ({ name, className = 'h-5 w-5' }) => {
+  const paths = {
+    overview: <><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></>,
+    inventory: <><path d="m4 7 8-4 8 4-8 4-8-4Z" /><path d="M4 7v10l8 4 8-4V7M12 11v10" /></>,
+    orders: <><path d="M5 4h14v16H5z" /><path d="M8 9h8M8 13h8M8 17h5" /></>,
+    customers: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.2a4 4 0 0 1 0 7.6" /></>,
+    support: <path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" />,
+    revenue: <><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>,
+    search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    plus: <path d="M12 5v14M5 12h14" />,
+    trash: <><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13" /></>,
+    close: <path d="m6 6 12 12M18 6 6 18" />,
+    external: <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6H5V6h6" /></>,
+  };
+  return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><g strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7">{paths[name]}</g></svg>;
+};
+
+const formatCurrency = (amount) => `₹${Number(amount || 0).toLocaleString('en-IN')}`;
+const formatDate = (value) => value ? new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value)) : '—';
+const gameName = (id) => games.find(([gameId]) => gameId === id)?.[1] || 'Clash of Clans';
+
 export default function Admin() {
+  const navigate = useNavigate();
+  const [admin, setAdmin] = useState(null);
+  const [authorized, setAuthorized] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts');
+  const [activeTab, setActiveTab] = useState('overview');
   const [showAddModal, setShowAddModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [gameFilter, setGameFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [notice, setNotice] = useState('');
+
   useEffect(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
+    let active = true;
+    const boot = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!active) return;
+      if (!session?.user) {
+        navigate('/login');
+        return;
+      }
+      if (session.user.email !== ADMIN_EMAIL) {
+        setAuthorized(false);
+        setLoading(false);
+        return;
+      }
+      setAdmin(session.user);
+      setAuthorized(true);
+      await fetchData();
+    };
+    boot();
+    return () => { active = false; };
+  }, [navigate]);
+
+  async function fetchData() {
     setLoading(true);
-    const [{ data: accs }, { data: ords }] = await Promise.all([
+    const [{ data: accountData, error: accountError }, { data: orderData, error: orderError }] = await Promise.all([
       supabase.from('accounts').select('*').order('created_at', { ascending: false }),
-      supabase.from('orders').select('*, accounts(town_hall)').order('created_at', { ascending: false })
+      supabase.from('orders').select('*, accounts(town_hall, game_id, image_url)').order('created_at', { ascending: false }),
     ]);
-    setAccounts(accs || []);
-    setOrders(ords || []);
+    if (accountError || orderError) setNotice('Some admin data could not be loaded. Refresh and try again.');
+    setAccounts(accountData || []);
+    setOrders(orderData || []);
     setLoading(false);
-  };
-  const totalRevenue = orders
-    .filter(o => o.status === 'paid' || o.status === 'delivered')
-    .reduce((sum, o) => sum + (o.amount || 0), 0);
-  const totalSold = accounts.filter(a => a.status === 'sold').length;
-  const totalStock = accounts.filter(a => a.status === 'available').length;
-  const filteredAccounts = accounts.filter(acc => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      acc.town_hall?.toString().includes(q) ||
-      acc.price?.toString().includes(q) ||
-      acc.heroes_level?.toLowerCase().includes(q) ||
-      acc.status?.toLowerCase().includes(q)
-    );
+  }
+
+  const customers = useMemo(() => {
+    const grouped = new Map();
+    orders.forEach((order) => {
+      const email = order.buyer_email || 'Unknown buyer';
+      const existing = grouped.get(email) || { email, orders: 0, spent: 0, lastOrder: order.created_at };
+      existing.orders += 1;
+      existing.spent += Number(order.amount || 0);
+      if (new Date(order.created_at) > new Date(existing.lastOrder)) existing.lastOrder = order.created_at;
+      grouped.set(email, existing);
+    });
+    return [...grouped.values()].sort((a, b) => b.spent - a.spent);
+  }, [orders]);
+
+  const totalRevenue = orders.filter((order) => ['paid', 'delivered', 'completed'].includes(order.status)).reduce((sum, order) => sum + Number(order.amount || 0), 0);
+  const totalStock = accounts.filter((account) => account.status === 'available').length;
+  const pendingOrders = orders.filter((order) => order.status === 'paid').length;
+  const filteredAccounts = accounts.filter((account) => {
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch = !query || [account.title, account.game_id, account.town_hall, account.price, account.status].some((value) => String(value || '').toLowerCase().includes(query));
+    return matchesSearch && (gameFilter === 'all' || account.game_id === gameFilter) && (statusFilter === 'all' || account.status === statusFilter);
   });
-  const addAccount = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const newAccount = {
-      town_hall: parseInt(form.th.value),
-      builder_hall: parseInt(form.bh.value) || null,
-      exp_level: parseInt(form.level.value) || null,
-      gems: parseInt(form.gems.value) || null,
-      heroes_level: form.heroes.value || null,
-      walls_level: form.walls.value || null,
-      price: parseInt(form.price.value),
-      original_price: parseInt(form.originalPrice.value) || null,
+
+  async function addAccount(event) {
+    event.preventDefault();
+    setSaving(true);
+    setNotice('');
+    const form = event.currentTarget;
+    const payload = {
+      game_id: form.game.value,
+      town_hall: Number(form.level.value),
+      builder_hall: Number(form.builderHall.value) || null,
+      exp_level: Number(form.expLevel.value) || null,
+      gems: Number(form.currencyAmount.value) || null,
+      heroes_level: form.features.value || null,
+      walls_level: form.secondaryLevel.value || null,
+      price: Number(form.price.value),
+      original_price: Number(form.originalPrice.value) || null,
       image_url: form.image.value || null,
       description: form.description.value || null,
-      status: 'available'
+      status: 'available',
     };
-    
-    const { error } = await supabase.from('accounts').insert(newAccount);
+    const { error } = await supabase.from('accounts').insert(payload);
+    setSaving(false);
     if (error) {
-      alert('Error: ' + error.message);
+      setNotice(`Could not add listing: ${error.message}`);
       return;
     }
-    setShowAddModal(false);
-    fetchData();
     form.reset();
-  };
-  const deleteAccount = async (id) => {
-    if (!confirm('Are you sure you want to delete this account? This cannot be undone.')) return;
-    await supabase.from('accounts').delete().eq('id', id);
+    setShowAddModal(false);
+    setNotice('Listing added successfully.');
     fetchData();
-  };
-  const markDelivered = async (orderId) => {
-    await supabase.from('orders').update({ status: 'delivered' }).eq('id', orderId);
-    fetchData();
-  };
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  };
-  const formatCurrency = (amount) => {
-    return '₹' + (amount || 0).toLocaleString('en-IN');
-  };
-  return (
-    <div className="admin-page">
-      <style>{`
-        .admin-page {
-          padding-top: 90px;
-          min-height: 100vh;
-          background: #0a0a0f;
-          color: #ffffff;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .admin-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 32px 24px;
-        }
-        
-        /* Header */
-        .admin-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 32px;
-          flex-wrap: wrap;
-          gap: 16px;
-        }
-        .admin-title {
-          font-size: 28px;
-          font-weight: 800;
-          margin: 0 0 6px 0;
-          color: #ffffff;
-        }
-        .admin-subtitle {
-          color: #6b6b7b;
-          margin: 0;
-          font-size: 14px;
-        }
-        .btn-gold {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 12px 24px;
-          background: linear-gradient(135deg, #ffd700, #e6c200);
-          color: #0a0a0f;
-          font-weight: 700;
-          border: none;
-          border-radius: 12px;
-          cursor: pointer;
-          font-size: 14px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          transition: all 0.3s ease;
-          text-decoration: none;
-        }
-        .btn-gold:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 20px;
-          margin-bottom: 40px;
-        }
-        .stat-card {
-          background: #14141e;
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 16px;
-          padding: 24px;
-          transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-          border-color: rgba(255,215,0,0.1);
-          transform: translateY(-2px);
-        }
-        .stat-card.blue { border-top: 3px solid #3b82f6; }
-        .stat-card.green { border-top: 3px solid #22c55e; }
-        .stat-card.gold { border-top: 3px solid #ffd700; }
-        .stat-card.purple { border-top: 3px solid #a855f7; }
-        
-        .stat-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 16px;
-        }
-        .stat-label {
-          font-size: 13px;
-          color: #6b6b7b;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        .stat-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .stat-icon.blue { background: rgba(59,130,246,0.1); color: #60a5fa; }
-        .stat-icon.green { background: rgba(34,197,94,0.1); color: #22c55e; }
-        .stat-icon.gold { background: rgba(255,215,0,0.1); color: #ffd700; }
-        .stat-icon.purple { background: rgba(168,85,247,0.1); color: #a855f7; }
-        
-        .stat-value {
-          font-size: 32px;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 4px;
-        }
-        .stat-value.gold { color: #ffd700; }
-        .stat-footer {
-          font-size: 13px;
-          color: #6b6b7b;
-        }
-        
-        /* Tabs */
-        .admin-tabs {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 24px;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
-          padding-bottom: 16px;
-          flex-wrap: wrap;
-        }
-        .admin-tab {
-          padding: 10px 20px;
-          border-radius: 10px;
-          border: none;
-          background: transparent;
-          color: #6b6b7b;
-          font-weight: 600;
-          font-size: 14px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .admin-tab:hover {
-          color: #a0a0b0;
-        }
-        .admin-tab.active {
-          background: rgba(255,215,0,0.08);
-          color: #ffd700;
-        }
-        
-        /* Search */
-        .admin-search {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 20px;
-          max-width: 320px;
-        }
-        .admin-search input {
-          flex: 1;
-          padding: 10px 14px 10px 38px;
-          background: #14141e;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 10px;
-          color: #ffffff;
-          font-size: 14px;
-          outline: none;
-          transition: border-color 0.2s;
-          position: relative;
-        }
-        .admin-search input:focus {
-          border-color: rgba(255,215,0,0.4);
-        }
-        .search-icon-wrap {
-          position: relative;
-          width: 100%;
-        }
-        .search-icon-wrap svg {
-          position: absolute;
-          left: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #6b6b7b;
-          pointer-events: none;
-        }
-        
-        /* Table Card */
-        .table-card {
-          background: #14141e;
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 16px;
-          overflow: hidden;
-        }
-        .data-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .data-table th {
-          text-align: left;
-          padding: 16px;
-          color: #6b6b7b;
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          font-weight: 600;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
-          white-space: nowrap;
-        }
-        .data-table td {
-          padding: 16px;
-          border-bottom: 1px solid rgba(255,255,255,0.03);
-          font-size: 14px;
-          vertical-align: middle;
-          color: #ffffff;
-        }
-        .data-table tr {
-          transition: background 0.2s;
-        }
-        .data-table tbody tr:hover td {
-          background: rgba(255,255,255,0.02);
-        }
-        .data-table tbody tr:last-child td {
-          border-bottom: none;
-        }
-        
-        /* Account cell */
-        .account-cell {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        .account-thumb {
-          width: 44px;
-          height: 44px;
-          border-radius: 10px;
-          background: #1a1a24;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          border: 1px solid rgba(255,255,255,0.05);
-          flex-shrink: 0;
-        }
-        .account-thumb img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .account-name {
-          font-weight: 700;
-          color: #ffd700;
-          font-size: 14px;
-        }
-        .account-meta {
-          font-size: 12px;
-          color: #6b6b7b;
-          margin-top: 2px;
-        }
-        
-        /* Price */
-        .price-current {
-          font-weight: 700;
-          color: #ffffff;
-        }
-        .price-original {
-          font-size: 12px;
-          color: #6b6b7b;
-          text-decoration: line-through;
-          margin-top: 2px;
-        }
-        
-        /* Badges */
-        .badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 5px 12px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          border: 1px solid;
-          text-transform: capitalize;
-          white-space: nowrap;
-        }
-        .badge-success {
-          background: rgba(34,197,94,0.1);
-          color: #22c55e;
-          border-color: rgba(34,197,94,0.3);
-        }
-        .badge-gold {
-          background: rgba(255,215,0,0.1);
-          color: #ffd700;
-          border-color: rgba(255,215,0,0.3);
-        }
-        .badge-blue {
-          background: rgba(59,130,246,0.1);
-          color: #60a5fa;
-          border-color: rgba(59,130,246,0.3);
-        }
-        
-        /* Actions */
-        .action-btn {
-          background: none;
-          border: none;
-          color: #ef4444;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 8px;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-        }
-        .action-btn:hover {
-          background: rgba(239,68,68,0.1);
-        }
-        .deliver-btn {
-          padding: 6px 14px;
-          background: rgba(59,130,246,0.1);
-          color: #60a5fa;
-          border: 1px solid rgba(59,130,246,0.3);
-          border-radius: 8px;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .deliver-btn:hover {
-          background: rgba(59,130,246,0.2);
-        }
-        
-        /* Empty state */
-        .empty-state {
-          text-align: center;
-          padding: 60px 20px;
-          color: #6b6b7b;
-        }
-        .empty-state h3 {
-          color: #ffffff;
-          margin: 16px 0 8px;
-          font-size: 18px;
-        }
-        .empty-state p {
-          margin: 0;
-          font-size: 14px;
-        }
-        
-        /* Shimmer loading */
-        @keyframes shimmer {
-          0% { background-position: -1000px 0; }
-          100% { background-position: 1000px 0; }
-        }
-        .shimmer {
-          background: linear-gradient(90deg, #1a1a24 25%, #252535 50%, #1a1a24 75%);
-          background-size: 1000px 100%;
-          animation: shimmer 2s infinite;
-          border-radius: 4px;
-        }
-        .shimmer-row {
-          display: flex;
-          gap: 20px;
-          padding: 20px;
-          border-bottom: 1px solid rgba(255,255,255,0.03);
-          align-items: center;
-        }
-        
-        /* Modal */
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.85);
-          z-index: 2000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-          backdrop-filter: blur(10px);
-          animation: fadeIn 0.2s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .modal {
-          background: #14141e;
-          border: 1px solid rgba(255,215,0,0.2);
-          border-radius: 20px;
-          padding: 32px;
-          width: 100%;
-          max-width: 520px;
-          max-height: 90vh;
-          overflow-y: auto;
-          box-shadow: 0 0 60px rgba(255,215,0,0.05);
-          animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 28px;
-        }
-        .modal-header h2 {
-          margin: 0;
-          font-size: 20px;
-          color: #ffffff;
-        }
-        .close-btn {
-          background: none;
-          border: none;
-          color: #6b6b7b;
-          cursor: pointer;
-          padding: 6px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          transition: all 0.2s;
-        }
-        .close-btn:hover {
-          color: #ffffff;
-          background: rgba(255,255,255,0.05);
-        }
-        
-        /* Form */
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-        .form-group {
-          margin-bottom: 18px;
-        }
-        .form-group label {
-          display: block;
-          margin-bottom: 8px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #a0a0b0;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-          width: 100%;
-          padding: 11px 14px;
-          background: #0a0a0f;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 10px;
-          color: #ffffff;
-          font-size: 14px;
-          outline: none;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-          border-color: rgba(255,215,0,0.4);
-          box-shadow: 0 0 0 3px rgba(255,215,0,0.05);
-        }
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-          color: #3a3a4a;
-        }
-        .form-group textarea {
-          resize: vertical;
-          min-height: 80px;
-        }
-        .form-actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 8px;
-        }
-        .btn-secondary {
-          flex: 1;
-          padding: 14px;
-          background: transparent;
-          color: #ffd700;
-          font-weight: 600;
-          border: 1px solid rgba(255,215,0,0.25);
-          border-radius: 12px;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-          background: rgba(255,215,0,0.08);
-          border-color: rgba(255,215,0,0.5);
-        }
-        
-        /* Scrollbar for modal */
-        .modal::-webkit-scrollbar {
-          width: 6px;
-        }
-        .modal::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .modal::-webkit-scrollbar-thumb {
-          background: #2a2a3a;
-          border-radius: 3px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-          .admin-header {
-            flex-direction: column;
-            align-items: stretch;
-          }
-          .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .form-row {
-            grid-template-columns: 1fr;
-          }
-          .data-table {
-            min-width: 700px;
-          }
-          .table-wrap {
-            overflow-x: auto;
-          }
-        }
-        @media (max-width: 480px) {
-          .stats-grid {
-            grid-template-columns: 1fr;
-          }
-          .admin-container {
-            padding: 20px 16px;
-          }
-          .modal {
-            padding: 24px 20px;
-          }
-        }
-      `}</style>
-      <div className="admin-container">
-        
-        {/* ===== HEADER ===== */}
-        <div className="admin-header">
-          <div>
-            <h1 className="admin-title">Seller Dashboard</h1>
-            <p className="admin-subtitle">Manage inventory, track orders, and monitor revenue</p>
+  }
+
+  async function deleteAccount(id) {
+    if (!window.confirm('Delete this listing permanently? This cannot be undone.')) return;
+    const { error } = await supabase.from('accounts').delete().eq('id', id);
+    if (error) setNotice(`Could not delete listing: ${error.message}`);
+    else fetchData();
+  }
+
+  async function markDelivered(orderId) {
+    const { error } = await supabase.from('orders').update({ status: 'delivered' }).eq('id', orderId);
+    if (error) setNotice(`Could not update order: ${error.message}`);
+    else fetchData();
+  }
+
+  if (authorized === false) return <main className="grid min-h-screen place-items-center bg-zinc-50 px-5"><div className="max-w-md rounded-3xl border border-zinc-200 bg-white p-9 text-center shadow-sm"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-red-50 text-red-600"><Icon name="customers" /></span><h1 className="mt-5 text-2xl font-black">Admin access required</h1><p className="mt-2 text-sm leading-6 text-zinc-500">This account is not authorized to open ClashVault administration.</p><Link to="/" className="mt-6 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Return home</Link></div></main>;
+
+  const navItems = [
+    ['overview', 'Overview', 'overview'], ['inventory', 'Inventory', 'inventory'], ['orders', 'Orders', 'orders'], ['customers', 'Customers', 'customers'], ['support', 'Support', 'support'],
+  ];
+  const navClass = (tab) => `flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition ${activeTab === tab ? 'bg-zinc-950 text-white shadow-lg' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950'}`;
+
+  return <div className="min-h-screen bg-zinc-50 text-zinc-950">
+    <aside className="border-b border-zinc-200 bg-white lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-64 lg:flex-col lg:border-b-0 lg:border-r">
+      <div className="flex h-20 items-center justify-between px-5 lg:px-6"><Link to="/" className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-yellow-300 text-xs font-black tracking-[-0.1em]">CV</span><span className="text-base font-black tracking-[0.08em]">CLASH<span className="text-[#b77e00]">VAULT</span></span></Link><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-zinc-500">Admin</span></div>
+      <nav className="flex gap-2 overflow-x-auto border-t border-zinc-100 px-4 py-3 lg:flex-1 lg:flex-col lg:overflow-visible lg:px-4 lg:py-6">{navItems.map(([tab, label, icon]) => <button key={tab} onClick={() => setActiveTab(tab)} className={navClass(tab)}><Icon name={icon} />{label}{tab === 'orders' && pendingOrders > 0 && <span className="ml-auto rounded-full bg-yellow-300 px-2 py-0.5 text-[10px] text-zinc-950">{pendingOrders}</span>}</button>)}</nav>
+      <div className="hidden border-t border-zinc-100 p-4 lg:block"><div className="rounded-2xl bg-zinc-100 p-4"><p className="truncate text-sm font-black">{admin?.email?.split('@')[0] || 'Administrator'}</p><p className="mt-1 truncate text-xs text-zinc-500">{admin?.email}</p></div><Link to="/" className="mt-3 flex items-center gap-2 px-3 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-950"><Icon name="external" className="h-4 w-4" />View storefront</Link></div>
+    </aside>
+
+    <main className="lg:ml-64">
+      <header className="border-b border-zinc-200 bg-white px-5 py-6 sm:px-8 lg:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between gap-5"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">Marketplace operations</p><h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">{navItems.find(([tab]) => tab === activeTab)?.[1]}</h1></div><div className="flex items-center gap-2"><button onClick={fetchData} className="hidden rounded-full border border-zinc-200 px-4 py-2.5 text-xs font-bold text-zinc-600 transition hover:border-zinc-400 sm:block">Refresh data</button><button onClick={() => setShowAddModal(true)} className="inline-flex items-center gap-2 rounded-full bg-zinc-950 px-4 py-2.5 text-xs font-black text-white transition hover:bg-[#b77e00] sm:px-5"><Icon name="plus" className="h-4 w-4" />Add listing</button></div></div></header>
+
+      <div className="mx-auto max-w-7xl px-5 py-7 sm:px-8 lg:px-10 lg:py-10">
+        {notice && <div className="mb-6 flex items-center justify-between rounded-2xl border border-yellow-200 bg-yellow-50 px-5 py-4 text-sm font-semibold text-yellow-900"><span>{notice}</span><button onClick={() => setNotice('')} className="ml-4 text-yellow-700"><Icon name="close" className="h-4 w-4" /></button></div>}
+
+        {activeTab === 'overview' && <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ['Revenue', formatCurrency(totalRevenue), 'Paid and delivered orders', 'revenue', 'bg-yellow-100 text-[#9a6a00]'],
+              ['Available stock', totalStock, `${accounts.length} total listings`, 'inventory', 'bg-blue-50 text-blue-600'],
+              ['Total orders', orders.length, `${pendingOrders} awaiting delivery`, 'orders', 'bg-emerald-50 text-emerald-600'],
+              ['Customers', customers.length, 'Unique purchasing buyers', 'customers', 'bg-violet-50 text-violet-600'],
+            ].map(([label, value, detail, icon, color]) => <section key={label} className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><div className="flex items-start justify-between"><p className="text-sm font-bold text-zinc-500">{label}</p><span className={`grid h-11 w-11 place-items-center rounded-2xl ${color}`}><Icon name={icon} /></span></div><p className="mt-6 text-3xl font-black tracking-[-0.04em] sm:text-4xl">{loading ? '—' : value}</p><p className="mt-2 text-xs text-zinc-400">{detail}</p></section>)}
           </div>
-          <button className="btn-gold" onClick={() => setShowAddModal(true)}>
-            <IconPlus />
-            <span>Add Account</span>
-          </button>
-        </div>
-        {/* ===== STATS CARDS ===== */}
-        <div className="stats-grid">
-          <div className="stat-card blue">
-            <div className="stat-header">
-              <span className="stat-label">Total Accounts</span>
-              <div className="stat-icon blue"><IconPackage /></div>
-            </div>
-            <div className="stat-value">{accounts.length}</div>
-            <div className="stat-footer">{totalStock} in stock</div>
+          <div className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+            <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><div className="flex items-center justify-between"><div><h2 className="text-xl font-black">Recent orders</h2><p className="mt-1 text-sm text-zinc-500">Latest marketplace purchases</p></div><button onClick={() => setActiveTab('orders')} className="text-xs font-bold text-[#a87300]">View all →</button></div><div className="mt-5 divide-y divide-zinc-100">{orders.slice(0, 5).map((order) => <div key={order.id} className="flex items-center gap-4 py-4"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-zinc-100 text-zinc-500"><Icon name="orders" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">#{order.id.slice(0, 8).toUpperCase()} · {gameName(order.accounts?.game_id)}</p><p className="mt-1 text-xs text-zinc-400">{order.buyer_email || 'Buyer'} · {formatDate(order.created_at)}</p></div><div className="text-right"><p className="text-sm font-black">{formatCurrency(order.amount)}</p><p className={`mt-1 text-[10px] font-bold uppercase ${order.status === 'delivered' ? 'text-emerald-600' : 'text-amber-600'}`}>{order.status}</p></div></div>)}{!loading && orders.length === 0 && <p className="py-14 text-center text-sm text-zinc-400">No orders yet.</p>}</div></section>
+            <section className="rounded-3xl bg-zinc-950 p-7 text-white shadow-xl"><p className="text-xs font-black uppercase tracking-[0.16em] text-yellow-300">Quick actions</p><h2 className="mt-3 text-2xl font-black">Run your marketplace</h2><p className="mt-2 text-sm leading-6 text-zinc-400">Add inventory, fulfil purchases, and answer buyers from one workspace.</p><div className="mt-7 space-y-3"><button onClick={() => setShowAddModal(true)} className="flex w-full items-center justify-between rounded-2xl bg-white px-4 py-4 text-sm font-black text-zinc-950">Create listing <span>→</span></button><button onClick={() => setActiveTab('orders')} className="flex w-full items-center justify-between rounded-2xl border border-white/10 px-4 py-4 text-sm font-bold">Process orders <span>→</span></button><button onClick={() => setActiveTab('support')} className="flex w-full items-center justify-between rounded-2xl border border-white/10 px-4 py-4 text-sm font-bold">Open support <span>→</span></button></div></section>
           </div>
-          <div className="stat-card green">
-            <div className="stat-header">
-              <span className="stat-label">Sold</span>
-              <div className="stat-icon green"><IconTrending /></div>
-            </div>
-            <div className="stat-value">{totalSold}</div>
-            <div className="stat-footer">Lifetime sales</div>
-          </div>
-          <div className="stat-card gold">
-            <div className="stat-header">
-              <span className="stat-label">Revenue</span>
-              <div className="stat-icon gold"><IconDollar /></div>
-            </div>
-            <div className="stat-value gold">{formatCurrency(totalRevenue)}</div>
-            <div className="stat-footer">Total earnings</div>
-          </div>
-          <div className="stat-card purple">
-            <div className="stat-header">
-              <span className="stat-label">Orders</span>
-              <div className="stat-icon purple"><IconUsers /></div>
-            </div>
-            <div className="stat-value">{orders.length}</div>
-            <div className="stat-footer">All time</div>
-          </div>
-        </div>
-        {/* ===== TABS ===== */}
-        <div className="admin-tabs">
-          <button 
-            className={`admin-tab ${activeTab === 'accounts' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('accounts')}
-          >
-            Inventory ({accounts.length})
-          </button>
-          <button 
-            className={`admin-tab ${activeTab === 'orders' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('orders')}
-          >
-            Orders ({orders.length})
-          </button>
-          <button 
-            className={`admin-tab ${activeTab === 'support' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('support')}
-          >
-            Support
-          </button>
-        </div>
-        {/* ===== INVENTORY TAB ===== */}
-        {activeTab === 'accounts' && (
-          <>
-            <div className="admin-search">
-              <div className="search-icon-wrap">
-                <IconSearch />
-                <input 
-                  type="text" 
-                  placeholder="Search accounts..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="table-card">
-              {loading ? (
-                <div>
-                  {[1,2,3,4,5].map(i => (
-                    <div key={i} className="shimmer-row">
-                      <div className="shimmer" style={{width: '44px', height: '44px', borderRadius: '10px', flexShrink: 0}} />
-                      <div className="shimmer" style={{width: '140px', height: '16px'}} />
-                      <div className="shimmer" style={{width: '80px', height: '16px', marginLeft: 'auto'}} />
-                      <div className="shimmer" style={{width: '80px', height: '16px'}} />
-                      <div className="shimmer" style={{width: '100px', height: '16px'}} />
-                    </div>
-                  ))}
-                </div>
-              ) : filteredAccounts.length === 0 ? (
-                <div className="empty-state">
-                  <IconEmptyBox />
-                  <h3>No accounts found</h3>
-                  <p>{searchQuery ? 'Try a different search term' : 'Add your first account to start selling'}</p>
-                </div>
-              ) : (
-                <div className="table-wrap">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Account</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Added</th>
-                        <th style={{textAlign: 'right'}}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredAccounts.map(acc => (
-                        <tr key={acc.id}>
-                          <td>
-                            <div className="account-cell">
-                              <div className="account-thumb">
-                                {acc.image_url ? (
-                                  <img src={acc.image_url} alt="" />
-                                ) : (
-                                  <span style={{fontSize: '20px'}}>🏰</span>
-                                )}
-                              </div>
-                              <div>
-                                <div className="account-name">TH{acc.town_hall} Account</div>
-                                <div className="account-meta">
-                                  {acc.heroes_level ? `Heroes ${acc.heroes_level}` : 'Maxed'} • {acc.gems ? `${acc.gems} Gems` : 'High Gems'}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="price-current">{formatCurrency(acc.price)}</div>
-                            {acc.original_price > 0 && (
-                              <div className="price-original">{formatCurrency(acc.original_price)}</div>
-                            )}
-                          </td>
-                          <td>
-                            <span className={`badge ${acc.status === 'available' ? 'badge-success' : 'badge-gold'}`}>
-                              {acc.status === 'available' ? <IconCheck /> : <IconShield />}
-                              {acc.status}
-                            </span>
-                          </td>
-                          <td style={{color: '#6b6b7b', fontSize: '13px', whiteSpace: 'nowrap'}}>
-                            {formatDate(acc.created_at)}
-                          </td>
-                          <td style={{textAlign: 'right'}}>
-                            <button 
-                              className="action-btn" 
-                              onClick={() => deleteAccount(acc.id)}
-                              title="Delete account"
-                            >
-                              <IconTrash />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        {/* ===== ORDERS TAB ===== */}
-        {activeTab === 'orders' && (
-          <div className="table-card">
-            {loading ? (
-              <div>
-                {[1,2,3,4,5].map(i => (
-                  <div key={i} className="shimmer-row">
-                    <div className="shimmer" style={{width: '80px', height: '16px'}} />
-                    <div className="shimmer" style={{width: '60px', height: '16px'}} />
-                    <div className="shimmer" style={{width: '80px', height: '16px', marginLeft: 'auto'}} />
-                    <div className="shimmer" style={{width: '80px', height: '16px'}} />
-                    <div className="shimmer" style={{width: '100px', height: '16px'}} />
-                  </div>
-                ))}
-              </div>
-            ) : orders.length === 0 ? (
-              <div className="empty-state">
-                <IconEmptyDoc />
-                <h3>No orders yet</h3>
-                <p>Orders will appear here when customers buy</p>
-              </div>
-            ) : (
-              <div className="table-wrap">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Order ID</th>
-                      <th>Account</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                      <th>Date</th>
-                      <th style={{textAlign: 'right'}}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map(order => (
-                      <tr key={order.id}>
-                        <td style={{fontFamily: 'monospace', fontSize: '12px', color: '#6b6b7b', whiteSpace: 'nowrap'}}>
-                          #{order.id.slice(0, 8).toUpperCase()}
-                        </td>
-                        <td>
-                          <span style={{fontWeight: 700, color: '#ffd700'}}>TH{order.accounts?.town_hall || '?'}</span>
-                        </td>
-                        <td style={{fontWeight: 700}}>
-                          {formatCurrency(order.amount)}
-                        </td>
-                        <td>
-                          <span className={`badge ${
-                            order.status === 'paid' ? 'badge-success' : 
-                            order.status === 'delivered' ? 'badge-blue' : 'badge-gold'
-                          }`}>
-                            {order.status === 'paid' && <IconCheck />}
-                            {order.status === 'delivered' && <IconShield />}
-                            {order.status}
-                          </span>
-                        </td>
-                        <td style={{color: '#6b6b7b', fontSize: '13px', whiteSpace: 'nowrap'}}>
-                          {formatDate(order.created_at)}
-                        </td>
-                        <td style={{textAlign: 'right'}}>
-                          {order.status === 'paid' && (
-                            <button 
-                              className="deliver-btn"
-                              onClick={() => markDelivered(order.id)}
-                            >
-                              Mark Delivered
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-        {/* ===== SUPPORT TAB ===== */}
-        {activeTab === 'support' && (
-          <AdminSupport />
-        )}
+        </>}
+
+        {activeTab === 'inventory' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="flex flex-col gap-4 border-b border-zinc-100 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"><div><h2 className="text-xl font-black">All listings</h2><p className="mt-1 text-sm text-zinc-500">{filteredAccounts.length} results</p></div><div className="flex flex-col gap-2 sm:flex-row"><label className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3"><span className="text-zinc-400"><Icon name="search" className="h-4 w-4" /></span><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search inventory" className="min-w-0 bg-transparent text-sm outline-none" /></label><select value={gameFilter} onChange={(event) => setGameFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All games</option>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All status</option><option value="available">Available</option><option value="sold">Sold</option></select></div></div><AdminTableLoading loading={loading} />{!loading && <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Listing</th><th className="px-5 py-4">Game</th><th className="px-5 py-4">Price</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Added</th><th className="px-6 py-4 text-right">Action</th></tr></thead><tbody className="divide-y divide-zinc-100">{filteredAccounts.map((account) => <tr key={account.id} className="transition hover:bg-zinc-50"><td className="px-6 py-4"><div className="flex items-center gap-3"><span className="h-12 w-12 overflow-hidden rounded-xl bg-zinc-100">{account.image_url && <img src={account.image_url} alt="" className="h-full w-full object-cover" />}</span><div><p className="text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()}</p></div></div></td><td className="px-5 py-4 text-sm font-semibold text-zinc-600">{gameName(account.game_id)}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(account.price)}</td><td className="px-5 py-4"><StatusBadge status={account.status} /></td><td className="px-5 py-4 text-sm text-zinc-500">{formatDate(account.created_at)}</td><td className="px-6 py-4 text-right"><button onClick={() => deleteAccount(account.id)} className="rounded-xl p-2.5 text-zinc-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Delete listing"><Icon name="trash" className="h-4 w-4" /></button></td></tr>)}</tbody></table>{filteredAccounts.length === 0 && <EmptyState icon="inventory" title="No listings found" text={searchQuery ? 'Try a different search.' : 'Add your first marketplace listing.'} />}</div>}</section>}
+
+        {activeTab === 'orders' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="border-b border-zinc-100 p-5 sm:p-6"><h2 className="text-xl font-black">All orders</h2><p className="mt-1 text-sm text-zinc-500">Review payments and complete delivery.</p></div><AdminTableLoading loading={loading} />{!loading && <div className="overflow-x-auto"><table className="w-full min-w-[820px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Order</th><th className="px-5 py-4">Buyer</th><th className="px-5 py-4">Game</th><th className="px-5 py-4">Amount</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Date</th><th className="px-6 py-4 text-right">Action</th></tr></thead><tbody className="divide-y divide-zinc-100">{orders.map((order) => <tr key={order.id} className="transition hover:bg-zinc-50"><td className="px-6 py-4 font-mono text-xs font-bold text-zinc-500">#{order.id.slice(0, 8).toUpperCase()}</td><td className="max-w-52 truncate px-5 py-4 text-sm font-semibold">{order.buyer_email || '—'}</td><td className="px-5 py-4 text-sm text-zinc-600">{gameName(order.accounts?.game_id)}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(order.amount)}</td><td className="px-5 py-4"><StatusBadge status={order.status} /></td><td className="px-5 py-4 text-sm text-zinc-500">{formatDate(order.created_at)}</td><td className="px-6 py-4 text-right">{order.status === 'paid' ? <button onClick={() => markDelivered(order.id)} className="rounded-full bg-zinc-950 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-600">Mark delivered</button> : <span className="text-xs text-zinc-400">No action</span>}</td></tr>)}</tbody></table>{orders.length === 0 && <EmptyState icon="orders" title="No orders yet" text="New purchases will appear here." />}</div>}</section>}
+
+        {activeTab === 'customers' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="border-b border-zinc-100 p-5 sm:p-6"><h2 className="text-xl font-black">Customers</h2><p className="mt-1 text-sm text-zinc-500">Buyer activity derived from marketplace orders.</p></div><div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Buyer</th><th className="px-5 py-4">Orders</th><th className="px-5 py-4">Total spent</th><th className="px-6 py-4">Last order</th></tr></thead><tbody className="divide-y divide-zinc-100">{customers.map((customer) => <tr key={customer.email} className="hover:bg-zinc-50"><td className="px-6 py-4"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-950 text-sm font-black text-white">{customer.email.charAt(0).toUpperCase()}</span><span className="text-sm font-bold">{customer.email}</span></div></td><td className="px-5 py-4 text-sm font-black">{customer.orders}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(customer.spent)}</td><td className="px-6 py-4 text-sm text-zinc-500">{formatDate(customer.lastOrder)}</td></tr>)}</tbody></table>{customers.length === 0 && <EmptyState icon="customers" title="No customers yet" text="Buyers will appear after their first order." />}</div></section>}
+
+        {activeTab === 'support' && <AdminSupport />}
       </div>
-      {/* ===== ADD ACCOUNT MODAL ===== */}
-      {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Add New Account</h2>
-              <button className="close-btn" onClick={() => setShowAddModal(false)}>
-                <IconX />
-              </button>
-            </div>
-            <form onSubmit={addAccount}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Town Hall *</label>
-                  <input name="th" type="number" min="1" max="20" required placeholder="17" />
-                </div>
-                <div className="form-group">
-                  <label>Builder Hall</label>
-                  <input name="bh" type="number" min="1" max="10" placeholder="10" />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Exp Level</label>
-                  <input name="level" type="number" placeholder="300" />
-                </div>
-                <div className="form-group">
-                  <label>Gems</label>
-                  <input name="gems" type="number" placeholder="5000" />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Price (₹) *</label>
-                  <input name="price" type="number" min="1" required placeholder="2999" />
-                </div>
-                <div className="form-group">
-                  <label>Original Price (₹)</label>
-                  <input name="originalPrice" type="number" placeholder="4999" />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Heroes Level</label>
-                <input name="heroes" placeholder="90/90/60/35" />
-              </div>
-              <div className="form-group">
-                <label>Walls Level</label>
-                <input name="walls" placeholder="16" />
-              </div>
-              <div className="form-group">
-                <label>Image URL</label>
-                <input name="image" type="url" placeholder="https://..." />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea name="description" rows="3" placeholder="Account details, special features, etc."></textarea>
-              </div>
-              <div className="form-actions">
-                <button type="button" className="btn-secondary" onClick={() => setShowAddModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn-gold" style={{flex: 1, justifyContent: 'center'}}>
-                  Add Account
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    </main>
+
+    {showAddModal && <div className="fixed inset-0 z-[3000] grid place-items-center overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={() => setShowAddModal(false)}><form onSubmit={addAccount} onMouseDown={(event) => event.stopPropagation()} className="relative my-8 w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"><button type="button" onClick={() => setShowAddModal(false)} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">New inventory</p><h2 className="mt-2 text-2xl font-black">Add marketplace listing</h2><p className="mt-2 text-sm text-zinc-500">Create an available listing for any supported game.</p><div className="mt-7 grid gap-5 sm:grid-cols-2"><AdminField label="Game"><select name="game" required className="input">{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></AdminField><AdminField label="Primary level *"><input name="level" type="number" min="1" required placeholder="Example: 17" className="input" /></AdminField><AdminField label="Builder / secondary level"><input name="builderHall" type="number" min="1" placeholder="Optional" className="input" /></AdminField><AdminField label="Experience level"><input name="expLevel" type="number" min="1" placeholder="Optional" className="input" /></AdminField><AdminField label="Price (₹) *"><input name="price" type="number" min="1" required placeholder="2999" className="input" /></AdminField><AdminField label="Original price (₹)"><input name="originalPrice" type="number" min="1" placeholder="4999" className="input" /></AdminField><AdminField label="Currency / gems amount"><input name="currencyAmount" type="number" min="0" placeholder="Optional" className="input" /></AdminField><AdminField label="Secondary level"><input name="secondaryLevel" placeholder="Optional" className="input" /></AdminField><AdminField label="Features"><input name="features" placeholder="Ranks, heroes, skins..." className="input" /></AdminField><AdminField label="Image URL"><input name="image" type="url" placeholder="https://..." className="input" /></AdminField></div><AdminField label="Description" className="mt-5"><textarea name="description" rows="4" placeholder="Describe the listing clearly..." className="input resize-none" /></AdminField><div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={() => setShowAddModal(false)} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white hover:bg-[#b77e00] disabled:opacity-60">{saving ? 'Adding…' : 'Add listing'}</button></div></form></div>}
+  </div>;
+}
+
+function StatusBadge({ status = 'pending' }) {
+  const style = status === 'available' || status === 'delivered' || status === 'completed' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : status === 'paid' ? 'bg-blue-50 text-blue-700 ring-blue-200' : status === 'sold' ? 'bg-violet-50 text-violet-700 ring-violet-200' : 'bg-amber-50 text-amber-700 ring-amber-200';
+  return <span className={`inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ring-1 ${style}`}>{status}</span>;
+}
+
+function EmptyState({ icon, title, text }) {
+  return <div className="px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-zinc-100 text-zinc-400"><Icon name={icon} /></span><h3 className="mt-5 text-xl font-black">{title}</h3><p className="mt-2 text-sm text-zinc-500">{text}</p></div>;
+}
+
+function AdminTableLoading({ loading }) {
+  if (!loading) return null;
+  return <div className="space-y-3 p-6">{[1, 2, 3, 4].map((item) => <div key={item} className="h-16 animate-pulse rounded-2xl bg-zinc-100" />)}</div>;
+}
+
+function AdminField({ label, children, className = '' }) {
+  const field = cloneElement(children, { className: `min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 ${children.type === 'textarea' ? 'resize-none' : ''}` });
+  return <label className={`block ${className}`}><span className="mb-2 block text-xs font-bold text-zinc-700">{label}</span>{field}</label>;
 }
