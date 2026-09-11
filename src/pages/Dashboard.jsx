@@ -23,7 +23,7 @@ const WalletIcon = () => <svg className="h-6 w-6" fill="none" stroke="currentCol
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState('');
+  const [publicId, setPublicId] = useState(null);
   const [language, setLanguage] = useState('EN');
   const [currency, setCurrency] = useState('INR');
   const [loading, setLoading] = useState(true);
@@ -44,8 +44,10 @@ export default function Dashboard() {
       const buyer = session.user;
       const savedLanguage = buyer.user_metadata?.language || localStorage.getItem('clashvault_language') || 'EN';
       const savedCurrency = buyer.user_metadata?.currency || localStorage.getItem('clashvault_currency') || 'INR';
+      const { data: permanentId } = await supabase.rpc('get_my_public_id');
+      if (!active) return;
       setUser(buyer);
-      setUserId(buyer.user_metadata?.username || '');
+      setPublicId(permanentId);
       setLanguage(savedLanguage);
       setCurrency(savedCurrency);
       setLoading(false);
@@ -59,17 +61,10 @@ export default function Dashboard() {
     setError('');
     setMessage('');
 
-    const cleanUserId = userId.trim();
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUserId)) {
-      setError('User ID must be 3–20 characters and use only letters, numbers, or underscores.');
-      return;
-    }
-
     setSaving(true);
     const { data, error: updateError } = await supabase.auth.updateUser({
       data: {
         ...user.user_metadata,
-        username: cleanUserId,
         language,
         currency,
       },
@@ -116,14 +111,14 @@ export default function Dashboard() {
               <input value={user?.email || ''} readOnly className="mt-2 h-14 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-500 outline-none" />
               <span className="mt-2 block text-xs text-zinc-400">Your sign-in email cannot be changed here.</span>
             </label>
-            <label className="block">
+            <div className="block">
               <span className="text-sm font-bold text-zinc-800">User ID</span>
-              <div className="mt-2 flex h-14 items-center rounded-2xl border border-zinc-200 bg-white px-4 transition focus-within:border-[#c68d00] focus-within:ring-4 focus-within:ring-yellow-100">
-                <span className="mr-1 text-zinc-400">@</span>
-                <input value={userId} onChange={(event) => setUserId(event.target.value)} placeholder="choose_your_id" maxLength={20} className="min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:font-normal placeholder:text-zinc-400" />
+              <div className="mt-2 flex h-14 items-center rounded-2xl border border-zinc-200 bg-zinc-50 px-4">
+                <span className="mr-2 text-sm font-bold text-zinc-400">ID</span>
+                <span className="text-base font-black tabular-nums tracking-[0.08em] text-zinc-900">{publicId || '••••••'}</span>
               </div>
-              <span className="mt-2 block text-xs text-zinc-400">Use 3–20 letters, numbers, or underscores.</span>
-            </label>
+              <span className="mt-2 block text-xs text-zinc-400">Your permanent account ID is assigned automatically and cannot be changed.</span>
+            </div>
           </div>
         </section>
 

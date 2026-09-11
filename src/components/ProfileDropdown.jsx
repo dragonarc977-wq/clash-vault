@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import supabase from '../lib/supabase';
 
 const DashboardIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1" strokeWidth="1.7" /><rect x="14" y="4" width="6" height="6" rx="1" strokeWidth="1.7" /><rect x="4" y="14" width="6" height="6" rx="1" strokeWidth="1.7" /><rect x="14" y="14" width="6" height="6" rx="1" strokeWidth="1.7" /></svg>;
 const WalletIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M4 7.5h15.5v11H4v-11Zm0 3h15.5M7 7.5l2-3h7l1.5 3m-2.5 6h3" /></svg>;
@@ -12,9 +13,24 @@ const ArrowIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColo
 
 export default function ProfileDropdown({ user, onLogout }) {
   const [open, setOpen] = useState(false);
+  const [publicId, setPublicId] = useState(null);
   const navigate = useNavigate();
   const avatarLetter = user?.email?.charAt(0).toUpperCase() || 'U';
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Arcus 87';
+
+  useEffect(() => {
+    let active = true;
+    const loadPublicId = async () => {
+      if (!user?.id) {
+        setPublicId(null);
+        return;
+      }
+      const { data, error } = await supabase.rpc('get_my_public_id');
+      if (active && !error) setPublicId(data);
+    };
+    loadPublicId();
+    return () => { active = false; };
+  }, [user?.id]);
 
   useEffect(() => {
     const onEscape = (event) => { if (event.key === 'Escape') setOpen(false); };
@@ -38,7 +54,7 @@ export default function ProfileDropdown({ user, onLogout }) {
       <button onClick={() => setOpen(false)} className="absolute inset-0 z-0 cursor-default bg-zinc-950/50 backdrop-blur-[2px]" aria-label="Close profile menu" />
       <aside className="relative z-10 flex h-[100dvh] max-h-[100dvh] w-full max-w-[390px] flex-col overflow-hidden !bg-white p-5 opacity-100 shadow-2xl sm:p-6" aria-label="Buyer account menu">
         <div className="flex shrink-0 justify-end"><button onClick={() => setOpen(false)} className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-900" aria-label="Close profile menu"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" /></svg></button></div>
-        <div className="mt-4 flex shrink-0 items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-base font-black text-white">{avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs text-zinc-500">Buyer account</p></div></div>
+        <div className="mt-4 flex shrink-0 items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-base font-black text-white">{avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs font-semibold tabular-nums text-zinc-500">ID {publicId || '••••••'}</p></div></div>
         <p className="mt-6 shrink-0 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Account</p>
         <div className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
           <button onClick={() => goTo('/dashboard')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>
