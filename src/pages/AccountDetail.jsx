@@ -27,7 +27,7 @@ export default function AccountDetail() {
   useEffect(() => {
     let active = true;
     const loadAccount = async () => {
-      const { data } = await supabase.from('accounts').select('*').eq('id', id).eq('status', 'available').maybeSingle();
+      const { data } = await supabase.from('accounts').select('*').eq('id', id).maybeSingle();
       if (!active) return;
       setAccount(data);
       if (data?.seller_id) {
@@ -41,14 +41,7 @@ export default function AccountDetail() {
 
     const channel = supabase
       .channel(`listing-${id}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts', filter: `id=eq.${id}` }, (payload) => {
-        if (payload.eventType === 'DELETE' || payload.new?.status !== 'available') {
-          setAccount(null);
-          setPurchaseError('This listing has just been purchased and is no longer available.');
-          return;
-        }
-        setAccount(payload.new);
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts', filter: `id=eq.${id}` }, () => loadAccount())
       .subscribe();
 
     return () => {
@@ -74,6 +67,7 @@ export default function AccountDetail() {
   if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This account is unavailable.</h1><Link to="/" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
 
   const gameName = gameNames[account.game_id] || 'Game account';
+  const isAvailable = account.status === 'available';
   const title = account.title || (account.game_id === 'clash-of-clans' && account.town_hall ? `TH${account.town_hall} Maxed Account` : `${gameName} Account`);
   const previousImage = () => setActiveImage((current) => current === 0 ? images.length - 1 : current - 1);
   const nextImage = () => setActiveImage((current) => current === images.length - 1 ? 0 : current + 1);
@@ -121,7 +115,7 @@ export default function AccountDetail() {
         </section>
 
         <section className="lg:sticky lg:top-24">
-          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#8b6100]">{gameName}</span><span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />Available</span></div>
+          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#8b6100]">{gameName}</span><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ${isAvailable ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-zinc-400'}`} />{isAvailable ? 'Available' : 'Purchased'}</span></div>
           <h1 className="mt-5 text-3xl font-black tracking-[-0.045em] sm:text-5xl">{title}</h1>
           <p className="mt-4 text-sm leading-7 text-zinc-500 sm:text-base">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
 
@@ -134,7 +128,7 @@ export default function AccountDetail() {
           <div className="mt-7 space-y-3"><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Purchase details shown before payment</div><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Private buyer support available</div><div className="flex items-center gap-3 text-sm font-semibold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>Delivery status tracked in My Orders</div></div>
 
           {purchaseError && <p className="mt-7 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{purchaseError}</p>}
-          <div className="mt-8 grid gap-3 sm:grid-cols-2"><button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#b77e00] disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button><button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">{isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#b77e00] disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg">Open my order</button>}<button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
         </section>
       </div>
     </div>
