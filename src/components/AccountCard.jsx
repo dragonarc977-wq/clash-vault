@@ -24,11 +24,13 @@ export default function AccountCard({ account }) {
     >
       {/* Image */}
       <div className="relative h-48 bg-zinc-800 overflow-hidden">
-        {account.image_url ? (
+        {(account.thumbnail_url || account.image_url) ? (
           <img
-            src={account.image_url}
+            src={account.thumbnail_url || account.image_url}
             alt={`TH${account.town_hall} Account`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-5xl">

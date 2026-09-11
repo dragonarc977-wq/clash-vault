@@ -3,7 +3,9 @@
 -- Run admin_roles.sql first so storage writes use Supabase admin roles.
 
 alter table public.accounts
-  add column if not exists image_urls text[] not null default '{}';
+  add column if not exists image_urls text[] not null default '{}',
+  add column if not exists thumbnail_url text,
+  add column if not exists thumbnail_urls text[] not null default '{}';
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

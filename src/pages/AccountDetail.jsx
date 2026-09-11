@@ -58,6 +58,11 @@ export default function AccountDetail() {
     if (account.image_url && !gallery.includes(account.image_url)) gallery.unshift(account.image_url);
     return gallery;
   }, [account]);
+  const thumbnails = useMemo(() => {
+    if (!account) return [];
+    const gallery = Array.isArray(account.thumbnail_urls) ? account.thumbnail_urls.filter(Boolean) : [];
+    return images.map((image, index) => gallery[index] || image);
+  }, [account, images]);
 
   if (loading) return <main className="min-h-screen bg-white px-5 pb-20 pt-28"><div className="mx-auto max-w-7xl animate-pulse"><div className="h-5 w-28 rounded bg-zinc-100" /><div className="mt-8 grid gap-10 lg:grid-cols-[1.15fr_0.85fr]"><div className="h-[560px] rounded-3xl bg-zinc-100" /><div className="h-[520px] rounded-3xl bg-zinc-100" /></div></div></main>;
 
@@ -103,10 +108,10 @@ export default function AccountDetail() {
       <div className="mt-7 grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] xl:gap-14">
         <section className="min-w-0">
           <div className="relative flex h-[420px] items-center justify-center overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-100 sm:h-[560px]">
-            {images.length ? <img src={images[activeImage]} alt={`${title} image ${activeImage + 1}`} className="h-full w-full object-contain" loading="eager" /> : <div className="text-center text-zinc-400"><span className="text-6xl">🎮</span><p className="mt-3 text-sm font-bold">No image available</p></div>}
+            {images.length ? <img key={images[activeImage]} src={images[activeImage]} alt={`${title} image ${activeImage + 1}`} className="h-full w-full object-contain" loading="eager" decoding="async" /> : <div className="text-center text-zinc-400"><span className="text-6xl">🎮</span><p className="mt-3 text-sm font-bold">No image available</p></div>}
             {images.length > 1 && <><button type="button" onClick={previousImage} aria-label="Previous image" className="absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-lg backdrop-blur transition hover:scale-105 sm:left-5"><ArrowLeft /></button><button type="button" onClick={nextImage} aria-label="Next image" className="absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-lg backdrop-blur transition hover:scale-105 sm:right-5"><ArrowRight /></button><span className="absolute bottom-4 right-4 rounded-full bg-zinc-950/80 px-3 py-1.5 text-xs font-bold text-white backdrop-blur">{activeImage + 1} / {images.length}</span></>}
           </div>
-          {images.length > 1 && <div className="mt-4 flex gap-3 overflow-x-auto pb-2">{images.map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(index)} className={`h-20 w-24 shrink-0 overflow-hidden rounded-xl border-2 bg-zinc-100 transition sm:h-24 sm:w-28 ${activeImage === index ? 'border-zinc-950 opacity-100' : 'border-transparent opacity-55 hover:opacity-100'}`} aria-label={`Show image ${index + 1}`}><img src={image} alt="" className="h-full w-full object-cover" /></button>)}</div>}
+          {images.length > 1 && <div className="mt-4 flex gap-3 overflow-x-auto pb-2">{images.map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(index)} className={`h-20 w-24 shrink-0 overflow-hidden rounded-xl border-2 bg-zinc-100 transition sm:h-24 sm:w-28 ${activeImage === index ? 'border-zinc-950 opacity-100' : 'border-transparent opacity-55 hover:opacity-100'}`} aria-label={`Show image ${index + 1}`} aria-current={activeImage === index}><img src={thumbnails[index]} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" /></button>)}</div>}
           <p className="mt-2 text-xs text-zinc-400">Images are shown without cropping. Use the arrows or thumbnails to view the complete gallery.</p>
         </section>
 

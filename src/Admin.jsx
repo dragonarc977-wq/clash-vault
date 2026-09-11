@@ -1,6 +1,7 @@
-import { cloneElement, useEffect, useMemo, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from './lib/supabase';
+import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from './lib/imageProcessing';
 import AdminSupport from './pages/AdminSupport';
 const games = [
   ['clash-of-clans', 'Clash of Clans'], ['brawl-stars', 'Brawl Stars'], ['valorant', 'Valorant'],
@@ -33,6 +34,26 @@ const storagePathFromUrl = (url) => {
   const marker = '/account-images/';
   return url?.includes(marker) ? decodeURIComponent(url.split(marker)[1]) : null;
 };
+
+async function uploadListingImage(file, gameId) {
+  const { full, thumbnail } = await optimizeListingImage(file);
+  const key = crypto.randomUUID();
+  const fullPath = `${gameId}/${key}.webp`;
+  const thumbnailPath = `${gameId}/thumbnails/${key}.webp`;
+  const bucket = supabase.storage.from('account-images');
+  const { error: fullError } = await bucket.upload(fullPath, full, { cacheControl: '31536000', contentType: 'image/webp', upsert: false });
+  if (fullError) throw fullError;
+  const { error: thumbnailError } = await bucket.upload(thumbnailPath, thumbnail, { cacheControl: '31536000', contentType: 'image/webp', upsert: false });
+  if (thumbnailError) {
+    await bucket.remove([fullPath]);
+    throw thumbnailError;
+  }
+  return {
+    paths: [fullPath, thumbnailPath],
+    url: bucket.getPublicUrl(fullPath).data.publicUrl,
+    thumbnailUrl: bucket.getPublicUrl(thumbnailPath).data.publicUrl,
+  };
+}
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -115,33 +136,29 @@ export default function Admin() {
       setNotice('Select at least one listing image.');
       return;
     }
-    if (imageFiles.length > 8) {
-      setNotice('You can upload up to 8 images for one listing.');
-      return;
-    }
-    const invalidImage = imageFiles.find((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024);
-    if (invalidImage) {
-      setNotice('Use JPG, PNG, or WebP images smaller than 5 MB each.');
+    const validationError = validateListingFiles(imageFiles);
+    if (validationError) {
+      setNotice(validationError);
       return;
     }
     setSaving(true);
     setNotice('');
     const uploadedPaths = [];
     const imageUrls = [];
+    const thumbnailUrls = [];
 
     for (const file of imageFiles) {
-      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const path = `${form.game.value}/${crypto.randomUUID()}.${extension}`;
-      const { error: uploadError } = await supabase.storage.from('account-images').upload(path, file, { cacheControl: '3600', upsert: false });
-      if (uploadError) {
+      try {
+        const uploaded = await uploadListingImage(file, form.game.value);
+        uploadedPaths.push(...uploaded.paths);
+        imageUrls.push(uploaded.url);
+        thumbnailUrls.push(uploaded.thumbnailUrl);
+      } catch (uploadError) {
         if (uploadedPaths.length) await supabase.storage.from('account-images').remove(uploadedPaths);
         setSaving(false);
         setNotice(`Could not upload images: ${uploadError.message}`);
         return;
       }
-      uploadedPaths.push(path);
-      const { data: publicImage } = supabase.storage.from('account-images').getPublicUrl(path);
-      imageUrls.push(publicImage.publicUrl);
     }
 
     const payload = {
@@ -156,6 +173,8 @@ export default function Admin() {
       original_price: Number(form.originalPrice.value) || null,
       image_url: imageUrls[0],
       image_urls: imageUrls,
+      thumbnail_url: thumbnailUrls[0],
+      thumbnail_urls: thumbnailUrls,
       description: form.description.value || null,
       status: 'available',
     };
@@ -178,10 +197,9 @@ export default function Admin() {
     const { error } = await supabase.from('accounts').delete().eq('id', id);
     if (error) setNotice(`Could not delete listing: ${error.message}`);
     else {
-      const paths = (listing?.image_urls || []).map((url) => {
-        const marker = '/account-images/';
-        return url.includes(marker) ? decodeURIComponent(url.split(marker)[1]) : null;
-      }).filter(Boolean);
+      const fullImages = listing?.image_urls?.length ? listing.image_urls : [listing?.image_url].filter(Boolean);
+      const thumbnails = listing?.thumbnail_urls?.length ? listing.thumbnail_urls : [listing?.thumbnail_url].filter(Boolean);
+      const paths = [...fullImages, ...thumbnails].map(storagePathFromUrl).filter(Boolean);
       if (paths.length) await supabase.storage.from('account-images').remove(paths);
       fetchData();
     }
@@ -202,27 +220,28 @@ export default function Admin() {
     setNotice('');
     const uploadedPaths = [];
     const imageUrls = [];
+    const thumbnailUrls = [];
 
     for (const image of gallery) {
       if (image.type === 'existing') {
         imageUrls.push(image.url);
+        thumbnailUrls.push(image.thumbnail || image.url);
         continue;
       }
-      const extension = image.file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const path = `${fields.game_id}/${crypto.randomUUID()}.${extension}`;
-      const { error: uploadError } = await supabase.storage.from('account-images').upload(path, image.file, { cacheControl: '3600', upsert: false });
-      if (uploadError) {
+      try {
+        const uploaded = await uploadListingImage(image.file, fields.game_id);
+        uploadedPaths.push(...uploaded.paths);
+        imageUrls.push(uploaded.url);
+        thumbnailUrls.push(uploaded.thumbnailUrl);
+      } catch (uploadError) {
         if (uploadedPaths.length) await supabase.storage.from('account-images').remove(uploadedPaths);
         setSaving(false);
         setNotice(`Could not upload new images: ${uploadError.message}`);
         return;
       }
-      uploadedPaths.push(path);
-      const { data } = supabase.storage.from('account-images').getPublicUrl(path);
-      imageUrls.push(data.publicUrl);
     }
 
-    const payload = { ...fields, image_url: imageUrls[0], image_urls: imageUrls };
+    const payload = { ...fields, image_url: imageUrls[0], image_urls: imageUrls, thumbnail_url: thumbnailUrls[0], thumbnail_urls: thumbnailUrls };
     const { data: updatedAccount, error } = await supabase
       .from('accounts')
       .update(payload)
@@ -239,8 +258,10 @@ export default function Admin() {
     }
 
     const oldImages = Array.isArray(account.image_urls) && account.image_urls.length ? account.image_urls : [account.image_url].filter(Boolean);
+    const oldThumbnails = Array.isArray(account.thumbnail_urls) ? account.thumbnail_urls : [account.thumbnail_url].filter(Boolean);
     const removedPaths = oldImages.filter((url) => !imageUrls.includes(url)).map(storagePathFromUrl).filter(Boolean);
-    if (removedPaths.length) await supabase.storage.from('account-images').remove(removedPaths);
+    const removedThumbnailPaths = oldThumbnails.filter((url) => !thumbnailUrls.includes(url)).map(storagePathFromUrl).filter(Boolean);
+    if (removedPaths.length || removedThumbnailPaths.length) await supabase.storage.from('account-images').remove([...removedPaths, ...removedThumbnailPaths]);
     setAccounts((current) => current.map((item) => (item.id === updatedAccount.id ? updatedAccount : item)));
     setSaving(false);
     setEditingAccount(null);
@@ -308,7 +329,7 @@ function InventoryManager({ accounts, total, loading, searchQuery, setSearchQuer
     {!loading && <>{accounts.length ? <div className="divide-y divide-zinc-100">{accounts.map((account) => {
       const imageCount = account.image_urls?.length || (account.image_url ? 1 : 0);
       return <div key={account.id} className="grid gap-4 p-5 transition hover:bg-zinc-50 sm:grid-cols-[minmax(220px,1.5fr)_1fr_0.7fr_0.7fr_auto] sm:items-center sm:px-6">
-        <div className="flex min-w-0 items-center gap-3"><span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100">{account.image_url && <img src={account.image_url} alt="" className="h-full w-full object-cover" />}{imageCount > 1 && <span className="absolute bottom-1 right-1 rounded-full bg-zinc-950 px-1.5 py-0.5 text-[8px] font-black text-white">+{imageCount - 1}</span>}</span><div className="min-w-0"><p className="truncate text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()} · {imageCount} image{imageCount === 1 ? '' : 's'}</p></div></div>
+        <div className="flex min-w-0 items-center gap-3"><span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100">{(account.thumbnail_url || account.image_url) && <img src={account.thumbnail_url || account.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />}{imageCount > 1 && <span className="absolute bottom-1 right-1 rounded-full bg-zinc-950 px-1.5 py-0.5 text-[8px] font-black text-white">+{imageCount - 1}</span>}</span><div className="min-w-0"><p className="truncate text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()} · {imageCount} image{imageCount === 1 ? '' : 's'}</p></div></div>
         <div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400 sm:hidden">Game</p><p className="mt-1 text-sm font-semibold text-zinc-600 sm:mt-0">{gameName(account.game_id)}</p></div>
         <div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400 sm:hidden">Price</p><p className="mt-1 text-sm font-black sm:mt-0">{formatCurrency(account.price)}</p></div>
         <div><StatusBadge status={account.status} /></div>
@@ -320,20 +341,16 @@ function InventoryManager({ accounts, total, loading, searchQuery, setSearchQuer
 
 function EditListingModal({ account, saving, onClose, onSave }) {
   const existingImages = Array.isArray(account.image_urls) && account.image_urls.length ? account.image_urls : [account.image_url].filter(Boolean);
-  const [gallery, setGallery] = useState(existingImages.map((url) => ({ id: url, type: 'existing', url, preview: url })));
+  const existingThumbnails = Array.isArray(account.thumbnail_urls) ? account.thumbnail_urls : [];
+  const [gallery, setGallery] = useState(existingImages.map((url, index) => ({ id: url, type: 'existing', url, thumbnail: existingThumbnails[index] || url, preview: existingThumbnails[index] || url })));
   const [error, setError] = useState('');
   const inputClass = 'min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100';
 
   function addPictures(event) {
     const files = Array.from(event.target.files || []);
-    if (gallery.length + files.length > 8) {
-      setError('A listing can have up to 8 images.');
-      event.target.value = '';
-      return;
-    }
-    const invalid = files.find((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024);
-    if (invalid) {
-      setError('Use JPG, PNG, or WebP images smaller than 5 MB each.');
+    const validationError = validateListingFiles(files, gallery.length);
+    if (validationError) {
+      setError(validationError);
       event.target.value = '';
       return;
     }
@@ -348,6 +365,16 @@ function EditListingModal({ account, saving, onClose, onSave }) {
 
   function makeCover(index) {
     setGallery((current) => [current[index], ...current.filter((_, itemIndex) => itemIndex !== index)]);
+  }
+
+  function moveImage(index, direction) {
+    setGallery((current) => {
+      const target = index + direction;
+      if (target < 0 || target >= current.length) return current;
+      const next = [...current];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   async function submit(event) {
@@ -378,7 +405,7 @@ function EditListingModal({ account, saving, onClose, onSave }) {
 
   return <div className="fixed inset-0 z-[3100] overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={onClose}><form onSubmit={submit} onMouseDown={(event) => event.stopPropagation()} className="relative mx-auto my-8 w-full max-w-3xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"><button type="button" onClick={onClose} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">Inventory editor</p><h2 className="mt-2 text-2xl font-black">Edit listing</h2><p className="mt-2 text-sm text-zinc-500">Update listing information and manage its complete image gallery.</p>
     {error && <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-bold text-red-700">{error}</p>}
-    <div className="mt-7"><div className="flex items-center justify-between"><p className="text-xs font-bold text-zinc-700">Listing pictures</p><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{gallery.length} / 8</span></div>{gallery.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{gallery.map((image, index) => <div key={image.id} className={`relative aspect-square overflow-hidden rounded-2xl border-2 bg-zinc-100 ${index === 0 ? 'border-yellow-400' : 'border-zinc-200'}`}><img src={image.preview} alt="" className="h-full w-full object-cover" /><div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-zinc-950/75 p-2 backdrop-blur"><button type="button" onClick={() => makeCover(index)} className={`text-[9px] font-black uppercase ${index === 0 ? 'text-yellow-300' : 'text-white'}`}>{index === 0 ? 'Cover' : 'Make cover'}</button><button type="button" onClick={() => setGallery((current) => current.filter((item) => item.id !== image.id))} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-white hover:bg-red-500" aria-label="Remove image"><Icon name="close" className="h-3.5 w-3.5" /></button></div></div>)}</div>}<label className="mt-3 flex min-h-20 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 text-center transition hover:border-[#c68d00] hover:bg-yellow-50"><span><span className="text-sm font-black">+ Add more pictures</span><span className="mt-1 block text-[10px] text-zinc-400">JPG, PNG or WebP · 5 MB each</span></span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addPictures} className="sr-only" /></label></div>
+    <div className="mt-7"><div className="flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-700">Listing pictures</p><p className="mt-1 text-[10px] text-zinc-400">Use the arrows to set the buyer gallery order. Picture 1 is the cover.</p></div><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{gallery.length} / {MAX_LISTING_IMAGES}</span></div>{gallery.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{gallery.map((image, index) => <div key={image.id} className={`relative aspect-square overflow-hidden rounded-2xl border-2 bg-zinc-100 ${index === 0 ? 'border-zinc-950' : 'border-zinc-200'}`}><img src={image.preview} alt={`Listing picture ${index + 1}`} className="h-full w-full object-cover" /><span className="absolute left-2 top-2 rounded-full bg-zinc-950/80 px-2 py-1 text-[8px] font-black text-white">{index + 1}</span><div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-zinc-950/80 p-2 backdrop-blur"><div className="flex gap-1"><button type="button" disabled={index === 0} onClick={() => moveImage(index, -1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image left">←</button><button type="button" disabled={index === gallery.length - 1} onClick={() => moveImage(index, 1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image right">→</button></div>{index > 0 && <button type="button" onClick={() => makeCover(index)} className="text-[8px] font-black uppercase text-white">Cover</button>}<button type="button" onClick={() => setGallery((current) => current.filter((item) => item.id !== image.id))} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-white hover:bg-red-500" aria-label="Remove image"><Icon name="close" className="h-3.5 w-3.5" /></button></div></div>)}</div>}<label className="mt-3 flex min-h-20 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 text-center transition hover:border-zinc-950 hover:bg-white"><span><span className="text-sm font-black">+ Add more pictures</span><span className="mt-1 block text-[10px] text-zinc-400">JPG, PNG or WebP · up to 12 MB · automatically optimized</span></span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addPictures} className="sr-only" /></label></div>
     <div className="mt-7 grid gap-5 sm:grid-cols-2"><label><span className="mb-2 block text-xs font-bold">Game</span><select name="game" defaultValue={account.game_id || 'clash-of-clans'} className={inputClass}>{games.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label><label><span className="mb-2 block text-xs font-bold">Status</span><select name="status" defaultValue={account.status || 'available'} className={inputClass}><option value="available">Available</option><option value="sold">Sold</option></select></label><label><span className="mb-2 block text-xs font-bold">Primary level *</span><input name="level" type="number" min="1" required defaultValue={account.town_hall || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Builder / secondary level</span><input name="builderHall" type="number" min="1" defaultValue={account.builder_hall || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Experience level</span><input name="expLevel" type="number" min="1" defaultValue={account.exp_level || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Currency / gems</span><input name="currencyAmount" type="number" min="0" defaultValue={account.gems || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Price (₹) *</span><input name="price" type="number" min="1" required defaultValue={account.price || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Original price (₹)</span><input name="originalPrice" type="number" min="1" defaultValue={account.original_price || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Features</span><input name="features" defaultValue={account.heroes_level || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Secondary level</span><input name="secondaryLevel" defaultValue={account.walls_level || ''} className={inputClass} /></label></div><label className="mt-5 block"><span className="mb-2 block text-xs font-bold">Description</span><textarea name="description" rows="4" defaultValue={account.description || ''} className={`${inputClass} resize-none`} /></label><div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={onClose} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white hover:bg-[#b77e00] disabled:opacity-60">{saving ? 'Saving…' : 'Save changes'}</button></div></form></div>;
 }
 
@@ -407,18 +434,46 @@ function AdminField({ label, children, className = '' }) {
 
 function ImageUploadInput({ className = '' }) {
   const [previews, setPreviews] = useState([]);
+  const [error, setError] = useState('');
+  const inputRef = useRef(null);
+
+  function syncFiles(next) {
+    const transfer = new DataTransfer();
+    next.forEach((preview) => transfer.items.add(preview.file));
+    if (inputRef.current) inputRef.current.files = transfer.files;
+    setPreviews(next);
+  }
 
   function previewImages(event) {
-    const files = Array.from(event.target.files || []).slice(0, 8);
-    Promise.all(files.map((file) => new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ name: file.name, url: reader.result });
-      reader.readAsDataURL(file);
-    }))).then(setPreviews);
+    previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+    const files = Array.from(event.target.files || []);
+    const validationError = validateListingFiles(files);
+    if (validationError) {
+      setError(validationError);
+      event.target.value = '';
+      setPreviews([]);
+      return;
+    }
+    setError('');
+    setPreviews(files.map((file) => ({ id: crypto.randomUUID(), name: file.name, file, url: URL.createObjectURL(file) })));
+  }
+
+  function movePreview(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= previews.length) return;
+    const next = [...previews];
+    [next[index], next[target]] = [next[target], next[index]];
+    syncFiles(next);
+  }
+
+  function removePreview(index) {
+    URL.revokeObjectURL(previews[index].url);
+    syncFiles(previews.filter((_, itemIndex) => itemIndex !== index));
   }
 
   return <div className={`sm:col-span-2 ${className}`}>
-    <label className="block"><span className="mb-2 block text-xs font-bold text-zinc-700">Listing images *</span><span className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 px-5 py-6 text-center transition hover:border-[#c68d00] hover:bg-yellow-50"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-950 text-white"><Icon name="plus" /></span><span className="mt-3 text-sm font-black">Choose multiple images</span><span className="mt-1 text-[11px] text-zinc-400">Up to 8 JPG, PNG, or WebP files · 5 MB each</span><input name="image" type="file" accept="image/jpeg,image/png,image/webp" multiple required onChange={previewImages} className="sr-only" /></span></label>
-    {previews.length > 0 && <div className="mt-3"><div className="mb-2 flex items-center justify-between"><span className="text-xs font-bold text-zinc-600">Selected pictures</span><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{previews.length} image{previews.length === 1 ? '' : 's'}</span></div><div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">{previews.map((preview, index) => <div key={`${preview.name}-${index}`} className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100"><img src={preview.url} alt="" className="h-full w-full object-cover" />{index === 0 && <span className="absolute bottom-1.5 left-1.5 rounded-full bg-zinc-950 px-2 py-1 text-[8px] font-black uppercase tracking-wider text-white">Cover</span>}</div>)}</div></div>}
+    <label className="block"><span className="mb-2 block text-xs font-bold text-zinc-700">Listing images *</span><span className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 px-5 py-6 text-center transition hover:border-zinc-950 hover:bg-white"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-950 text-white"><Icon name="plus" /></span><span className="mt-3 text-sm font-black">Choose high-quality images</span><span className="mt-1 text-[11px] text-zinc-400">Up to {MAX_LISTING_IMAGES} JPG, PNG, or WebP files · 12 MB each</span><span className="mt-1 text-[10px] font-semibold text-emerald-600">Automatically compressed to sharp WebP with fast thumbnails</span><input ref={inputRef} name="image" type="file" accept="image/jpeg,image/png,image/webp" multiple required onChange={previewImages} className="sr-only" /></span></label>
+    {error && <p className="mt-2 text-xs font-semibold text-red-600">{error}</p>}
+    {previews.length > 0 && <div className="mt-3"><div className="mb-2 flex items-center justify-between"><span className="text-xs font-bold text-zinc-600">Gallery order · first picture is the cover</span><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{previews.length} / {MAX_LISTING_IMAGES}</span></div><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{previews.map((preview, index) => <div key={preview.id} className={`relative aspect-square overflow-hidden rounded-xl border-2 bg-zinc-100 ${index === 0 ? 'border-zinc-950' : 'border-zinc-200'}`}><img src={preview.url} alt={`Selected picture ${index + 1}`} className="h-full w-full object-cover" /><span className="absolute left-1.5 top-1.5 rounded-full bg-zinc-950/80 px-2 py-1 text-[8px] font-black text-white">{index + 1}</span><div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-zinc-950/80 p-1.5"><div className="flex gap-1"><button type="button" disabled={index === 0} onClick={() => movePreview(index, -1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image left">←</button><button type="button" disabled={index === previews.length - 1} onClick={() => movePreview(index, 1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image right">→</button></div><button type="button" onClick={() => removePreview(index)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-white hover:bg-red-500" aria-label="Remove image"><Icon name="close" className="h-3.5 w-3.5" /></button></div></div>)}</div></div>}
   </div>;
 }

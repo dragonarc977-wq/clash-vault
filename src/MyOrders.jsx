@@ -81,7 +81,7 @@ export default function MyOrders() {
             const price = order.amount ?? order.total_amount ?? order.price ?? account.price;
             return <article key={order.id} className="group grid gap-5 rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-200/60 sm:grid-cols-[120px_1fr_auto] sm:items-center sm:p-5">
               <div className="h-32 overflow-hidden rounded-2xl bg-zinc-100 sm:h-28 sm:w-[120px]">
-                {account.image_url ? <img src={account.image_url} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="grid h-full w-full place-items-center text-zinc-400"><PackageIcon /></div>}
+                {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" /> : <div className="grid h-full w-full place-items-center text-zinc-400"><PackageIcon /></div>}
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-3">
