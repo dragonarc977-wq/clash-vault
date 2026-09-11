@@ -13,6 +13,7 @@ const ArrowIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColo
 
 export default function ProfileDropdown({ user, onLogout }) {
   const [open, setOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const [publicId, setPublicId] = useState(null);
   const navigate = useNavigate();
   const avatarLetter = user?.email?.charAt(0).toUpperCase() || 'U';
@@ -33,10 +34,14 @@ export default function ProfileDropdown({ user, onLogout }) {
   }, [user?.id]);
 
   useEffect(() => {
-    const onEscape = (event) => { if (event.key === 'Escape') setOpen(false); };
+    const onEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      if (confirmLogout) setConfirmLogout(false);
+      else setOpen(false);
+    };
     document.addEventListener('keydown', onEscape);
     return () => document.removeEventListener('keydown', onEscape);
-  }, []);
+  }, [confirmLogout]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -64,8 +69,19 @@ export default function ProfileDropdown({ user, onLogout }) {
           <button onClick={() => goTo('/support')} className={itemClass}><span className="text-zinc-500"><TicketIcon /></span><span className="flex-1">Ticket</span><span className="text-zinc-400"><ArrowIcon /></span></button>
           <button onClick={() => goTo('/become-a-seller')} className={itemClass}><span className="text-zinc-500"><StoreIcon /></span><span className="flex-1">Sell on ClashVault</span><span className="text-zinc-400"><ArrowIcon /></span></button>
         </div>
-        <div className="shrink-0 border-t border-zinc-200 pt-3 pb-[env(safe-area-inset-bottom)]"><button onClick={() => { setOpen(false); onLogout(); }} className="flex w-full items-center gap-4 rounded-xl px-3 py-3.5 text-left text-[15px] font-bold text-red-600 transition hover:bg-red-50"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14 8l4 4-4 4M18 12H7m4 8H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" /></svg>Log out</button></div>
+        <div className="shrink-0 border-t border-zinc-200 pt-3 pb-[env(safe-area-inset-bottom)]"><button onClick={() => setConfirmLogout(true)} className="flex w-full items-center gap-4 rounded-xl px-3 py-3.5 text-left text-[15px] font-bold text-red-600 transition hover:bg-red-50"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14 8l4 4-4 4M18 12H7m4 8H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" /></svg>Log out</button></div>
       </aside>
+      {confirmLogout && <div className="absolute inset-0 z-20 grid place-items-center bg-zinc-950/45 px-5 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-labelledby="logout-title">
+        <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl sm:p-7">
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-red-50 text-red-600"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14 8l4 4-4 4M18 12H7m4 8H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" /></svg></div>
+          <h2 id="logout-title" className="mt-5 text-2xl font-black tracking-tight text-zinc-950">Log out?</h2>
+          <p className="mt-2 text-sm leading-6 text-zinc-500">Are you sure you want to log out of your account?</p>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button onClick={() => setConfirmLogout(false)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm font-bold text-zinc-800 transition hover:bg-zinc-50">No</button>
+            <button onClick={() => { setConfirmLogout(false); setOpen(false); onLogout(); }} className="rounded-xl bg-zinc-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-600">Yes</button>
+          </div>
+        </div>
+      </div>}
     </div>, document.body)}
   </div>;
 }
