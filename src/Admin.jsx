@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import supabase from './lib/supabase';
 import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from './lib/imageProcessing';
 import AdminSupport from './pages/AdminSupport';
+import AdminSellers from './pages/AdminSellers';
 const games = [
   ['clash-of-clans', 'Clash of Clans'], ['brawl-stars', 'Brawl Stars'], ['valorant', 'Valorant'],
   ['clash-royale', 'Clash Royale'], ['fortnite', 'Fortnite'], ['pokemon-go', 'Pokémon GO'],
@@ -16,6 +17,7 @@ const Icon = ({ name, className = 'h-5 w-5' }) => {
     orders: <><path d="M5 4h14v16H5z" /><path d="M8 9h8M8 13h8M8 17h5" /></>,
     customers: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.2a4 4 0 0 1 0 7.6" /></>,
     support: <path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" />,
+    sellers: <><path d="M4 10h16M5 10l1-5h12l1 5v9H5v-9Z" /><path d="M9 14h6" /></>,
     revenue: <><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>,
     search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
     plus: <path d="M12 5v14M5 12h14" />,
@@ -162,6 +164,8 @@ export default function Admin() {
     }
 
     const payload = {
+      seller_id: admin.id,
+      moderation_status: 'approved',
       game_id: form.game.value,
       town_hall: Number(form.level.value),
       builder_hall: Number(form.builderHall.value) || null,
@@ -206,7 +210,8 @@ export default function Admin() {
   }
 
   async function markDelivered(orderId) {
-    const { error } = await supabase.from('orders').update({ status: 'delivered' }).eq('id', orderId);
+    const sellerAvailableAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { error } = await supabase.from('orders').update({ status: 'delivered', seller_available_at: sellerAvailableAt }).eq('id', orderId);
     if (error) setNotice(`Could not update order: ${error.message}`);
     else fetchData();
   }
@@ -272,7 +277,7 @@ export default function Admin() {
   if (authorized === false) return <main className="grid min-h-screen place-items-center bg-zinc-50 px-5"><div className="max-w-md rounded-3xl border border-zinc-200 bg-white p-9 text-center shadow-sm"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-red-50 text-red-600"><Icon name="customers" /></span><h1 className="mt-5 text-2xl font-black">Admin access required</h1><p className="mt-2 text-sm leading-6 text-zinc-500">This account is not authorized to open ClashVault administration.</p><Link to="/" className="mt-6 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Return home</Link></div></main>;
 
   const navItems = [
-    ['overview', 'Overview', 'overview'], ['inventory-editor', 'Inventory', 'inventory'], ['orders', 'Orders', 'orders'], ['customers', 'Customers', 'customers'], ['support', 'Support', 'support'],
+    ['overview', 'Overview', 'overview'], ['inventory-editor', 'Inventory', 'inventory'], ['orders', 'Orders', 'orders'], ['sellers', 'Sellers', 'sellers'], ['customers', 'Customers', 'customers'], ['support', 'Support', 'support'],
   ];
   const navClass = (tab) => `flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition ${activeTab === tab ? 'bg-zinc-950 text-white shadow-lg' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950'}`;
 
@@ -311,6 +316,8 @@ export default function Admin() {
         {activeTab === 'orders' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="border-b border-zinc-100 p-5 sm:p-6"><h2 className="text-xl font-black">All orders</h2><p className="mt-1 text-sm text-zinc-500">Review payments and complete delivery.</p></div><AdminTableLoading loading={loading} />{!loading && <div className="overflow-x-auto"><table className="w-full min-w-[820px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Order</th><th className="px-5 py-4">Buyer</th><th className="px-5 py-4">Game</th><th className="px-5 py-4">Amount</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Date</th><th className="px-6 py-4 text-right">Action</th></tr></thead><tbody className="divide-y divide-zinc-100">{orders.map((order) => <tr key={order.id} className="transition hover:bg-zinc-50"><td className="px-6 py-4 font-mono text-xs font-bold text-zinc-500">#{order.id.slice(0, 8).toUpperCase()}</td><td className="max-w-52 truncate px-5 py-4 text-sm font-semibold">{order.buyer_email || '—'}</td><td className="px-5 py-4 text-sm text-zinc-600">{gameName(order.accounts?.game_id)}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(order.amount)}</td><td className="px-5 py-4"><StatusBadge status={order.status} /></td><td className="px-5 py-4 text-sm text-zinc-500">{formatDate(order.created_at)}</td><td className="px-6 py-4 text-right">{order.status === 'paid' ? <button onClick={() => markDelivered(order.id)} className="rounded-full bg-zinc-950 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-600">Mark delivered</button> : <span className="text-xs text-zinc-400">No action</span>}</td></tr>)}</tbody></table>{orders.length === 0 && <EmptyState icon="orders" title="No orders yet" text="New purchases will appear here." />}</div>}</section>}
 
         {activeTab === 'customers' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="border-b border-zinc-100 p-5 sm:p-6"><h2 className="text-xl font-black">Customers</h2><p className="mt-1 text-sm text-zinc-500">Buyer activity derived from marketplace orders.</p></div><div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Buyer</th><th className="px-5 py-4">Orders</th><th className="px-5 py-4">Total spent</th><th className="px-6 py-4">Last order</th></tr></thead><tbody className="divide-y divide-zinc-100">{customers.map((customer) => <tr key={customer.email} className="hover:bg-zinc-50"><td className="px-6 py-4"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-950 text-sm font-black text-white">{customer.email.charAt(0).toUpperCase()}</span><span className="text-sm font-bold">{customer.email}</span></div></td><td className="px-5 py-4 text-sm font-black">{customer.orders}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(customer.spent)}</td><td className="px-6 py-4 text-sm text-zinc-500">{formatDate(customer.lastOrder)}</td></tr>)}</tbody></table>{customers.length === 0 && <EmptyState icon="customers" title="No customers yet" text="Buyers will appear after their first order." />}</div></section>}
+
+        {activeTab === 'sellers' && <AdminSellers />}
 
         {activeTab === 'support' && <AdminSupport />}
       </div>

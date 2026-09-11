@@ -18,6 +18,7 @@ export default function AccountDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [account, setAccount] = useState(null);
+  const [seller, setSeller] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [checkingOut, setCheckingOut] = useState(false);
@@ -29,6 +30,10 @@ export default function AccountDetail() {
       const { data } = await supabase.from('accounts').select('*').eq('id', id).eq('status', 'available').maybeSingle();
       if (!active) return;
       setAccount(data);
+      if (data?.seller_id) {
+        const { data: sellerData } = await supabase.from('public_sellers').select('*').eq('user_id', data.seller_id).maybeSingle();
+        if (active) setSeller(sellerData);
+      }
       setActiveImage(0);
       setLoading(false);
     };
@@ -119,6 +124,8 @@ export default function AccountDetail() {
           <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#8b6100]">{gameName}</span><span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />Available</span></div>
           <h1 className="mt-5 text-3xl font-black tracking-[-0.045em] sm:text-5xl">{title}</h1>
           <p className="mt-4 text-sm leading-7 text-zinc-500 sm:text-base">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+
+          {seller && <div className="mt-6 flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-sm font-black text-white">{seller.display_name.charAt(0).toUpperCase()}</span><div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400">Sold by</p><p className="mt-0.5 font-black">{seller.display_name} <span className="ml-1 text-xs text-emerald-600">✓ Verified seller</span></p></div></div>}
 
           <div className="mt-7 rounded-3xl border border-zinc-200 bg-zinc-50 p-6 sm:p-7"><p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Price</p><div className="mt-2 flex flex-wrap items-baseline gap-3"><span className="text-4xl font-black tracking-[-0.04em] sm:text-5xl">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-lg text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div><div className="mt-5 flex flex-wrap gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-xs font-bold text-emerald-700 ring-1 ring-zinc-200"><ShieldIcon />Secure checkout</span><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-xs font-bold text-zinc-700 ring-1 ring-zinc-200"><CheckIcon />Reviewed listing</span></div></div>
 
