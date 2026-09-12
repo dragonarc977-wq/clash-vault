@@ -9,6 +9,11 @@ const games = [
   ['clash-royale', 'Clash Royale'], ['fortnite', 'Fortnite'], ['pokemon-go', 'Pokémon GO'],
   ['mobile-legends', 'Mobile Legends'], ['free-fire', 'Free Fire'], ['hay-day', 'Hay Day'], ['squad-busters', 'Squad Busters'],
 ];
+const listingTypes = [['account', 'Account'], ['item', 'Item'], ['service', 'Service']];
+const platforms = ['Mobile', 'PC', 'PlayStation', 'Xbox', 'Nintendo Switch', 'Cross-platform'];
+const regions = ['Global', 'India', 'Asia', 'Europe', 'North America', 'South America', 'Middle East'];
+const itemCategories = ['Currency', 'Top-up', 'Skin', 'Weapon', 'Card', 'Chest', 'Boost', 'Other'];
+const serviceCategories = ['Rank boost', 'Coaching', 'Quest completion', 'Farming', 'Account setup', 'Other'];
 
 const Icon = ({ name, className = 'h-5 w-5' }) => {
   const paths = {
@@ -65,11 +70,13 @@ export default function Admin() {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [addListingType, setAddListingType] = useState('account');
   const [editingAccount, setEditingAccount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [gameFilter, setGameFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [notice, setNotice] = useState('');
 
@@ -126,8 +133,8 @@ export default function Admin() {
   const pendingOrders = orders.filter((order) => order.status === 'paid').length;
   const filteredAccounts = accounts.filter((account) => {
     const query = searchQuery.trim().toLowerCase();
-    const matchesSearch = !query || [account.title, account.game_id, account.town_hall, account.price, account.status].some((value) => String(value || '').toLowerCase().includes(query));
-    return matchesSearch && (gameFilter === 'all' || account.game_id === gameFilter) && (statusFilter === 'all' || account.status === statusFilter);
+    const matchesSearch = !query || [account.title, account.game_id, account.listing_type, account.town_hall, account.price, account.status, ...Object.values(account.attributes || {})].some((value) => String(value || '').toLowerCase().includes(query));
+    return matchesSearch && (gameFilter === 'all' || account.game_id === gameFilter) && (typeFilter === 'all' || (account.listing_type || 'account') === typeFilter) && (statusFilter === 'all' || account.status === statusFilter);
   });
 
   async function addAccount(event) {
@@ -163,23 +170,34 @@ export default function Admin() {
       }
     }
 
+    const value = (name) => form.elements.namedItem(name)?.value?.trim() || '';
+    const deliveryMethod = addListingType === 'service' ? 'scheduled' : value('deliveryMethod');
+    const attributes = addListingType === 'account'
+      ? { level: Number(value('level')) || null, rank: value('rank') || null, access: value('access') || null, features: value('features') || null }
+      : addListingType === 'item'
+        ? { item_name: value('itemName'), item_category: value('itemCategory'), quantity: Number(value('quantity')) || 1 }
+        : { service_name: value('serviceName'), service_category: value('serviceCategory'), estimated_days: Number(value('estimatedDays')) || 1, requirements: value('requirements') || null };
     const payload = {
       seller_id: admin.id,
       moderation_status: 'approved',
-      game_id: form.game.value,
-      town_hall: Number(form.level.value),
-      builder_hall: Number(form.builderHall.value) || null,
-      exp_level: Number(form.expLevel.value) || null,
-      gems: Number(form.currencyAmount.value) || null,
-      heroes_level: form.features.value || null,
-      walls_level: form.secondaryLevel.value || null,
-      price: Number(form.price.value),
-      original_price: Number(form.originalPrice.value) || null,
+      game_id: value('game'),
+      title: value('title'),
+      listing_type: addListingType,
+      delivery_method: deliveryMethod,
+      platform: value('platform') || null,
+      region: value('region') || null,
+      attributes,
+      town_hall: addListingType === 'account' ? Number(value('level')) || null : null,
+      heroes_level: addListingType === 'account' ? value('features') || null : null,
+      full_email_access: addListingType === 'account' ? value('access') === 'Full email access' : false,
+      instant_delivery: deliveryMethod === 'instant',
+      price: Number(value('price')),
+      original_price: Number(value('originalPrice')) || null,
       image_url: imageUrls[0],
       image_urls: imageUrls,
       thumbnail_url: thumbnailUrls[0],
       thumbnail_urls: thumbnailUrls,
-      description: form.description.value || null,
+      description: value('description') || null,
       status: 'available',
     };
     const { error } = await supabase.from('accounts').insert(payload);
@@ -190,6 +208,7 @@ export default function Admin() {
       return;
     }
     form.reset();
+    setAddListingType('account');
     setShowAddModal(false);
     setNotice('Listing added successfully.');
     fetchData();
@@ -302,7 +321,7 @@ export default function Admin() {
           </div>
         </>}
 
-        {activeTab === 'inventory-editor' && <InventoryManager accounts={filteredAccounts} total={accounts.length} loading={loading} searchQuery={searchQuery} setSearchQuery={setSearchQuery} gameFilter={gameFilter} setGameFilter={setGameFilter} statusFilter={statusFilter} setStatusFilter={setStatusFilter} onEdit={setEditingAccount} onDelete={deleteAccount} />}
+        {activeTab === 'inventory-editor' && <InventoryManager accounts={filteredAccounts} total={accounts.length} loading={loading} searchQuery={searchQuery} setSearchQuery={setSearchQuery} gameFilter={gameFilter} setGameFilter={setGameFilter} typeFilter={typeFilter} setTypeFilter={setTypeFilter} statusFilter={statusFilter} setStatusFilter={setStatusFilter} onEdit={setEditingAccount} onDelete={deleteAccount} />}
 
         {activeTab === 'inventory' && <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm"><div className="flex flex-col gap-4 border-b border-zinc-100 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"><div><h2 className="text-xl font-black">All listings</h2><p className="mt-1 text-sm text-zinc-500">{filteredAccounts.length} results</p></div><div className="flex flex-col gap-2 sm:flex-row"><label className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3"><span className="text-zinc-400"><Icon name="search" className="h-4 w-4" /></span><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search inventory" className="min-w-0 bg-transparent text-sm outline-none" /></label><select value={gameFilter} onChange={(event) => setGameFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All games</option>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All status</option><option value="available">Available</option><option value="sold">Sold</option></select></div></div><AdminTableLoading loading={loading} />{!loading && <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left"><thead><tr className="border-b border-zinc-100 text-[10px] font-black uppercase tracking-wider text-zinc-400"><th className="px-6 py-4">Listing</th><th className="px-5 py-4">Game</th><th className="px-5 py-4">Price</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Added</th><th className="px-6 py-4 text-right">Action</th></tr></thead><tbody className="divide-y divide-zinc-100">{filteredAccounts.map((account) => <tr key={account.id} className="transition hover:bg-zinc-50"><td className="px-6 py-4"><div className="flex items-center gap-3"><span className="h-12 w-12 overflow-hidden rounded-xl bg-zinc-100">{account.image_url && <img src={account.image_url} alt="" className="h-full w-full object-cover" />}</span><div><p className="text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()}</p></div></div></td><td className="px-5 py-4 text-sm font-semibold text-zinc-600">{gameName(account.game_id)}</td><td className="px-5 py-4 text-sm font-black">{formatCurrency(account.price)}</td><td className="px-5 py-4"><StatusBadge status={account.status} /></td><td className="px-5 py-4 text-sm text-zinc-500">{formatDate(account.created_at)}</td><td className="px-6 py-4 text-right"><button onClick={() => deleteAccount(account.id)} className="rounded-xl p-2.5 text-zinc-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Delete listing"><Icon name="trash" className="h-4 w-4" /></button></td></tr>)}</tbody></table>{filteredAccounts.length === 0 && <EmptyState icon="inventory" title="No listings found" text={searchQuery ? 'Try a different search.' : 'Add your first marketplace listing.'} />}</div>}</section>}
 
@@ -318,18 +337,60 @@ export default function Admin() {
 
     {editingAccount && <EditListingModal key={editingAccount.id} account={editingAccount} saving={saving} onClose={() => setEditingAccount(null)} onSave={saveAccountEdits} />}
 
-    {showAddModal && <div className="fixed inset-0 z-[3000] grid place-items-center overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={() => setShowAddModal(false)}><form onSubmit={addAccount} onMouseDown={(event) => event.stopPropagation()} className="relative my-8 w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"><button type="button" onClick={() => setShowAddModal(false)} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">New inventory</p><h2 className="mt-2 text-2xl font-black">Add marketplace listing</h2><p className="mt-2 text-sm text-zinc-500">Create an available listing for any supported game.</p><div className="mt-7 grid gap-5 sm:grid-cols-2"><AdminField label="Game"><select name="game" required className="input">{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></AdminField><AdminField label="Primary level *"><input name="level" type="number" min="1" required placeholder="Example: 17" className="input" /></AdminField><AdminField label="Builder / secondary level"><input name="builderHall" type="number" min="1" placeholder="Optional" className="input" /></AdminField><AdminField label="Experience level"><input name="expLevel" type="number" min="1" placeholder="Optional" className="input" /></AdminField><AdminField label="Price (₹) *"><input name="price" type="number" min="1" required placeholder="2999" className="input" /></AdminField><AdminField label="Original price (₹)"><input name="originalPrice" type="number" min="1" placeholder="4999" className="input" /></AdminField><AdminField label="Currency / gems amount"><input name="currencyAmount" type="number" min="0" placeholder="Optional" className="input" /></AdminField><AdminField label="Secondary level"><input name="secondaryLevel" placeholder="Optional" className="input" /></AdminField><AdminField label="Features"><input name="features" placeholder="Ranks, heroes, skins..." className="input" /></AdminField><AdminField label="Image URL"><input name="image" type="url" placeholder="https://..." className="input" /></AdminField></div><AdminField label="Description" className="mt-5"><textarea name="description" rows="4" placeholder="Describe the listing clearly..." className="input resize-none" /></AdminField><div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={() => setShowAddModal(false)} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white hover:bg-[#b77e00] disabled:opacity-60">{saving ? 'Adding…' : 'Add listing'}</button></div></form></div>}
+    {showAddModal && <AddListingModal listingType={addListingType} setListingType={setAddListingType} saving={saving} onClose={() => setShowAddModal(false)} onSubmit={addAccount} />}
   </div>;
 }
 
-function InventoryManager({ accounts, total, loading, searchQuery, setSearchQuery, gameFilter, setGameFilter, statusFilter, setStatusFilter, onEdit, onDelete }) {
+function AddListingModal({ listingType, setListingType, saving, onClose, onSubmit }) {
+  return <div className="fixed inset-0 z-[3000] overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={onClose}>
+    <form onSubmit={onSubmit} onMouseDown={(event) => event.stopPropagation()} className="relative mx-auto my-8 w-full max-w-3xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+      <button type="button" onClick={onClose} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button>
+      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">New inventory</p>
+      <h2 className="mt-2 text-2xl font-black">Add marketplace listing</h2>
+      <p className="mt-2 text-sm text-zinc-500">Choose a product type to see its relevant information and delivery options.</p>
+      <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl bg-zinc-100 p-1.5">{listingTypes.map(([value, label]) => <button key={value} type="button" onClick={() => setListingType(value)} className={`rounded-xl px-3 py-3 text-sm font-black transition ${listingType === value ? 'bg-zinc-950 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-950'}`}>{label}</button>)}</div>
+      <div className="mt-7 grid gap-5 sm:grid-cols-2">
+        <AdminField label="Game"><select name="game" required>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></AdminField>
+        <AdminField label="Listing title *"><input name="title" required placeholder={listingType === 'account' ? 'Example: TH15 Maxed Account' : listingType === 'item' ? 'Example: 1,000 Diamonds' : 'Example: Rank Boost to Diamond'} /></AdminField>
+        <AdminField label="Platform"><select name="platform"><option value="">Any platform</option>{platforms.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
+        <AdminField label="Region"><select name="region"><option value="">Any region</option>{regions.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
+        {listingType === 'account' && <>
+          <AdminField label="Primary level *"><input name="level" type="number" min="1" required placeholder="Example: 15" /></AdminField>
+          <AdminField label="Rank"><input name="rank" placeholder="Example: Legendary" /></AdminField>
+          <AdminField label="Account access"><select name="access"><option>Full email access</option><option>Login details only</option><option>Transfer assistance</option></select></AdminField>
+          <AdminField label="Features"><input name="features" placeholder="Heroes, skins, rare items..." /></AdminField>
+        </>}
+        {listingType === 'item' && <>
+          <AdminField label="Item name *"><input name="itemName" required placeholder="Example: Diamonds" /></AdminField>
+          <AdminField label="Item category *"><select name="itemCategory" required>{itemCategories.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
+          <AdminField label="Quantity *"><input name="quantity" type="number" min="1" defaultValue="1" required /></AdminField>
+        </>}
+        {listingType === 'service' && <>
+          <AdminField label="Service name *"><input name="serviceName" required placeholder="Example: Rank boost" /></AdminField>
+          <AdminField label="Service category *"><select name="serviceCategory" required>{serviceCategories.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
+          <AdminField label="Estimated completion (days) *"><input name="estimatedDays" type="number" min="1" defaultValue="1" required /></AdminField>
+          <AdminField label="Buyer requirements"><input name="requirements" placeholder="Details needed from buyer" /></AdminField>
+        </>}
+        {listingType !== 'service' && <AdminField label="Delivery method *"><select name="deliveryMethod" required><option value="seller_delivery">Seller delivery</option><option value="instant">Instant delivery</option></select></AdminField>}
+        {listingType === 'service' && <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-xs font-semibold leading-5 text-blue-800">Services use scheduled delivery. The seller submits completion details after finishing the work.</div>}
+        <AdminField label="Price (₹) *"><input name="price" type="number" min="1" required placeholder="2999" /></AdminField>
+        <AdminField label="Original price (₹)"><input name="originalPrice" type="number" min="1" placeholder="Optional" /></AdminField>
+        <AdminField label="Image URL"><input name="image" /></AdminField>
+      </div>
+      <AdminField label="Description" className="mt-5"><textarea name="description" rows="4" placeholder="Describe exactly what the buyer receives." /></AdminField>
+      <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={onClose} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white disabled:opacity-60">{saving ? 'Adding…' : `Add ${listingType}`}</button></div>
+    </form>
+  </div>;
+}
+
+function InventoryManager({ accounts, total, loading, searchQuery, setSearchQuery, gameFilter, setGameFilter, typeFilter, setTypeFilter, statusFilter, setStatusFilter, onEdit, onDelete }) {
   return <section className="rounded-3xl border border-zinc-200 bg-white shadow-sm">
-    <div className="flex flex-col gap-4 border-b border-zinc-100 p-5 sm:p-6 xl:flex-row xl:items-center xl:justify-between"><div><h2 className="text-xl font-black">All listings</h2><p className="mt-1 text-sm text-zinc-500">{accounts.length} of {total} listings</p></div><div className="grid gap-2 sm:grid-cols-3"><label className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3"><span className="text-zinc-400"><Icon name="search" className="h-4 w-4" /></span><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search inventory" className="min-w-0 bg-transparent text-sm outline-none" /></label><select value={gameFilter} onChange={(event) => setGameFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All games</option>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All status</option><option value="available">Available</option><option value="sold">Sold</option></select></div></div>
+    <div className="flex flex-col gap-4 border-b border-zinc-100 p-5 sm:p-6 xl:flex-row xl:items-center xl:justify-between"><div><h2 className="text-xl font-black">All listings</h2><p className="mt-1 text-sm text-zinc-500">{accounts.length} of {total} listings</p></div><div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4"><label className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3"><span className="text-zinc-400"><Icon name="search" className="h-4 w-4" /></span><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search inventory" className="min-w-0 bg-transparent text-sm outline-none" /></label><select value={gameFilter} onChange={(event) => setGameFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All games</option>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select><select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All types</option>{listingTypes.map(([value, label]) => <option key={value} value={value}>{label}s</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none"><option value="all">All status</option><option value="available">Available</option><option value="sold">Sold</option></select></div></div>
     <AdminTableLoading loading={loading} />
     {!loading && <>{accounts.length ? <div className="divide-y divide-zinc-100">{accounts.map((account) => {
       const imageCount = account.image_urls?.length || (account.image_url ? 1 : 0);
       return <div key={account.id} className="grid gap-4 p-5 transition hover:bg-zinc-50 sm:grid-cols-[minmax(220px,1.5fr)_1fr_0.7fr_0.7fr_auto] sm:items-center sm:px-6">
-        <div className="flex min-w-0 items-center gap-3"><span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100">{(account.thumbnail_url || account.image_url) && <img src={account.thumbnail_url || account.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />}{imageCount > 1 && <span className="absolute bottom-1 right-1 rounded-full bg-zinc-950 px-1.5 py-0.5 text-[8px] font-black text-white">+{imageCount - 1}</span>}</span><div className="min-w-0"><p className="truncate text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()} · {imageCount} image{imageCount === 1 ? '' : 's'}</p></div></div>
+        <div className="flex min-w-0 items-center gap-3"><span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100">{(account.thumbnail_url || account.image_url) && <img src={account.thumbnail_url || account.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />}{imageCount > 1 && <span className="absolute bottom-1 right-1 rounded-full bg-zinc-950 px-1.5 py-0.5 text-[8px] font-black text-white">+{imageCount - 1}</span>}</span><div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-sm font-black">{account.title || `Level ${account.town_hall || '?'} Account`}</p><span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[8px] font-black uppercase text-zinc-500">{account.listing_type || 'account'}</span></div><p className="mt-1 text-xs text-zinc-400">#{String(account.id).slice(0, 8).toUpperCase()} · {imageCount} image{imageCount === 1 ? '' : 's'}</p></div></div>
         <div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400 sm:hidden">Game</p><p className="mt-1 text-sm font-semibold text-zinc-600 sm:mt-0">{gameName(account.game_id)}</p></div>
         <div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400 sm:hidden">Price</p><p className="mt-1 text-sm font-black sm:mt-0">{formatCurrency(account.price)}</p></div>
         <div><StatusBadge status={account.status} /></div>
@@ -344,6 +405,7 @@ function EditListingModal({ account, saving, onClose, onSave }) {
   const existingThumbnails = Array.isArray(account.thumbnail_urls) ? account.thumbnail_urls : [];
   const [gallery, setGallery] = useState(existingImages.map((url, index) => ({ id: url, type: 'existing', url, thumbnail: existingThumbnails[index] || url, preview: existingThumbnails[index] || url })));
   const [error, setError] = useState('');
+  const [listingType, setListingType] = useState(account.listing_type || 'account');
   const inputClass = 'min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100';
 
   function addPictures(event) {
@@ -384,21 +446,32 @@ function EditListingModal({ account, saving, onClose, onSave }) {
       return;
     }
     const form = event.currentTarget;
+    const value = (name) => form.elements.namedItem(name)?.value?.trim() || '';
+    const deliveryMethod = listingType === 'service' ? 'scheduled' : value('deliveryMethod');
+    const attributes = listingType === 'account'
+      ? { level: Number(value('level')) || null, rank: value('rank') || null, access: value('access') || null, features: value('features') || null }
+      : listingType === 'item'
+        ? { item_name: value('itemName'), item_category: value('itemCategory'), quantity: Number(value('quantity')) || 1 }
+        : { service_name: value('serviceName'), service_category: value('serviceCategory'), estimated_days: Number(value('estimatedDays')) || 1, requirements: value('requirements') || null };
     await onSave({
       account,
       gallery,
       fields: {
-        game_id: form.game.value,
-        town_hall: Number(form.level.value),
-        builder_hall: Number(form.builderHall.value) || null,
-        exp_level: Number(form.expLevel.value) || null,
-        gems: Number(form.currencyAmount.value) || null,
-        heroes_level: form.features.value || null,
-        walls_level: form.secondaryLevel.value || null,
-        price: Number(form.price.value),
-        original_price: Number(form.originalPrice.value) || null,
-        description: form.description.value || null,
-        status: form.status.value,
+        game_id: value('game'),
+        title: value('title'),
+        listing_type: listingType,
+        delivery_method: deliveryMethod,
+        platform: value('platform') || null,
+        region: value('region') || null,
+        attributes,
+        town_hall: listingType === 'account' ? Number(value('level')) || null : null,
+        heroes_level: listingType === 'account' ? value('features') || null : null,
+        full_email_access: listingType === 'account' ? value('access') === 'Full email access' : false,
+        instant_delivery: deliveryMethod === 'instant',
+        price: Number(value('price')),
+        original_price: Number(value('originalPrice')) || null,
+        description: value('description') || null,
+        status: value('status'),
       },
     });
   }
@@ -406,7 +479,41 @@ function EditListingModal({ account, saving, onClose, onSave }) {
   return <div className="fixed inset-0 z-[3100] overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={onClose}><form onSubmit={submit} onMouseDown={(event) => event.stopPropagation()} className="relative mx-auto my-8 w-full max-w-3xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"><button type="button" onClick={onClose} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">Inventory editor</p><h2 className="mt-2 text-2xl font-black">Edit listing</h2><p className="mt-2 text-sm text-zinc-500">Update listing information and manage its complete image gallery.</p>
     {error && <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-bold text-red-700">{error}</p>}
     <div className="mt-7"><div className="flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-700">Listing pictures</p><p className="mt-1 text-[10px] text-zinc-400">Use the arrows to set the buyer gallery order. Picture 1 is the cover.</p></div><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{gallery.length} / {MAX_LISTING_IMAGES}</span></div>{gallery.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{gallery.map((image, index) => <div key={image.id} className={`relative aspect-square overflow-hidden rounded-2xl border-2 bg-zinc-100 ${index === 0 ? 'border-zinc-950' : 'border-zinc-200'}`}><img src={image.preview} alt={`Listing picture ${index + 1}`} className="h-full w-full object-cover" /><span className="absolute left-2 top-2 rounded-full bg-zinc-950/80 px-2 py-1 text-[8px] font-black text-white">{index + 1}</span><div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-zinc-950/80 p-2 backdrop-blur"><div className="flex gap-1"><button type="button" disabled={index === 0} onClick={() => moveImage(index, -1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image left">←</button><button type="button" disabled={index === gallery.length - 1} onClick={() => moveImage(index, 1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image right">→</button></div>{index > 0 && <button type="button" onClick={() => makeCover(index)} className="text-[8px] font-black uppercase text-white">Cover</button>}<button type="button" onClick={() => setGallery((current) => current.filter((item) => item.id !== image.id))} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-white hover:bg-red-500" aria-label="Remove image"><Icon name="close" className="h-3.5 w-3.5" /></button></div></div>)}</div>}<label className="mt-3 flex min-h-20 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 text-center transition hover:border-zinc-950 hover:bg-white"><span><span className="text-sm font-black">+ Add more pictures</span><span className="mt-1 block text-[10px] text-zinc-400">JPG, PNG or WebP · up to 12 MB · automatically optimized</span></span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addPictures} className="sr-only" /></label></div>
-    <div className="mt-7 grid gap-5 sm:grid-cols-2"><label><span className="mb-2 block text-xs font-bold">Game</span><select name="game" defaultValue={account.game_id || 'clash-of-clans'} className={inputClass}>{games.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label><label><span className="mb-2 block text-xs font-bold">Status</span><select name="status" defaultValue={account.status || 'available'} className={inputClass}><option value="available">Available</option><option value="sold">Sold</option></select></label><label><span className="mb-2 block text-xs font-bold">Primary level *</span><input name="level" type="number" min="1" required defaultValue={account.town_hall || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Builder / secondary level</span><input name="builderHall" type="number" min="1" defaultValue={account.builder_hall || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Experience level</span><input name="expLevel" type="number" min="1" defaultValue={account.exp_level || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Currency / gems</span><input name="currencyAmount" type="number" min="0" defaultValue={account.gems || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Price (₹) *</span><input name="price" type="number" min="1" required defaultValue={account.price || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Original price (₹)</span><input name="originalPrice" type="number" min="1" defaultValue={account.original_price || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Features</span><input name="features" defaultValue={account.heroes_level || ''} className={inputClass} /></label><label><span className="mb-2 block text-xs font-bold">Secondary level</span><input name="secondaryLevel" defaultValue={account.walls_level || ''} className={inputClass} /></label></div><label className="mt-5 block"><span className="mb-2 block text-xs font-bold">Description</span><textarea name="description" rows="4" defaultValue={account.description || ''} className={`${inputClass} resize-none`} /></label><div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={onClose} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white hover:bg-[#b77e00] disabled:opacity-60">{saving ? 'Saving…' : 'Save changes'}</button></div></form></div>;
+    <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl bg-zinc-100 p-1.5">{listingTypes.map(([value, label]) => <button key={value} type="button" onClick={() => setListingType(value)} className={`rounded-xl px-3 py-3 text-sm font-black transition ${listingType === value ? 'bg-zinc-950 text-white shadow-sm' : 'text-zinc-500'}`}>{label}</button>)}</div>
+    <div className="mt-7 grid gap-5 sm:grid-cols-2">
+      <EditField label="Game" inputClass={inputClass}><select name="game" defaultValue={account.game_id || 'clash-of-clans'}>{games.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></EditField>
+      <EditField label="Status" inputClass={inputClass}><select name="status" defaultValue={account.status || 'available'}><option value="available">Available</option><option value="sold">Sold</option></select></EditField>
+      <EditField label="Listing title *" inputClass={inputClass}><input name="title" required defaultValue={account.title || ''} /></EditField>
+      <EditField label="Platform" inputClass={inputClass}><select name="platform" defaultValue={account.platform || ''}><option value="">Any platform</option>{platforms.map((value) => <option key={value}>{value}</option>)}</select></EditField>
+      <EditField label="Region" inputClass={inputClass}><select name="region" defaultValue={account.region || ''}><option value="">Any region</option>{regions.map((value) => <option key={value}>{value}</option>)}</select></EditField>
+      {listingType === 'account' && <>
+        <EditField label="Primary level *" inputClass={inputClass}><input name="level" type="number" min="1" required defaultValue={account.attributes?.level || account.town_hall || ''} /></EditField>
+        <EditField label="Rank" inputClass={inputClass}><input name="rank" defaultValue={account.attributes?.rank || ''} /></EditField>
+        <EditField label="Account access" inputClass={inputClass}><select name="access" defaultValue={account.attributes?.access || (account.full_email_access ? 'Full email access' : 'Login details only')}><option>Full email access</option><option>Login details only</option><option>Transfer assistance</option></select></EditField>
+        <EditField label="Features" inputClass={inputClass}><input name="features" defaultValue={account.attributes?.features || account.heroes_level || ''} /></EditField>
+      </>}
+      {listingType === 'item' && <>
+        <EditField label="Item name *" inputClass={inputClass}><input name="itemName" required defaultValue={account.attributes?.item_name || ''} /></EditField>
+        <EditField label="Item category *" inputClass={inputClass}><select name="itemCategory" required defaultValue={account.attributes?.item_category || 'Currency'}>{itemCategories.map((value) => <option key={value}>{value}</option>)}</select></EditField>
+        <EditField label="Quantity *" inputClass={inputClass}><input name="quantity" type="number" min="1" required defaultValue={account.attributes?.quantity || 1} /></EditField>
+      </>}
+      {listingType === 'service' && <>
+        <EditField label="Service name *" inputClass={inputClass}><input name="serviceName" required defaultValue={account.attributes?.service_name || ''} /></EditField>
+        <EditField label="Service category *" inputClass={inputClass}><select name="serviceCategory" required defaultValue={account.attributes?.service_category || 'Rank boost'}>{serviceCategories.map((value) => <option key={value}>{value}</option>)}</select></EditField>
+        <EditField label="Estimated completion (days) *" inputClass={inputClass}><input name="estimatedDays" type="number" min="1" required defaultValue={account.attributes?.estimated_days || 1} /></EditField>
+        <EditField label="Buyer requirements" inputClass={inputClass}><input name="requirements" defaultValue={account.attributes?.requirements || ''} /></EditField>
+      </>}
+      {listingType !== 'service' && <EditField label="Delivery method" inputClass={inputClass}><select name="deliveryMethod" defaultValue={account.delivery_method || 'seller_delivery'}><option value="seller_delivery">Seller delivery</option><option value="instant">Instant delivery</option></select></EditField>}
+      <EditField label="Price (₹) *" inputClass={inputClass}><input name="price" type="number" min="1" required defaultValue={account.price || ''} /></EditField>
+      <EditField label="Original price (₹)" inputClass={inputClass}><input name="originalPrice" type="number" min="1" defaultValue={account.original_price || ''} /></EditField>
+    </div>
+    <label className="mt-5 block"><span className="mb-2 block text-xs font-bold">Description</span><textarea name="description" rows="4" defaultValue={account.description || ''} className={`${inputClass} resize-none`} /></label>
+    <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={onClose} className="rounded-2xl border border-zinc-200 px-6 py-3.5 text-sm font-bold hover:bg-zinc-50">Cancel</button><button disabled={saving} className="rounded-2xl bg-zinc-950 px-7 py-3.5 text-sm font-black text-white disabled:opacity-60">{saving ? 'Saving…' : 'Save changes'}</button></div>
+  </form></div>;
+}
+
+function EditField({ label, inputClass, children }) {
+  return <label><span className="mb-2 block text-xs font-bold">{label}</span>{cloneElement(children, { className: inputClass })}</label>;
 }
 
 function StatusBadge({ status = 'pending' }) {

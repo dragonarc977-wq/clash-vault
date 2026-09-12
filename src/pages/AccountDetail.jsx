@@ -64,11 +64,14 @@ export default function AccountDetail() {
 
   if (loading) return <main className="min-h-screen bg-white px-5 pb-20 pt-28"><div className="mx-auto max-w-7xl animate-pulse"><div className="h-5 w-28 rounded bg-zinc-100" /><div className="mt-8 grid gap-10 lg:grid-cols-[1.15fr_0.85fr]"><div className="h-[560px] rounded-3xl bg-zinc-100" /><div className="h-[520px] rounded-3xl bg-zinc-100" /></div></div></main>;
 
-  if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This account is unavailable.</h1><Link to="/" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
+  if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This listing is unavailable.</h1><Link to="/" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
 
   const gameName = gameNames[account.game_id] || 'Game account';
   const isAvailable = account.status === 'available';
-  const title = account.title || (account.game_id === 'clash-of-clans' && account.town_hall ? `TH${account.town_hall} Maxed Account` : `${gameName} Account`);
+  const listingType = String(account.listing_type || 'account').replace(/s$/, '').toLowerCase();
+  const attributes = account.attributes || {};
+  const typeLabel = listingType.charAt(0).toUpperCase() + listingType.slice(1);
+  const title = account.title || (listingType === 'item' ? attributes.item_name : listingType === 'service' ? attributes.service_name : account.game_id === 'clash-of-clans' && account.town_hall ? `TH${account.town_hall} Maxed Account` : `${gameName} Account`);
   const previousImage = () => setActiveImage((current) => current === 0 ? images.length - 1 : current - 1);
   const nextImage = () => setActiveImage((current) => current === images.length - 1 ? 0 : current + 1);
   const beginCheckout = async () => {
@@ -91,13 +94,17 @@ export default function AccountDetail() {
     }
     navigate(`/checkout/${id}`);
   };
-  const stats = [
-    { label: account.game_id === 'clash-of-clans' ? 'Town Hall' : 'Primary level', value: account.town_hall ? `${account.game_id === 'clash-of-clans' ? 'TH' : ''}${account.town_hall}` : 'High' },
-    { label: 'Secondary level', value: account.builder_hall ? `BH${account.builder_hall}` : account.walls_level || '—' },
-    { label: 'Experience', value: account.exp_level ? `Level ${account.exp_level}` : 'High' },
-    { label: 'Currency / items', value: account.gems ? Number(account.gems).toLocaleString('en-IN') : 'Included' },
-    { label: 'Features', value: account.heroes_level || 'Premium' },
-    { label: 'Delivery', value: account.instant_delivery === false ? 'Manual' : 'Instant' },
+  const deliveryLabel = account.delivery_method === 'scheduled' ? 'Scheduled' : account.delivery_method === 'instant' ? 'Instant' : 'Seller delivery';
+  const stats = listingType === 'item' ? [
+    { label: 'Item', value: attributes.item_name || title }, { label: 'Category', value: attributes.item_category || 'Item' }, { label: 'Quantity', value: attributes.quantity || 1 },
+    { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
+  ] : listingType === 'service' ? [
+    { label: 'Service', value: attributes.service_name || title }, { label: 'Category', value: attributes.service_category || 'Service' }, { label: 'Completion', value: attributes.estimated_days ? `${attributes.estimated_days} day${Number(attributes.estimated_days) === 1 ? '' : 's'}` : 'Agreed with seller' },
+    { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
+  ] : [
+    { label: account.game_id === 'clash-of-clans' ? 'Town Hall' : 'Primary level', value: account.town_hall ? `${account.game_id === 'clash-of-clans' ? 'TH' : ''}${account.town_hall}` : attributes.rank || 'High' },
+    { label: 'Rank', value: attributes.rank || account.walls_level || '—' }, { label: 'Access', value: attributes.access || (account.full_email_access ? 'Full email access' : 'Game login') },
+    { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
   ];
 
   return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
@@ -115,7 +122,7 @@ export default function AccountDetail() {
         </section>
 
         <section className="lg:sticky lg:top-24">
-          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#8b6100]">{gameName}</span><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ${isAvailable ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-zinc-400'}`} />{isAvailable ? 'Available' : 'Purchased'}</span></div>
+          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#8b6100]">{gameName}</span><span className="rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-blue-700">{typeLabel}</span><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ${isAvailable ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-zinc-400'}`} />{isAvailable ? 'Available' : 'Purchased'}</span></div>
           <h1 className="mt-5 text-3xl font-black tracking-[-0.045em] sm:text-5xl">{title}</h1>
           <p className="mt-4 text-sm leading-7 text-zinc-500 sm:text-base">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
 

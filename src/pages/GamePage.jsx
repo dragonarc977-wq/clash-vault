@@ -15,9 +15,12 @@ const games = {
   'squad-busters': { name: 'Squad Busters', short: 'SQUAD', description: 'Accounts, squads and gold', levelLabel: 'Level', levels: ['50+', '45+', '40+', '35+', '30+'] },
 };
 
-const listingTypes = ['All', 'Accounts', 'Items', 'Top-ups', 'Services'];
+const listingTypes = ['All', 'Accounts', 'Items', 'Services'];
 const platforms = ['All platforms', 'Android', 'iOS', 'PC', 'PlayStation', 'Xbox'];
 const regions = ['All regions', 'Global', 'Asia', 'Europe', 'North America', 'South America'];
+const itemCategories = ['All item categories', 'Currency', 'Skin', 'Collectible', 'Bundle', 'Other'];
+const serviceCategories = ['All service categories', 'Boosting', 'Coaching', 'Quest completion', 'Top-up', 'Other'];
+const deliveryMethods = [['All delivery','All delivery'],['instant','Instant code/details'],['seller_delivery','Seller delivery'],['scheduled','Scheduled service']];
 const priceRanges = [
   { id: 'under2500', label: 'Under ₹2,500', matches: (price) => price < 2500 },
   { id: '2500to7500', label: '₹2,500 – ₹7,500', matches: (price) => price >= 2500 && price <= 7500 },
@@ -33,7 +36,10 @@ function ListingCard({ account, game }) {
   const navigate = useNavigate();
   const title = account.title || account.name || `${game.name} Account`;
   const subtitle = account.description || 'Verified marketplace listing with clear purchase details.';
-  const category = account.listing_type || account.category || 'Account';
+  const type = String(account.listing_type || account.category || 'account').replace(/s$/, '').toLowerCase();
+  const category = type.charAt(0).toUpperCase() + type.slice(1);
+  const attributes = account.attributes || {};
+  const deliveryLabel = account.delivery_method === 'scheduled' ? 'Scheduled' : account.delivery_method === 'instant' ? 'Instant' : 'Seller delivery';
   const discount = account.original_price > account.price ? Math.round(((account.original_price - account.price) / account.original_price) * 100) : 0;
 
   return <article onClick={() => navigate(`/account/${account.id}`)} className="group cursor-pointer overflow-hidden rounded-3xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-200/70">
@@ -41,12 +47,12 @@ function ListingCard({ account, game }) {
       {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" />}
       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent" />
       <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4"><span className="rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-zinc-800 backdrop-blur">{category}</span>{discount > 0 && <span className="rounded-full bg-red-500 px-3 py-1.5 text-[10px] font-black text-white">-{discount}%</span>}</div>
-      {account.instant_delivery && <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black text-zinc-800 backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Instant delivery</span>}
+      <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black text-zinc-800 backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{deliveryLabel}</span>
     </div>
     <div className="p-5">
       <h2 className="truncate text-lg font-black tracking-tight">{title}</h2>
       <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">{subtitle}</p>
-      <div className="mt-4 flex flex-wrap gap-2">{account.region && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.region}</span>}{account.platform && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.platform}</span>}{account.full_email_access && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Full access</span>}</div>
+      <div className="mt-4 flex flex-wrap gap-2">{account.region && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.region}</span>}{account.platform && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.platform}</span>}{type === 'account' && account.full_email_access && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Full access</span>}{type === 'item' && attributes.quantity && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Qty {attributes.quantity}</span>}{type === 'service' && attributes.estimated_days && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span>}</div>
       <div className="mt-5 flex items-end justify-between border-t border-zinc-100 pt-5"><div><p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-black">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600"><CheckIcon /> Verified</span></div>
     </div>
   </article>;
@@ -64,6 +70,8 @@ export default function GamePage() {
   const [platform, setPlatform] = useState('All platforms');
   const [region, setRegion] = useState('All regions');
   const [delivery, setDelivery] = useState('All delivery');
+  const [category, setCategory] = useState('All categories');
+  const [serviceTime, setServiceTime] = useState('Any duration');
   const [price, setPrice] = useState([]);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [fullAccess, setFullAccess] = useState(false);
@@ -112,12 +120,18 @@ export default function GamePage() {
   const filtered = useMemo(() => {
     let result = [...accounts];
     const query = search.trim().toLowerCase();
-    if (query) result = result.filter((item) => [item.title, item.name, item.description, item.rank, item.level, item.town_hall].some((value) => String(value || '').toLowerCase().includes(query)));
+    if (query) result = result.filter((item) => [item.title, item.name, item.description, item.rank, item.level, item.town_hall, ...Object.values(item.attributes || {})].some((value) => String(value || '').toLowerCase().includes(query)));
     if (type !== 'All') result = result.filter((item) => String(item.listing_type || item.category || 'Account').toLowerCase() === type.replace(/s$/, '').toLowerCase());
     if (level !== 'All') result = result.filter((item) => String(item.rank ?? item.level ?? item.town_hall ?? '').toLowerCase().includes(level.replace('+', '').toLowerCase()));
     if (platform !== 'All platforms') result = result.filter((item) => String(item.platform || '').toLowerCase() === platform.toLowerCase());
     if (region !== 'All regions') result = result.filter((item) => String(item.region || '').toLowerCase() === region.toLowerCase());
-    if (delivery === 'Instant delivery') result = result.filter((item) => item.instant_delivery === true);
+    if (delivery !== 'All delivery') result = result.filter((item) => String(item.delivery_method || (item.instant_delivery ? 'instant' : 'seller_delivery')) === delivery);
+    if (type === 'Items' && category !== 'All categories') result = result.filter((item) => item.attributes?.item_category === category);
+    if (type === 'Services' && category !== 'All categories') result = result.filter((item) => item.attributes?.service_category === category);
+    if (type === 'Services' && serviceTime !== 'Any duration') result = result.filter((item) => {
+      const days = Number(item.attributes?.estimated_days || 0);
+      return serviceTime === '1 day' ? days <= 1 : serviceTime === 'Up to 3 days' ? days <= 3 : days > 3;
+    });
     if (verifiedOnly) result = result.filter((item) => item.verified !== false);
     if (fullAccess) result = result.filter((item) => item.full_email_access === true);
     if (price.length) result = result.filter((item) => price.some((id) => priceRanges.find((range) => range.id === id)?.matches(Number(item.price || 0))));
@@ -125,10 +139,10 @@ export default function GamePage() {
     else if (sort === 'price-high') result.sort((a, b) => (b.price || 0) - (a.price || 0));
     else result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     return result;
-  }, [accounts, delivery, fullAccess, level, platform, price, region, search, sort, type, verifiedOnly]);
+  }, [accounts, category, delivery, fullAccess, level, platform, price, region, search, serviceTime, sort, type, verifiedOnly]);
 
-  const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
-  const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
+  const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', category !== 'All categories', serviceTime !== 'Any duration', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
+  const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
   const selectClass = 'h-12 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-700 outline-none transition focus:border-[#c68d00] focus:ring-4 focus:ring-yellow-100';
 
   if (!game) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">GAME NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This marketplace is unavailable.</h1><Link to="/#games" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">View all games</Link></div></main>;
@@ -150,13 +164,15 @@ export default function GamePage() {
       <aside className={`${showFilters ? 'block' : 'hidden'} rounded-3xl border border-zinc-200 bg-white p-5 lg:sticky lg:top-36 lg:block lg:self-start`}>
         <div className="flex items-center justify-between"><h2 className="font-black">Filters</h2>{activeFilterCount > 0 && <button onClick={clearFilters} className="text-xs font-bold text-[#a87300]">Clear all</button>}</div>
         <div className="mt-6 space-y-5">
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Listing type</span><select value={type} onChange={(event) => setType(event.target.value)} className={selectClass}>{listingTypes.map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Listing type</span><select value={type} onChange={(event) => { setType(event.target.value); setCategory('All categories'); setLevel('All'); setServiceTime('Any duration'); setFullAccess(false); }} className={selectClass}>{listingTypes.map((item) => <option key={item}>{item}</option>)}</select></label>
+          {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
+          {type === 'Items' && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Item category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All item categories</option>{itemCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>}
+          {type === 'Services' && <><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Service category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All service categories</option>{serviceCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Completion time</span><select value={serviceTime} onChange={(event) => setServiceTime(event.target.value)} className={selectClass}><option>Any duration</option><option>1 day</option><option>Up to 3 days</option><option>More than 3 days</option></select></label></>}
           <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
           <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}><option>All delivery</option><option>Instant delivery</option></select></label>
+          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
           <div><span className="mb-3 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Price</span><div className="space-y-3">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-yellow-400" />{range.label}</label>)}</div></div>
-          <div className="border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Verified listings</label><label className="mt-3 flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Full access</label></div>
+          <div className="border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Verified listings</label>{(type === 'All' || type === 'Accounts') && <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Full email access</label>}</div>
         </div>
       </aside>
 
