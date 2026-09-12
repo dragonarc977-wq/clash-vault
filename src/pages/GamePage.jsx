@@ -35,36 +35,46 @@ const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColo
 function ListingCard({ account, game, seller }) {
   const navigate = useNavigate();
   const title = account.title || account.name || `${game.name} Account`;
-  const subtitle = account.description || 'Verified marketplace listing with clear purchase details.';
   const type = String(account.listing_type || account.category || 'account').replace(/s$/, '').toLowerCase();
   const category = type.charAt(0).toUpperCase() + type.slice(1);
   const attributes = account.attributes || {};
   const deliveryLabel = account.delivery_method === 'scheduled' ? 'Scheduled' : account.delivery_method === 'instant' ? 'Instant' : 'Seller delivery';
   const discount = account.original_price > account.price ? Math.round(((account.original_price - account.price) / account.original_price) * 100) : 0;
+  const heroSummary = [
+    ['BK', attributes.barbarian_king], ['AQ', attributes.archer_queen],
+    ['GW', attributes.grand_warden], ['RC', attributes.royal_champion],
+    ['MP', attributes.minion_prince],
+  ].filter(([, value]) => value !== null && value !== undefined && value !== '').map(([label, value]) => `${label} ${value}`).join(' · ');
+  const accountStats = type === 'account' ? [
+    { label: account.game_id === 'clash-of-clans' ? 'TH' : game.levelLabel, value: attributes.town_hall || account.town_hall || attributes.rank || account.rank || attributes.level || account.level },
+    { label: 'Heroes', value: heroSummary || account.heroes_level || attributes.heroes_count || attributes.brawlers_count },
+    { label: 'XP', value: attributes.experience_level || attributes.account_level || attributes.trainer_level || account.exp_level },
+  ].filter((stat) => stat.value !== null && stat.value !== undefined && stat.value !== '') : [];
 
-  return <article onClick={() => navigate(`/account/${account.id}`)} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-200/70">
-    <div className="relative h-52 shrink-0 overflow-hidden bg-zinc-100">
+  return <article onClick={() => navigate(`/account/${account.id}`)} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[22px] border border-zinc-200/90 bg-white shadow-[0_12px_35px_-26px_rgba(24,24,27,0.55)] transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-[0_20px_45px_-25px_rgba(24,24,27,0.35)]">
+    <div className="relative h-44 shrink-0 overflow-hidden bg-zinc-100 sm:h-48">
       {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent" />
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4"><span className="rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-zinc-800 backdrop-blur">{category}</span>{discount > 0 && <span className="rounded-full bg-red-500 px-3 py-1.5 text-[10px] font-black text-white">-{discount}%</span>}</div>
-      <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black text-zinc-800 backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{deliveryLabel}</span>
+      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/55 via-transparent to-zinc-950/5" />
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3.5"><span className="rounded-full border border-white/50 bg-white/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-zinc-800 shadow-sm backdrop-blur-md">{category}</span>{discount > 0 && <span className="rounded-full bg-zinc-950 px-2.5 py-1 text-[9px] font-black text-white shadow-sm">-{discount}%</span>}</div>
+      <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/90 px-2.5 py-1 text-[9px] font-bold text-zinc-800 shadow-sm backdrop-blur-md"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{deliveryLabel}</span>
     </div>
-    <div className="flex flex-1 flex-col p-5">
-      <h2 className="truncate text-lg font-black tracking-tight"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
-      <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">{subtitle}</p>
-      <div className="mt-4 flex flex-wrap gap-2">{account.region && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.region}</span>}{account.platform && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.platform}</span>}{type === 'account' && account.full_email_access && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Full access</span>}{type === 'item' && attributes.quantity && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Qty {attributes.quantity}</span>}{type === 'service' && attributes.estimated_days && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span>}</div>
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-5">
+    <div className="flex flex-1 flex-col bg-gradient-to-b from-white to-zinc-50/40 p-4">
+      <h2 className="line-clamp-2 min-h-10 text-[15px] font-black leading-5 tracking-[-0.015em]"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
+      {accountStats.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{accountStats.map((stat) => <span key={stat.label} title={`${stat.label}: ${stat.value}`} className="max-w-full truncate rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-semibold text-zinc-600 shadow-sm"><span className="font-black text-zinc-900">{stat.label}</span> {stat.value}</span>)}</div>}
+      {type === 'item' && attributes.quantity && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-semibold text-zinc-600 shadow-sm"><span className="font-black text-zinc-900">Qty</span> {attributes.quantity}</span></div>}
+      {type === 'service' && attributes.estimated_days && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-semibold text-zinc-600 shadow-sm"><span className="font-black text-zinc-900">Delivery</span> {attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span></div>}
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-4">
         <div className="min-w-0">
           {discount > 0 && <p className="mb-0.5 text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</p>}
-          <p className="flex flex-wrap items-baseline gap-1.5"><span className="text-[22px] font-bold leading-tight tracking-tight">₹{Number(account.price || 0).toLocaleString('en-IN')}</span><span className="text-[10px] font-medium text-zinc-400">INR</span></p>
+          <p className="flex flex-wrap items-baseline gap-1.5"><span className="text-xl font-black leading-tight tracking-tight">₹{Number(account.price || 0).toLocaleString('en-IN')}</span><span className="text-[9px] font-medium text-zinc-400">INR</span></p>
         </div>
-        <Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="inline-flex h-10 shrink-0 items-center justify-center gap-3 rounded-full bg-zinc-950 px-4 text-xs font-bold text-white transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">Buy now <span aria-hidden="true">→</span></Link>
+        <Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-zinc-950 px-3.5 text-[11px] font-bold text-white transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">Buy now <span aria-hidden="true">→</span></Link>
       </div>
     </div>
-    {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2.5 border-t border-zinc-100 bg-zinc-50/80 px-5 py-3.5 transition hover:bg-zinc-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-950">
-      {seller.avatar_url ? <img src={seller.avatar_url} alt="" loading="lazy" className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-950 text-[10px] font-bold text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}
-      <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-[13px] font-semibold text-zinc-800">{seller.display_name}</span><span title="Verified seller" aria-label="Verified seller" className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700"><CheckIcon /></span></span>
-      <span className="shrink-0 text-[11px] font-medium tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
+    {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2 border-t border-zinc-100 bg-white px-4 py-2.5 transition hover:bg-zinc-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-950">
+      {seller.avatar_url ? <img src={seller.avatar_url} alt="" loading="lazy" className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zinc-950 text-[9px] font-bold text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}
+      <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-xs font-semibold text-zinc-800">{seller.display_name}</span><span title="Verified seller" aria-label="Verified seller" className="grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700"><CheckIcon /></span></span>
+      <span className="shrink-0 text-[10px] font-medium tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
     </Link>}
   </article>;
 }
@@ -194,7 +204,7 @@ export default function GamePage() {
     <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
       <div className="min-w-0">
         <div className="mb-6"><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div>
-        {loading ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[430px] animate-pulse rounded-3xl bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
+        {loading ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[355px] animate-pulse rounded-[22px] bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
       </div>
     </section>
 
