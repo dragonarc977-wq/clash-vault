@@ -9,7 +9,20 @@ const number = (key, label, placeholder, required = false) => ({ key, label, pla
 const text = (key, label, placeholder, required = false) => ({ key, label, placeholder, required, type: 'text' });
 
 export const accountFieldsByGame = {
-  'clash-of-clans': [number('town_hall', 'Town Hall level', 'Example: 16', true), text('heroes_level', 'Heroes levels', 'Example: BK 95, AQ 95, GW 70', true), number('gems', 'Gems', 'Example: 2500'), number('builder_hall', 'Builder Hall level', 'Example: 10'), number('experience_level', 'Experience level', 'Example: 220'), text('walls_level', 'Walls level', 'Example: Maxed TH16')],
+  'clash-of-clans': [
+    number('town_hall', 'Town Hall level', 'Example: 16', true),
+    number('barbarian_king', 'Barbarian King level', 'Enter level'),
+    number('archer_queen', 'Archer Queen level', 'Enter level'),
+    number('grand_warden', 'Grand Warden level', 'Enter level'),
+    number('royal_champion', 'Royal Champion level', 'Enter level'),
+    number('minion_prince', 'Minion Prince level', 'Enter level'),
+    number('battle_machine', 'Battle Machine level', 'Enter level'),
+    number('battle_copter', 'Battle Copter level', 'Enter level'),
+    number('gems', 'Gems', 'Example: 2500'),
+    number('builder_hall', 'Builder Hall level', 'Example: 10'),
+    number('experience_level', 'Experience level', 'Example: 220'),
+    text('walls_level', 'Walls level', 'Example: Maxed TH16'),
+  ],
   'brawl-stars': [number('trophies', 'Total trophies', 'Example: 45000', true), number('brawlers_count', 'Unlocked brawlers', 'Example: 82', true), number('maxed_brawlers', 'Maxed brawlers', 'Example: 25'), number('legendary_brawlers', 'Legendary brawlers', 'Example: 12'), number('gems', 'Gems', 'Example: 300'), text('highest_rank', 'Highest rank', 'Example: Masters')],
   valorant: [text('rank', 'Current rank', 'Example: Diamond 2', true), number('account_level', 'Account level', 'Example: 175', true), number('skins_count', 'Weapon skins', 'Example: 48'), number('agents_count', 'Unlocked agents', 'Example: 24'), number('valorant_points', 'Valorant Points', 'Example: 1200'), text('rare_skins', 'Notable skins', 'Example: Elderflame Vandal')],
   'clash-royale': [number('king_level', 'King level', 'Example: 15', true), number('trophies', 'Trophies', 'Example: 9000', true), text('arena', 'Arena / league', 'Example: Ultimate Champion'), number('maxed_cards', 'Maxed cards', 'Example: 32'), number('gems', 'Gems', 'Example: 850'), number('gold', 'Gold', 'Example: 500000')],
@@ -33,8 +46,18 @@ export const accountFieldValue = (product, fieldKey) => {
   if (stored !== null && stored !== undefined && stored !== '') return stored;
   const firstNumber = getAccountFields(product?.game_id).find((field) => field.type === 'number')?.key;
   if (fieldKey === firstNumber) return product?.town_hall || '';
+  const heroCodes = { barbarian_king: '(?:BK|Barbarian King)', archer_queen: '(?:AQ|Archer Queen)', grand_warden: '(?:GW|Grand Warden)', royal_champion: '(?:RC|Royal Champion)', minion_prince: '(?:MP|Minion Prince)', battle_machine: '(?:BM|Battle Machine)', battle_copter: '(?:BC|Battle Copter)' };
+  if (heroCodes[fieldKey] && product?.heroes_level) {
+    const match = String(product.heroes_level).match(new RegExp(`${heroCodes[fieldKey]}\\s*[:=-]?\\s*(\\d+)`, 'i'));
+    if (match) return match[1];
+  }
   const legacy = { builder_hall: 'builder_hall', experience_level: 'exp_level', account_level: 'exp_level', trainer_level: 'exp_level', farm_level: 'exp_level', gems: 'gems', diamonds: 'gems', v_bucks: 'gems', coins: 'gems', heroes_level: 'heroes_level', rare_skins: 'heroes_level', walls_level: 'walls_level', rank: 'walls_level', highest_rank: 'walls_level' };
   return legacy[fieldKey] ? product?.[legacy[fieldKey]] || '' : '';
 };
+export const clashHeroSummary = (attributes = {}) => [
+  ['BK', attributes.barbarian_king], ['AQ', attributes.archer_queen], ['GW', attributes.grand_warden],
+  ['RC', attributes.royal_champion], ['MP', attributes.minion_prince], ['BM', attributes.battle_machine],
+  ['BC', attributes.battle_copter],
+].filter(([, level]) => level !== null && level !== undefined && level !== '').map(([hero, level]) => `${hero} ${level}`).join(', ') || null;
 export const gameLabel = (gameId) => marketplaceGames.find(([id]) => id === gameId)?.[1] || gameId;
 export const readableAttribute = (key) => key.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');

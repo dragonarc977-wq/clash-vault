@@ -2,7 +2,7 @@ import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from './lib/supabase';
 import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from './lib/imageProcessing';
-import { accountFieldValue, getAccountFields } from './lib/listingOptions';
+import { accountFieldValue, clashHeroSummary, getAccountFields } from './lib/listingOptions';
 import AdminSupport from './pages/AdminSupport';
 import AdminSellers from './pages/AdminSellers';
 const games = [
@@ -193,7 +193,7 @@ export default function Admin() {
       builder_hall: addListingType === 'account' ? Number(attributes.builder_hall) || null : null,
       exp_level: addListingType === 'account' ? Number(attributes.experience_level || attributes.account_level || attributes.trainer_level || attributes.farm_level) || null : null,
       gems: addListingType === 'account' ? Number(attributes.gems || attributes.diamonds || attributes.v_bucks || attributes.coins) || null : null,
-      heroes_level: addListingType === 'account' ? attributes.heroes_level || attributes.rare_skins || null : null,
+      heroes_level: addListingType === 'account' ? clashHeroSummary(attributes) || attributes.rare_skins || null : null,
       walls_level: addListingType === 'account' ? attributes.walls_level || attributes.rank || attributes.highest_rank || null : null,
       full_email_access: addListingType === 'account' ? value('access') === 'Full email access' : false,
       instant_delivery: deliveryMethod === 'instant',
@@ -471,7 +471,7 @@ function EditListingModal({ account, saving, onClose, onSave }) {
         builder_hall: listingType === 'account' ? Number(attributes.builder_hall) || null : null,
         exp_level: listingType === 'account' ? Number(attributes.experience_level || attributes.account_level || attributes.trainer_level || attributes.farm_level) || null : null,
         gems: listingType === 'account' ? Number(attributes.gems || attributes.diamonds || attributes.v_bucks || attributes.coins) || null : null,
-        heroes_level: listingType === 'account' ? attributes.heroes_level || attributes.rare_skins || null : null,
+        heroes_level: listingType === 'account' ? clashHeroSummary(attributes) || attributes.rare_skins || null : null,
         walls_level: listingType === 'account' ? attributes.walls_level || attributes.rank || attributes.highest_rank || null : null,
         full_email_access: listingType === 'account' ? value('access') === 'Full email access' : false,
         instant_delivery: deliveryMethod === 'instant',

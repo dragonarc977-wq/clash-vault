@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from '../lib/imageProcessing';
-import { accountFieldValue, gameLabel, getAccountFields, itemCategories, listingTypes, marketplaceGames, platforms, regions, serviceCategories } from '../lib/listingOptions';
+import { accountFieldValue, clashHeroSummary, gameLabel, getAccountFields, itemCategories, listingTypes, marketplaceGames, platforms, regions, serviceCategories } from '../lib/listingOptions';
 
 const inputClass = 'mt-2 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 text-sm outline-none transition focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-100';
 const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN')}`;
@@ -95,7 +95,7 @@ export default function MyProducts() {
         builder_hall: listingType === 'account' ? Number(attributes.builder_hall) || null : null,
         exp_level: listingType === 'account' ? Number(attributes.experience_level || attributes.account_level || attributes.trainer_level || attributes.farm_level) || null : null,
         gems: listingType === 'account' ? Number(attributes.gems || attributes.diamonds || attributes.v_bucks || attributes.coins) || null : null,
-        heroes_level: listingType === 'account' ? attributes.heroes_level || attributes.rare_skins || null : null,
+        heroes_level: listingType === 'account' ? clashHeroSummary(attributes) || attributes.rare_skins || null : null,
         walls_level: listingType === 'account' ? attributes.walls_level || attributes.rank || attributes.highest_rank || null : null,
         full_email_access: listingType === 'account' && value('access') === 'Full email access', instant_delivery: deliveryMethod === 'instant',
         price: Number(value('price')), original_price: Number(value('originalPrice')) || null, description: value('description') || null,
