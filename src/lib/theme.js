@@ -1,11 +1,12 @@
 export const MARKETPLACE_THEMES = [
+  { id: 'classic-light', label: 'Original white', colors: ['#ffffff', '#18181b', '#facc15'] },
   { id: 'electric-blue', label: 'Electric blue', colors: ['#07111f', '#2563eb', '#38bdf8'] },
   { id: 'cyber-violet', label: 'Cyber violet', colors: ['#0b0920', '#7c3aed', '#d946ef'] },
   { id: 'aurora-teal', label: 'Aurora teal', colors: ['#061719', '#14b8a6', '#5eead4'] },
 ];
 
 const STORAGE_KEY = 'marketplace_theme';
-const DEFAULT_THEME = MARKETPLACE_THEMES[0].id;
+const DEFAULT_THEME = 'classic-light';
 
 export function getTheme() {
   const saved = localStorage.getItem(STORAGE_KEY);

@@ -145,6 +145,23 @@ textarea:focus-visible {
 }
 
 /* Marketplace color themes. These overrides cover every existing page and dialog. */
+html[data-theme="classic-light"] {
+  --theme-page: #fafaf9;
+  --theme-page-deep: #09090b;
+  --theme-surface: #ffffff;
+  --theme-surface-rgb: 255, 255, 255;
+  --theme-surface-soft: #fafafa;
+  --theme-surface-raised: #f4f4f5;
+  --theme-border: #e4e4e7;
+  --theme-border-soft: #f4f4f5;
+  --theme-text: #18181b;
+  --theme-text-soft: #52525b;
+  --theme-muted: #71717a;
+  --theme-accent: #facc15;
+  --theme-accent-bright: #a87300;
+  --theme-accent-rgb: 250, 204, 21;
+}
+
 html[data-theme="electric-blue"] {
   --theme-page: #07111f;
   --theme-page-deep: #040b15;
@@ -206,7 +223,6 @@ html[data-theme] body {
     radial-gradient(circle at 15% -10%, rgba(var(--theme-accent-rgb), 0.2), transparent 34rem),
     radial-gradient(circle at 95% 18%, rgba(var(--theme-accent-rgb), 0.1), transparent 28rem),
     linear-gradient(180deg, var(--theme-page) 0%, var(--theme-page-deep) 100%);
-  background-attachment: fixed;
   color: var(--theme-text);
 }
 
@@ -361,6 +377,66 @@ html[data-theme] ::selection {
   color: #fff;
 }
 
+/* Preserve the original white marketplace appearance as the default theme. */
+html[data-theme="classic-light"] {
+  color-scheme: light;
+  background: #f5f5f3;
+}
+
+html[data-theme="classic-light"] body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(24, 24, 27, 0.045), transparent 26rem),
+    linear-gradient(180deg, #fafaf9 0%, #f4f4f2 100%);
+}
+
+html[data-theme="classic-light"] .app-wrapper {
+  background: radial-gradient(circle at 92% 8%, rgba(161, 161, 170, 0.1), transparent 24rem);
+}
+
+html[data-theme="classic-light"] [class~="bg-zinc-950"] {
+  background-color: #09090b !important;
+}
+
+html[data-theme="classic-light"] [class*="hover:bg-zinc-800"]:hover {
+  background-color: #27272a !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-yellow-50"] {
+  background-color: #fefce8 !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-yellow-100"] {
+  background-color: #fef9c3 !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-yellow-300"] {
+  background-color: #fde047 !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-amber-"] {
+  background-color: #fffbeb !important;
+}
+
+html[data-theme="classic-light"] [class*="text-amber-"] {
+  color: #b45309 !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-blue-"] {
+  background-color: #eff6ff !important;
+}
+
+html[data-theme="classic-light"] [class*="text-blue-"] {
+  color: #2563eb !important;
+}
+
+html[data-theme="classic-light"] [class*="bg-violet-"] {
+  background-color: #f5f3ff !important;
+}
+
+html[data-theme="classic-light"] [class*="text-violet-"] {
+  color: #7c3aed !important;
+}
+
 @media (hover: hover) and (pointer: fine) {
   html[data-theme] [class*="hover:bg-zinc-50"]:hover,
   html[data-theme] [class*="hover:bg-zinc-100"]:hover {
@@ -386,6 +462,24 @@ html[data-theme] ::selection {
     background:
       radial-gradient(circle at 50% -8%, rgba(var(--theme-accent-rgb), 0.18), transparent 24rem),
       var(--theme-page);
-    background-attachment: scroll;
+  }
+
+  html[data-theme="classic-light"] body {
+    background: linear-gradient(180deg, #fafaf9 0%, #f5f5f3 100%);
+  }
+
+  /* Mobile performance: avoid continuous GPU repaints while scrolling. */
+  html[data-theme] .app-wrapper main {
+    animation: none;
+  }
+
+  html[data-theme] [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  html[data-theme] [class*="shadow-2xl"],
+  html[data-theme] [class*="shadow-xl"] {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14) !important;
   }
 }
