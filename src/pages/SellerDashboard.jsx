@@ -40,6 +40,7 @@ export default function SellerDashboard() {
   const [listingType, setListingType] = useState('account');
   const [deliveryOrder, setDeliveryOrder] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [notice, setNotice] = useState('');
 
   const load = useCallback(async (id) => {
@@ -91,6 +92,22 @@ export default function SellerDashboard() {
     form.reset(); setNotice('Withdrawal request submitted for admin review.'); await load(user.id);
   }
 
+  async function uploadAvatar(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) { setNotice('Profile picture must be JPG, PNG or WebP and smaller than 2 MB.'); return; }
+    setAvatarUploading(true); setNotice('');
+    const path = `${user.id}/profile-picture`;
+    const bucket = supabase.storage.from('seller-avatars');
+    const { error: uploadError } = await bucket.upload(path, file, { upsert: true, contentType: file.type, cacheControl: '3600' });
+    if (uploadError) { setNotice(uploadError.message); setAvatarUploading(false); return; }
+    const publicUrl = `${bucket.getPublicUrl(path).data.publicUrl}?v=${Date.now()}`;
+    const { error } = await supabase.from('seller_profiles').update({ avatar_url: publicUrl }).eq('user_id', user.id);
+    if (error) setNotice(error.message); else { setProfile((current) => ({ ...current, avatar_url: publicUrl })); setNotice('Seller profile picture updated.'); }
+    setAvatarUploading(false);
+  }
+
   async function deliverOrder(event) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -107,7 +124,7 @@ export default function SellerDashboard() {
 
   if (loading) return <main className="min-h-screen bg-zinc-50 px-5 pt-28"><div className="mx-auto h-96 max-w-7xl animate-pulse rounded-3xl bg-white" /></main>;
   const tabs = [['overview','Overview'],['listings','My listings'],['orders','Sales'],['earnings','Earnings']];
-  return <main className="min-h-screen bg-zinc-50 px-5 pb-20 pt-24 text-zinc-950 sm:px-8"><div className="mx-auto max-w-7xl"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#a87300]">Verified seller</p><h1 className="mt-2 text-4xl font-black tracking-[-0.05em] sm:text-6xl">{profile.display_name}</h1><p className="mt-3 text-sm text-zinc-500">Manage listings, sales and protected earnings.</p></div><button onClick={() => navigate('/my-products')} className="rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Manage products</button></div>
+  return <main className="min-h-screen bg-zinc-50 px-5 pb-20 pt-24 text-zinc-950 sm:px-8"><div className="mx-auto max-w-7xl"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div className="flex items-center gap-4"><label className="group relative grid h-20 w-20 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-3xl bg-zinc-950 text-2xl font-black text-white shadow-sm">{profile.avatar_url ? <img src={profile.avatar_url} alt="Seller profile" className="h-full w-full object-cover" /> : profile.display_name.charAt(0).toUpperCase()}<span className="absolute inset-x-0 bottom-0 bg-zinc-950/75 py-1.5 text-center text-[8px] font-black uppercase opacity-0 transition group-hover:opacity-100">Change</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={avatarUploading} onChange={uploadAvatar} className="sr-only" /></label><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#a87300]">Verified seller</p><h1 className="mt-1 text-3xl font-black tracking-[-0.05em] sm:text-5xl">{profile.display_name}</h1><p className="mt-2 text-sm text-zinc-500">{avatarUploading ? 'Uploading profile picture…' : 'Manage listings, sales and protected earnings.'}</p></div></div><button onClick={() => navigate('/my-products')} className="rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Manage products</button></div>
     <nav className="mt-8 flex gap-2 overflow-x-auto border-b border-zinc-200 pb-3">{tabs.map(([id,label]) => <button key={id} onClick={() => setTab(id)} className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-bold ${tab === id ? 'bg-zinc-950 text-white' : 'bg-white text-zinc-600'}`}>{label}</button>)}</nav>
     {notice && <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold text-amber-800">{notice}</div>}
     {tab === 'overview' && <><div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[['Available earnings',money(balance.available)],['Pending earnings',money(balance.pending)],['Live listings',stats.approved],['Awaiting review',stats.review]].map(([label,value]) => <section key={label} className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><p className="text-sm font-bold text-zinc-500">{label}</p><p className="mt-6 text-3xl font-black">{value}</p></section>)}</div><section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-7"><h2 className="text-xl font-black">How seller payments work</h2><div className="mt-5 grid gap-4 sm:grid-cols-3">{[['1','Buyer pays','Payment and listing are verified.'],['2','Protection period','Your earnings remain pending for seven days.'],['3','Request withdrawal','You apply and admin completes the payout.']].map(([n,title,text]) => <div key={n} className="rounded-2xl bg-zinc-50 p-5"><span className="grid h-8 w-8 place-items-center rounded-full bg-zinc-950 text-xs font-black text-white">{n}</span><p className="mt-4 font-black">{title}</p><p className="mt-2 text-sm leading-6 text-zinc-500">{text}</p></div>)}</div></section></>}

@@ -16,6 +16,7 @@ import Balance from "./pages/Balance";
 import SellerOnboarding from "./pages/SellerOnboarding";
 import SellerDashboard from "./pages/SellerDashboard";
 import MyProducts from "./pages/MyProducts";
+import SellerMessages from "./pages/SellerMessages";
 import GamePage from "./pages/GamePage";
 
 function App() {
@@ -45,6 +46,8 @@ function App() {
         <Route path="/become-a-seller" element={<SellerOnboarding />} />
         <Route path="/seller" element={<SellerDashboard />} />
         <Route path="/my-products" element={<MyProducts />} />
+        <Route path="/seller-chat" element={<SellerMessages />} />
+        <Route path="/seller-chat/:listingId" element={<SellerMessages />} />
         <Route path="/game/:gameId" element={<GamePage />} />
 
         {/* ✅ ADMIN SUPPORT */}
