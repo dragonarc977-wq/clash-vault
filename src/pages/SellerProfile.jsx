@@ -121,12 +121,12 @@ export default function SellerProfile() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
             <button type="button" onClick={() => setShowFeedback(true)} className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-left transition hover:bg-zinc-50 sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-2.5">
               <span className="min-w-0"><span className="block text-[9px] font-semibold text-zinc-400 sm:text-[10px]">Seller rating</span><span className="mt-0.5 block truncate text-[11px] font-bold sm:text-sm"><span className="text-amber-500">★</span> {Number(seller.feedback_count) > 0 ? `${seller.average_rating} / 5` : 'No ratings yet'}</span></span>
               <span className="shrink-0 border-l border-zinc-200 pl-2 sm:pl-4"><span className="block text-[11px] font-semibold sm:text-sm">Feedback</span><span className="mt-0.5 block text-[9px] text-zinc-500 sm:text-xs">{Number(seller.feedback_count || 0)} reviews →</span></span>
             </button>
-            <button type="button" disabled={!listings.length && viewerId !== sellerId} onClick={startChat} className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-zinc-950 px-3.5 text-xs font-bold text-white transition hover:bg-zinc-800 disabled:opacity-40 sm:min-h-0 sm:gap-2 sm:px-5 sm:py-3.5 sm:text-sm"><ChatIcon className="h-4 w-4 sm:h-5 sm:w-5" />Live chat</button>
+            <button type="button" disabled={!listings.length && viewerId !== sellerId} onClick={startChat} className="inline-flex h-8 items-center justify-center gap-1 rounded-full bg-zinc-950 px-2.5 text-[9px] font-bold text-white transition hover:bg-zinc-800 disabled:opacity-40 sm:h-auto sm:gap-2 sm:px-5 sm:py-3.5 sm:text-sm"><ChatIcon className="h-3 w-3 sm:h-5 sm:w-5" />Live chat</button>
           </div>
         </div>
       </section>
