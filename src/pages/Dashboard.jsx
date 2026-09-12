@@ -2,30 +2,20 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 
-const languages = [
-  { value: 'EN', label: 'English' },
-  { value: 'ZH', label: 'Chinese' },
-  { value: 'HI', label: 'Hindi' },
-  { value: 'FR', label: 'French' },
-  { value: 'NL', label: 'Dutch' },
-  { value: 'PT-BR', label: 'Brazilian Portuguese' },
-];
-
 const currencies = [
   { value: 'INR', label: 'Indian Rupee', symbol: '₹' },
   { value: 'USD', label: 'US Dollar', symbol: '$' },
 ];
 
 const UserIcon = () => <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M19 20a7 7 0 0 0-14 0m11-13a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" /></svg>;
-const GlobeIcon = () => <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" strokeWidth="1.7" /><path strokeLinecap="round" strokeWidth="1.7" d="M3.5 12h17M12 3c2.2 2.5 3.3 5.5 3.3 9S14.2 18.5 12 21c-2.2-2.5-3.3-5.5-3.3-9S9.8 5.5 12 3Z" /></svg>;
 const WalletIcon = () => <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M4 6.5h15.5v12H4v-12Zm0 3h15.5M15 14h2" /></svg>;
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [publicId, setPublicId] = useState(null);
-  const [language, setLanguage] = useState('EN');
   const [currency, setCurrency] = useState('INR');
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -42,13 +32,11 @@ export default function Dashboard() {
       }
 
       const buyer = session.user;
-      const savedLanguage = buyer.user_metadata?.language || localStorage.getItem('clashvault_language') || 'EN';
       const savedCurrency = buyer.user_metadata?.currency || localStorage.getItem('clashvault_currency') || 'INR';
       const { data: permanentId } = await supabase.rpc('get_my_public_id');
       if (!active) return;
       setUser(buyer);
       setPublicId(permanentId);
-      setLanguage(savedLanguage);
       setCurrency(savedCurrency);
       setLoading(false);
     };
@@ -65,7 +53,6 @@ export default function Dashboard() {
     const { data, error: updateError } = await supabase.auth.updateUser({
       data: {
         ...user.user_metadata,
-        language,
         currency,
       },
     });
@@ -77,10 +64,36 @@ export default function Dashboard() {
     }
 
     setUser(data.user);
-    localStorage.setItem('clashvault_language', language);
     localStorage.setItem('clashvault_currency', currency);
-    window.dispatchEvent(new CustomEvent('clashvault-preferences', { detail: { language, currency } }));
+    window.dispatchEvent(new CustomEvent('clashvault-preferences', { detail: { currency } }));
     setMessage('Your account settings have been saved.');
+  };
+
+  const uploadProfilePicture = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setError(''); setMessage('');
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) {
+      setError('Profile picture must be JPG, PNG or WebP and smaller than 2 MB.');
+      return;
+    }
+    setAvatarUploading(true);
+    const path = `${user.id}/profile-picture`;
+    const bucket = supabase.storage.from('profile-avatars');
+    const { error: uploadError } = await bucket.upload(path, file, { upsert: true, contentType: file.type, cacheControl: '3600' });
+    if (uploadError) { setError(uploadError.message); setAvatarUploading(false); return; }
+    const avatarUrl = `${bucket.getPublicUrl(path).data.publicUrl}?v=${Date.now()}`;
+    const { data, error: updateError } = await supabase.auth.updateUser({ data: { ...user.user_metadata, avatar_url: avatarUrl } });
+    if (!updateError) {
+      await Promise.all([
+        supabase.from('user_profiles').update({ avatar_url: avatarUrl }).eq('user_id', user.id),
+        supabase.from('seller_profiles').update({ avatar_url: avatarUrl }).eq('user_id', user.id),
+      ]);
+    }
+    if (updateError) setError(updateError.message);
+    else { setUser(data.user); setMessage('Profile picture updated.'); }
+    setAvatarUploading(false);
   };
 
   if (loading) return <main className="min-h-screen bg-zinc-50 px-5 pt-28 text-zinc-950"><div className="mx-auto max-w-6xl animate-pulse"><div className="h-10 w-64 rounded-xl bg-zinc-200" /><div className="mt-8 h-72 rounded-3xl bg-white" /></div></main>;
@@ -105,7 +118,12 @@ export default function Dashboard() {
             <div><h2 className="text-xl font-black tracking-tight sm:text-2xl">Account details</h2><p className="mt-1 text-sm leading-6 text-zinc-500">Your buyer identity on ClashVault.</p></div>
           </div>
 
-          <div className="mt-8 space-y-6">
+          <div className="mt-7 flex items-center gap-4 rounded-2xl bg-zinc-50 p-4">
+            <span className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-zinc-950 text-2xl font-black text-white">{user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="Profile" className="h-full w-full object-cover" /> : displayName.charAt(0).toUpperCase()}</span>
+            <div><p className="text-sm font-black">Profile picture</p><p className="mt-1 text-xs text-zinc-500">JPG, PNG or WebP · maximum 2 MB</p><label className="mt-3 inline-flex cursor-pointer rounded-full bg-zinc-950 px-4 py-2 text-xs font-bold text-white"><span>{avatarUploading ? 'Uploading…' : user?.user_metadata?.avatar_url ? 'Change picture' : 'Set up picture'}</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={avatarUploading} onChange={uploadProfilePicture} className="sr-only" /></label></div>
+          </div>
+
+          <div className="mt-6 space-y-6">
             <label className="block">
               <span className="text-sm font-bold text-zinc-800">Email address</span>
               <input value={user?.email || ''} readOnly className="mt-2 h-14 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-500 outline-none" />
@@ -123,16 +141,6 @@ export default function Dashboard() {
         </section>
 
         <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="flex items-start gap-4">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-yellow-100 text-[#9a6a00]"><GlobeIcon /></span>
-            <div><h2 className="text-xl font-black tracking-tight sm:text-2xl">Language</h2><p className="mt-1 text-sm leading-6 text-zinc-500">Choose how you want to browse the marketplace.</p></div>
-          </div>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {languages.map((option) => <button key={option.value} type="button" onClick={() => setLanguage(option.value)} className={`min-h-16 rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${language === option.value ? 'border-zinc-950 bg-zinc-950 text-white shadow-lg' : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400'}`}><span className="block text-[10px] font-black tracking-wider opacity-60">{option.value}</span><span className="mt-1 block">{option.label}</span></button>)}
-          </div>
-        </section>
-
-        <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2">
           <div className="flex items-start gap-4">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-yellow-100 text-[#9a6a00]"><WalletIcon /></span>
             <div><h2 className="text-xl font-black tracking-tight sm:text-2xl">Currency</h2><p className="mt-1 text-sm leading-6 text-zinc-500">Prices will be shown in your preferred currency.</p></div>

@@ -18,6 +18,7 @@ export default function ProfileDropdown({ user, onLogout }) {
   const [sellerStatus, setSellerStatus] = useState(null);
   const navigate = useNavigate();
   const avatarLetter = user?.email?.charAt(0).toUpperCase() || 'U';
+  const avatarUrl = user?.user_metadata?.avatar_url;
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Arcus 87';
 
   useEffect(() => {
@@ -59,12 +60,12 @@ export default function ProfileDropdown({ user, onLogout }) {
   const itemClass = 'flex w-full items-center gap-4 rounded-xl px-3 py-3.5 text-left text-base font-semibold text-zinc-800 transition hover:bg-zinc-50';
 
   return <div>
-    <button onClick={() => setOpen(true)} aria-label="Open profile menu" className="relative grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206] transition hover:scale-[1.04]">{avatarLetter}<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" /></button>
+    <button onClick={() => setOpen(true)} aria-label="Open profile menu" className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-yellow-300 text-xs font-black text-[#171206] transition hover:scale-[1.04]">{avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : avatarLetter}<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" /></button>
     {open && createPortal(<div className="fixed inset-0 z-[9999] flex justify-end">
       <button onClick={() => setOpen(false)} className="absolute inset-0 z-0 cursor-default bg-zinc-950/50 backdrop-blur-[2px]" aria-label="Close profile menu" />
       <aside className="relative z-10 flex h-[100dvh] max-h-[100dvh] w-full max-w-[390px] flex-col overflow-hidden !bg-white p-5 opacity-100 shadow-2xl sm:p-6" aria-label="Buyer account menu">
         <div className="flex shrink-0 justify-end"><button onClick={() => setOpen(false)} className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-900" aria-label="Close profile menu"><svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" /></svg></button></div>
-        <div className="mt-4 flex shrink-0 items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-zinc-950 text-base font-black text-white">{avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs font-semibold tabular-nums text-zinc-500">ID {publicId || '••••••'}</p></div></div>
+        <div className="mt-4 flex shrink-0 items-center gap-3 rounded-2xl bg-zinc-100 p-4"><span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-zinc-950 text-base font-black text-white">{avatarUrl ? <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" /> : avatarLetter}</span><div className="min-w-0"><p className="truncate text-xl font-black tracking-[-0.04em] text-zinc-950">{displayName}</p><p className="mt-0.5 text-xs font-semibold tabular-nums text-zinc-500">ID {publicId || '••••••'}</p></div></div>
         <p className="mt-6 shrink-0 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Account</p>
         <div className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
           <button onClick={() => goTo('/dashboard')} className={itemClass}><span className="text-zinc-500"><DashboardIcon /></span><span className="flex-1">Dashboard</span><span className="text-zinc-400"><ArrowIcon /></span></button>

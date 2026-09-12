@@ -32,7 +32,7 @@ const SearchIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentCol
 const FilterIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 6h16M7 12h10m-7 6h4" /></svg>;
 const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
 
-function ListingCard({ account, game }) {
+function ListingCard({ account, game, seller }) {
   const navigate = useNavigate();
   const title = account.title || account.name || `${game.name} Account`;
   const subtitle = account.description || 'Verified marketplace listing with clear purchase details.';
@@ -53,6 +53,7 @@ function ListingCard({ account, game }) {
       <h2 className="truncate text-lg font-black tracking-tight">{title}</h2>
       <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">{subtitle}</p>
       <div className="mt-4 flex flex-wrap gap-2">{account.region && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.region}</span>}{account.platform && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.platform}</span>}{type === 'account' && account.full_email_access && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Full access</span>}{type === 'item' && attributes.quantity && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Qty {attributes.quantity}</span>}{type === 'service' && attributes.estimated_days && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span>}</div>
+      {seller && <button type="button" onClick={(event) => { event.stopPropagation(); navigate(`/seller/${seller.user_id}`); }} className="mt-4 flex w-full items-center gap-2.5 rounded-xl bg-zinc-50 p-2.5 text-left transition hover:bg-zinc-100">{seller.avatar_url ? <img src={seller.avatar_url} alt="" className="h-8 w-8 shrink-0 rounded-lg object-cover" /> : <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-zinc-950 text-[10px] font-black text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}<span className="min-w-0 flex-1 truncate text-xs font-black">{seller.display_name}</span><span className="shrink-0 text-[11px] font-bold tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span></button>}
       <div className="mt-5 flex items-end justify-between border-t border-zinc-100 pt-5"><div><p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-black">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600"><CheckIcon /> Verified</span></div>
     </div>
   </article>;
@@ -62,6 +63,7 @@ export default function GamePage() {
   const { gameId } = useParams();
   const game = games[gameId];
   const [accounts, setAccounts] = useState([]);
+  const [sellers, setSellers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
@@ -103,7 +105,15 @@ export default function GamePage() {
       const { data, error: loadError } = await supabase.from('accounts').select('*').eq('game_id', gameId).eq('status', 'available').order('created_at', { ascending: false });
       if (!active) return;
       if (loadError) setError('We could not load these listings. Please try again.');
-      else setAccounts(data || []);
+      else {
+        const listings = data || [];
+        setAccounts(listings);
+        const sellerIds = [...new Set(listings.map((item) => item.seller_id).filter(Boolean))];
+        if (sellerIds.length) {
+          const { data: sellerRows } = await supabase.from('public_sellers').select('user_id,display_name,avatar_url,total_sales').in('user_id', sellerIds);
+          if (active) setSellers(Object.fromEntries((sellerRows || []).map((seller) => [seller.user_id, seller])));
+        } else setSellers({});
+      }
       setLoading(false);
     };
     loadListings();
@@ -174,7 +184,7 @@ export default function GamePage() {
     <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
       <div className="min-w-0">
         <div className="mb-6"><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div>
-        {loading ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[430px] animate-pulse rounded-3xl bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
+        {loading ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[430px] animate-pulse rounded-3xl bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
       </div>
     </section>
 
