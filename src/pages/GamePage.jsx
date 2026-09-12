@@ -42,20 +42,30 @@ function ListingCard({ account, game, seller }) {
   const deliveryLabel = account.delivery_method === 'scheduled' ? 'Scheduled' : account.delivery_method === 'instant' ? 'Instant' : 'Seller delivery';
   const discount = account.original_price > account.price ? Math.round(((account.original_price - account.price) / account.original_price) * 100) : 0;
 
-  return <article onClick={() => navigate(`/account/${account.id}`)} className="group cursor-pointer overflow-hidden rounded-3xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-200/70">
-    <div className="relative h-52 overflow-hidden bg-zinc-100">
+  return <article onClick={() => navigate(`/account/${account.id}`)} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-200/70">
+    <div className="relative h-52 shrink-0 overflow-hidden bg-zinc-100">
       {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" />}
       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent" />
       <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4"><span className="rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-zinc-800 backdrop-blur">{category}</span>{discount > 0 && <span className="rounded-full bg-red-500 px-3 py-1.5 text-[10px] font-black text-white">-{discount}%</span>}</div>
       <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black text-zinc-800 backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{deliveryLabel}</span>
     </div>
-    <div className="p-5">
-      <h2 className="truncate text-lg font-black tracking-tight">{title}</h2>
+    <div className="flex flex-1 flex-col p-5">
+      <h2 className="truncate text-lg font-black tracking-tight"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
       <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-zinc-500">{subtitle}</p>
       <div className="mt-4 flex flex-wrap gap-2">{account.region && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.region}</span>}{account.platform && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{account.platform}</span>}{type === 'account' && account.full_email_access && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Full access</span>}{type === 'item' && attributes.quantity && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">Qty {attributes.quantity}</span>}{type === 'service' && attributes.estimated_days && <span className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-[11px] font-bold text-zinc-600">{attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span>}</div>
-      {seller && <button type="button" onClick={(event) => { event.stopPropagation(); navigate(`/seller/${seller.user_id}`); }} className="mt-4 flex w-full items-center gap-2.5 border-y border-zinc-100 py-3 text-left transition hover:bg-zinc-50">{seller.avatar_url ? <img src={seller.avatar_url} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-zinc-950 text-[10px] font-black text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}<span className="min-w-0 truncate text-xs font-black">{seller.display_name}</span><span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-bold text-emerald-600"><CheckIcon />Verified</span><span className="ml-auto shrink-0 text-[11px] font-bold tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span></button>}
-      <div className="mt-5 flex items-end justify-between border-t border-zinc-100 pt-5"><div><p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-black">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600"><CheckIcon /> Verified</span></div>
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-5">
+        <div className="min-w-0">
+          {discount > 0 && <p className="mb-0.5 text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</p>}
+          <p className="flex flex-wrap items-baseline gap-1.5"><span className="text-[22px] font-bold leading-tight tracking-tight">₹{Number(account.price || 0).toLocaleString('en-IN')}</span><span className="text-[10px] font-medium text-zinc-400">INR</span></p>
+        </div>
+        <Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="inline-flex h-10 shrink-0 items-center justify-center gap-3 rounded-full bg-zinc-950 px-4 text-xs font-bold text-white transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">Buy now <span aria-hidden="true">→</span></Link>
+      </div>
     </div>
+    {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2.5 border-t border-zinc-100 bg-zinc-50/80 px-5 py-3.5 transition hover:bg-zinc-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-950">
+      {seller.avatar_url ? <img src={seller.avatar_url} alt="" loading="lazy" className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-950 text-[10px] font-bold text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}
+      <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-[13px] font-semibold text-zinc-800">{seller.display_name}</span><span title="Verified seller" aria-label="Verified seller" className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700"><CheckIcon /></span></span>
+      <span className="shrink-0 text-[11px] font-medium tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
+    </Link>}
   </article>;
 }
 
