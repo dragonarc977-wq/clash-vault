@@ -4,6 +4,40 @@
 alter table public.user_profiles add column if not exists avatar_url text;
 alter table public.seller_profiles add column if not exists cover_url text;
 
+create table if not exists public.seller_feedback (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null unique references public.orders(id) on delete cascade,
+  seller_id uuid not null references public.seller_profiles(user_id) on delete cascade,
+  buyer_id uuid not null references auth.users(id) on delete cascade,
+  rating smallint not null check (rating between 1 and 5),
+  comment text check (comment is null or char_length(trim(comment)) between 3 and 500),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists seller_feedback_seller_idx on public.seller_feedback(seller_id,created_at desc);
+alter table public.seller_feedback enable row level security;
+drop policy if exists "public reads seller feedback" on public.seller_feedback;
+drop policy if exists "buyers read their own seller feedback" on public.seller_feedback;
+create policy "buyers read their own seller feedback" on public.seller_feedback for select to authenticated
+using (buyer_id = auth.uid());
+drop policy if exists "buyers review completed orders" on public.seller_feedback;
+create policy "buyers review completed orders" on public.seller_feedback for insert to authenticated
+with check (
+  public.seller_feedback.buyer_id = auth.uid() and exists (
+    select 1 from public.orders purchase
+    where purchase.id = public.seller_feedback.order_id and purchase.buyer_id = auth.uid()
+      and purchase.seller_id = public.seller_feedback.seller_id and purchase.status in ('delivered','completed')
+  )
+);
+revoke all on public.seller_feedback from anon;
+grant select on public.seller_feedback to authenticated;
+grant insert on public.seller_feedback to authenticated;
+
+create or replace view public.public_seller_feedback with (security_invoker = false) as
+select id, seller_id, rating, comment, created_at from public.seller_feedback;
+revoke all on public.public_seller_feedback from public;
+grant select on public.public_seller_feedback to anon, authenticated;
+
 drop policy if exists "Users can update their own profile picture" on public.user_profiles;
 create policy "Users can update their own profile picture" on public.user_profiles for update to authenticated
 using (user_id = auth.uid()) with check (user_id = auth.uid());
@@ -41,11 +75,11 @@ with check (bucket_id='seller-covers' and (storage.foldername(name))[1]=auth.uid
 
 create or replace view public.public_sellers with (security_invoker = false) as
 select profile.user_id, profile.display_name, profile.created_at, profile.avatar_url,
-  count(market_order.id) filter (where market_order.status in ('delivered','completed'))::bigint as total_sales,
-  profile.cover_url
+  (select count(*) from public.orders market_order where market_order.seller_id = profile.user_id and market_order.status in ('delivered','completed'))::bigint as total_sales,
+  profile.cover_url,
+  (select round(avg(feedback.rating)::numeric, 1) from public.seller_feedback feedback where feedback.seller_id = profile.user_id) as average_rating,
+  (select count(*) from public.seller_feedback feedback where feedback.seller_id = profile.user_id)::bigint as feedback_count
 from public.seller_profiles profile
-left join public.orders market_order on market_order.seller_id = profile.user_id
-where profile.status = 'approved'
-group by profile.user_id, profile.display_name, profile.created_at, profile.avatar_url, profile.cover_url;
+where profile.status = 'approved';
 revoke all on public.public_sellers from public;
 grant select on public.public_sellers to anon, authenticated;
