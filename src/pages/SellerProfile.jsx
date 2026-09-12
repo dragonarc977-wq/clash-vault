@@ -8,7 +8,7 @@ const gameNames = {
   'mobile-legends': 'Mobile Legends', 'free-fire': 'Free Fire', 'hay-day': 'Hay Day', 'squad-busters': 'Squad Busters',
 };
 
-const ChatIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" /></svg>;
+const ChatIcon = ({ className = 'h-5 w-5' }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" /></svg>;
 
 export default function SellerProfile() {
   const { sellerId } = useParams();
@@ -110,14 +110,23 @@ export default function SellerProfile() {
     <div className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
       <section className="overflow-hidden rounded-[28px] border border-zinc-200 bg-white shadow-sm">
         <div className="relative h-40 bg-zinc-900 sm:h-64">{seller.cover_url ? <img src={seller.cover_url} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-600" />}<div className="absolute inset-0 bg-gradient-to-t from-zinc-950/55 via-transparent to-transparent" />{viewerId === sellerId && <label className="absolute right-4 top-4 cursor-pointer rounded-full bg-white/95 px-4 py-2.5 text-xs font-black text-zinc-950 shadow-md backdrop-blur"><span>{coverUploading ? 'Uploading…' : seller.cover_url ? 'Change cover' : 'Add cover picture'}</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={coverUploading} onChange={uploadCover} className="sr-only" /></label>}</div>
-        <div className="relative flex flex-col gap-5 px-5 py-6 xl:flex-row xl:items-center xl:justify-between sm:px-8">
-          <div className="flex min-w-0 items-center gap-4"><span className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-3xl border-4 border-white bg-zinc-950 text-3xl font-black text-white shadow-md sm:h-28 sm:w-28">{seller.avatar_url ? <img src={seller.avatar_url} alt={`${seller.display_name} profile`} className="h-full w-full object-cover" /> : seller.display_name.charAt(0).toUpperCase()}</span><div className="min-w-0 pb-1"><div className="flex items-center gap-2"><h1 className="truncate text-2xl font-black tracking-[-0.04em] sm:text-4xl">{seller.display_name}</h1><span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-black uppercase text-emerald-700">✓ Verified</span></div><div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold text-zinc-500"><span>{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span></div></div></div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={() => setShowFeedback(true)} className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white px-4 py-2.5 text-left transition hover:bg-zinc-50">
-              <span><span className="block text-[10px] font-semibold text-zinc-400">Seller rating</span><span className="mt-0.5 block text-sm font-bold"><span className="text-amber-500">★</span> {Number(seller.feedback_count) > 0 ? `${seller.average_rating} / 5` : 'No ratings yet'}</span></span>
-              <span className="border-l border-zinc-200 pl-4"><span className="block text-sm font-semibold">Feedback</span><span className="mt-0.5 block text-xs text-zinc-500">{Number(seller.feedback_count || 0)} reviews →</span></span>
+        <div className="relative flex flex-col gap-4 px-4 py-5 sm:px-8 sm:py-6 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border-2 border-white bg-zinc-950 text-xl font-black text-white shadow-md sm:h-24 sm:w-24 sm:rounded-3xl sm:border-4 sm:text-3xl">{seller.avatar_url ? <img src={seller.avatar_url} alt={`${seller.display_name} profile`} className="h-full w-full object-cover" /> : seller.display_name.charAt(0).toUpperCase()}</span>
+            <div className="min-w-0 flex-1">
+              <h1 className="w-full truncate text-xl font-black tracking-[-0.035em] sm:text-4xl">{seller.display_name}</h1>
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-black uppercase text-emerald-700 sm:px-2.5 sm:text-[9px]">✓ Verified</span>
+                <span className="text-xs font-bold text-zinc-500 sm:text-sm">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+            <button type="button" onClick={() => setShowFeedback(true)} className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-left transition hover:bg-zinc-50 sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-2.5">
+              <span className="min-w-0"><span className="block text-[9px] font-semibold text-zinc-400 sm:text-[10px]">Seller rating</span><span className="mt-0.5 block truncate text-[11px] font-bold sm:text-sm"><span className="text-amber-500">★</span> {Number(seller.feedback_count) > 0 ? `${seller.average_rating} / 5` : 'No ratings yet'}</span></span>
+              <span className="shrink-0 border-l border-zinc-200 pl-2 sm:pl-4"><span className="block text-[11px] font-semibold sm:text-sm">Feedback</span><span className="mt-0.5 block text-[9px] text-zinc-500 sm:text-xs">{Number(seller.feedback_count || 0)} reviews →</span></span>
             </button>
-            <button type="button" disabled={!listings.length && viewerId !== sellerId} onClick={startChat} className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-zinc-800 disabled:opacity-40"><ChatIcon />Live chat</button>
+            <button type="button" disabled={!listings.length && viewerId !== sellerId} onClick={startChat} className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-zinc-950 px-3.5 text-xs font-bold text-white transition hover:bg-zinc-800 disabled:opacity-40 sm:min-h-0 sm:gap-2 sm:px-5 sm:py-3.5 sm:text-sm"><ChatIcon className="h-4 w-4 sm:h-5 sm:w-5" />Live chat</button>
           </div>
         </div>
       </section>
