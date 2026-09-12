@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { applyTheme, getTheme, MARKETPLACE_THEMES } from '../lib/theme';
 import ProfileDropdown from './ProfileDropdown';
 
 const SEARCH_GAMES = [
@@ -17,6 +18,7 @@ const SEARCH_GAMES = [
 ];
 
 const IconButton = ({ children, label, className = '', onClick }) => <button type="button" onClick={onClick} aria-label={label} className={`grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950 ${className}`}>{children}</button>;
+const ThemeCheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m5 12 4 4L19 6" /></svg>;
 
 function listingKind(listing) {
   const value = String(listing.listing_type || listing.category || listing.type || 'account').toLowerCase();
@@ -30,9 +32,9 @@ export default function Navbar() {
   const searchAreaRef = useRef(null);
   const [user, setUser] = useState(null);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
   const [language, setLanguage] = useState(() => localStorage.getItem('clashvault_language') || 'EN');
-  const [currency, setCurrency] = useState(() => localStorage.getItem('clashvault_currency') || 'INR');
+  const [theme, setTheme] = useState(getTheme);
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [inventory, setInventory] = useState([]);
@@ -48,7 +50,6 @@ export default function Navbar() {
   useEffect(() => {
     const syncPreferences = (event) => {
       if (event.detail?.language) setLanguage(event.detail.language);
-      if (event.detail?.currency) setCurrency(event.detail.currency);
     };
     window.addEventListener('clashvault-preferences', syncPreferences);
     return () => window.removeEventListener('clashvault-preferences', syncPreferences);
@@ -84,11 +85,11 @@ export default function Navbar() {
     return SEARCH_GAMES.filter((game) => `${game.name} ${game.aliases}`.toLowerCase().includes(query));
   }, [search]);
 
-  const closeMenus = () => { setLanguageOpen(false); setCurrencyOpen(false); setSearchOpen(false); };
+  const closeMenus = () => { setLanguageOpen(false); setThemeOpen(false); setSearchOpen(false); };
   const openSearch = () => {
     setSearchOpen(true);
     setLanguageOpen(false);
-    setCurrencyOpen(false);
+    setThemeOpen(false);
     loadInventory();
   };
   const openGame = (gameId) => {
@@ -136,8 +137,8 @@ export default function Navbar() {
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <Link to="/support" aria-label="Support inbox" className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950"><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 5.5h16v13H4v-13Zm0 8.5h4.4l1.6 2.25h4L15.6 14H20" /></svg></Link>
         <div className="relative hidden sm:block"><IconButton label="Notifications" onClick={() => { closeMenus(); navigate('/notifications'); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg></IconButton></div>
-        <div className="relative hidden md:block"><button type="button" onClick={() => { setLanguageOpen((value) => !value); setCurrencyOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600 transition hover:bg-zinc-50"><span className="text-[#c68d00]">◎</span>{language}</button>{languageOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-28 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setLanguage('EN'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">English</button><button type="button" onClick={() => { setLanguage('HI'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">Hindi</button></div>}</div>
-        <div className="relative hidden lg:block"><button type="button" onClick={() => { setCurrencyOpen((value) => !value); setLanguageOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600"><span className="text-[#c68d00]">{currency === 'INR' ? '₹' : '$'}</span>{currency}</button>{currencyOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-24 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setCurrency('INR'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">₹ INR</button><button type="button" onClick={() => { setCurrency('USD'); setCurrencyOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">$ USD</button></div>}</div>
+        <div className="relative hidden md:block"><button type="button" onClick={() => { setLanguageOpen((value) => !value); setThemeOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600 transition hover:bg-zinc-50"><span className="text-[#c68d00]">◎</span>{language}</button>{languageOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-28 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setLanguage('EN'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">English</button><button type="button" onClick={() => { setLanguage('HI'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">Hindi</button></div>}</div>
+        <div className="relative"><IconButton label="Change color theme" onClick={() => { setThemeOpen((value) => !value); setLanguageOpen(false); setSearchOpen(false); }} className={themeOpen ? 'border-zinc-400 bg-zinc-50 text-zinc-950' : ''}><svg className="h-[17px] w-[17px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="8" cy="8" r="3" strokeWidth="1.8"/><circle cx="16" cy="8" r="3" strokeWidth="1.8"/><circle cx="12" cy="16" r="3" strokeWidth="1.8"/></svg></IconButton>{themeOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-48 rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"><p className="px-2 pb-1.5 pt-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Choose theme</p>{MARKETPLACE_THEMES.map((option) => <button key={option.id} type="button" onClick={() => { setTheme(applyTheme(option.id)); setThemeOpen(false); }} className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-xs transition hover:bg-zinc-50 ${theme === option.id ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-600'}`}><span className="flex -space-x-1">{option.colors.map((color) => <span key={color} className="h-4 w-4 rounded-full border border-white/40" style={{ backgroundColor: color }} />)}</span><span className="flex-1 font-medium">{option.label}</span>{theme === option.id && <ThemeCheckIcon />}</button>)}</div>}</div>
         {user ? <ProfileDropdown user={user} onLogout={async () => { closeMenus(); await supabase.auth.signOut(); navigate('/login'); }} /> : <Link to="/login" className="grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206]">→</Link>}
       </div>
     </div>

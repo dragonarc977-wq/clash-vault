@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import CookieBanner from './CookieBanner.jsx'
+import { initializeTheme } from './lib/theme.js'
+
+initializeTheme()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

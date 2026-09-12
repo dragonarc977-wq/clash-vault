@@ -143,3 +143,249 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Marketplace color themes. These overrides cover every existing page and dialog. */
+html[data-theme="electric-blue"] {
+  --theme-page: #07111f;
+  --theme-page-deep: #040b15;
+  --theme-surface: #0d1b2e;
+  --theme-surface-rgb: 13, 27, 46;
+  --theme-surface-soft: #10233b;
+  --theme-surface-raised: #142a45;
+  --theme-border: #21466e;
+  --theme-border-soft: #193653;
+  --theme-text: #f8fafc;
+  --theme-text-soft: #cbd5e1;
+  --theme-muted: #8fa3bc;
+  --theme-accent: #2563eb;
+  --theme-accent-bright: #38bdf8;
+  --theme-accent-rgb: 37, 99, 235;
+}
+
+html[data-theme="cyber-violet"] {
+  --theme-page: #0b0920;
+  --theme-page-deep: #060511;
+  --theme-surface: #17132e;
+  --theme-surface-rgb: 23, 19, 46;
+  --theme-surface-soft: #201943;
+  --theme-surface-raised: #2a2055;
+  --theme-border: #49358a;
+  --theme-border-soft: #342865;
+  --theme-text: #faf7ff;
+  --theme-text-soft: #ddd6fe;
+  --theme-muted: #a89cc7;
+  --theme-accent: #7c3aed;
+  --theme-accent-bright: #d946ef;
+  --theme-accent-rgb: 124, 58, 237;
+}
+
+html[data-theme="aurora-teal"] {
+  --theme-page: #061719;
+  --theme-page-deep: #031011;
+  --theme-surface: #0b2528;
+  --theme-surface-rgb: 11, 37, 40;
+  --theme-surface-soft: #103136;
+  --theme-surface-raised: #153e43;
+  --theme-border: #21636a;
+  --theme-border-soft: #17494f;
+  --theme-text: #ecfeff;
+  --theme-text-soft: #c7f9f4;
+  --theme-muted: #8dbab8;
+  --theme-accent: #14b8a6;
+  --theme-accent-bright: #5eead4;
+  --theme-accent-rgb: 20, 184, 166;
+}
+
+html[data-theme] {
+  color-scheme: dark;
+  background: var(--theme-page-deep);
+}
+
+html[data-theme] body {
+  background:
+    radial-gradient(circle at 15% -10%, rgba(var(--theme-accent-rgb), 0.2), transparent 34rem),
+    radial-gradient(circle at 95% 18%, rgba(var(--theme-accent-rgb), 0.1), transparent 28rem),
+    linear-gradient(180deg, var(--theme-page) 0%, var(--theme-page-deep) 100%);
+  background-attachment: fixed;
+  color: var(--theme-text);
+}
+
+html[data-theme] .app-wrapper {
+  background: linear-gradient(135deg, rgba(var(--theme-accent-rgb), 0.035), transparent 45%);
+}
+
+html[data-theme] .app-wrapper > main[class*="bg-white"],
+html[data-theme] .app-wrapper > main[class*="bg-zinc-50"] {
+  background-color: transparent !important;
+}
+
+html[data-theme] [class~="bg-white"],
+html[data-theme] [class*="bg-white/"] {
+  background-color: var(--theme-surface) !important;
+}
+
+html[data-theme] [class~="bg-zinc-50"],
+html[data-theme] [class*="bg-zinc-50/"] {
+  background-color: var(--theme-surface-soft) !important;
+}
+
+html[data-theme] [class~="bg-zinc-100"],
+html[data-theme] [class*="bg-zinc-100/"] {
+  background-color: var(--theme-surface-raised) !important;
+}
+
+html[data-theme] [class~="bg-zinc-200"] {
+  background-color: var(--theme-border) !important;
+}
+
+html[data-theme] [class~="bg-zinc-800"],
+html[data-theme] [class~="bg-zinc-900"],
+html[data-theme] [class~="bg-black"] {
+  background-color: var(--theme-page-deep) !important;
+}
+
+html[data-theme] [class~="bg-zinc-950"],
+html[data-theme] [class*="bg-yellow-"],
+html[data-theme] [class*="bg-amber-"] {
+  background-color: var(--theme-accent) !important;
+}
+
+html[data-theme] [class*="bg-blue-"],
+html[data-theme] [class*="bg-violet-"],
+html[data-theme] [class*="bg-indigo-"] {
+  background-color: rgba(var(--theme-accent-rgb), 0.18) !important;
+}
+
+html[data-theme] [class~="text-zinc-950"],
+html[data-theme] [class~="text-zinc-900"],
+html[data-theme] [class~="text-zinc-800"],
+html[data-theme] [class~="text-black"] {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] [class~="text-zinc-700"],
+html[data-theme] [class~="text-zinc-600"] {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] [class~="text-zinc-500"],
+html[data-theme] [class~="text-zinc-400"],
+html[data-theme] [class~="text-zinc-300"] {
+  color: var(--theme-muted) !important;
+}
+
+html[data-theme] [class*="text-yellow-"],
+html[data-theme] [class*="text-amber-"],
+html[data-theme] [class*="text-blue-"],
+html[data-theme] [class*="text-violet-"],
+html[data-theme] [class*="text-indigo-"],
+html[data-theme] [class*="text-[#b77e00]"],
+html[data-theme] [class*="text-[#a87300]"],
+html[data-theme] [class*="text-[#9a6a00]"],
+html[data-theme] [class*="text-[#8b6100]"],
+html[data-theme] [class*="text-[#c68d00]"] {
+  color: var(--theme-accent-bright) !important;
+}
+
+html[data-theme] [class*="text-[#171206]"] {
+  color: #fff !important;
+}
+
+html[data-theme] [class*="bg-[#c68d00]"] {
+  background-color: var(--theme-accent) !important;
+}
+
+html[data-theme] [class*="border-zinc-"],
+html[data-theme] [class*="border-yellow-"],
+html[data-theme] [class*="border-amber-"],
+html[data-theme] [class*="border-blue-"],
+html[data-theme] [class*="border-violet-"],
+html[data-theme] [class*="border-[#c68d00]"] {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] [class~="border-white"],
+html[data-theme] [class*="border-white/"] {
+  border-color: rgba(var(--theme-surface-rgb), 0.9) !important;
+}
+
+html[data-theme] [class*="divide-zinc-"] > :not(:last-child) {
+  border-color: var(--theme-border-soft) !important;
+}
+
+html[data-theme] [class*="ring-zinc-"],
+html[data-theme] [class*="ring-yellow-"] {
+  --tw-ring-color: rgba(var(--theme-accent-rgb), 0.28) !important;
+}
+
+html[data-theme] input,
+html[data-theme] select,
+html[data-theme] textarea {
+  color: var(--theme-text);
+  caret-color: var(--theme-accent-bright);
+}
+
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder {
+  color: var(--theme-muted);
+}
+
+html[data-theme] option {
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+html[data-theme] [class*="from-white"] {
+  --tw-gradient-from: var(--theme-surface) !important;
+  --tw-gradient-to: rgba(var(--theme-surface-rgb), 0) !important;
+}
+
+html[data-theme] [class*="to-zinc-50"] {
+  --tw-gradient-to: var(--theme-surface-soft) !important;
+}
+
+html[data-theme] [class*="bg-[radial-gradient"] {
+  background-image: radial-gradient(circle at 50% 0%, rgba(var(--theme-accent-rgb), 0.2), transparent 55%) !important;
+}
+
+html[data-theme] button:focus-visible,
+html[data-theme] a:focus-visible,
+html[data-theme] input:focus-visible,
+html[data-theme] select:focus-visible,
+html[data-theme] textarea:focus-visible {
+  outline-color: var(--theme-accent-bright);
+}
+
+html[data-theme] ::selection {
+  background: var(--theme-accent);
+  color: #fff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-theme] [class*="hover:bg-zinc-50"]:hover,
+  html[data-theme] [class*="hover:bg-zinc-100"]:hover {
+    background-color: var(--theme-surface-raised) !important;
+  }
+
+  html[data-theme] [class*="hover:bg-zinc-800"]:hover,
+  html[data-theme] [class*="hover:bg-yellow-"]:hover,
+  html[data-theme] [class*="hover:bg-amber-"]:hover,
+  html[data-theme] [class*="hover:bg-[#b77e00]"]:hover,
+  html[data-theme] [class*="hover:bg-[#c68d00]"]:hover {
+    background-color: var(--theme-accent-bright) !important;
+  }
+
+  html[data-theme] .app-wrapper main [class*="rounded-3xl"][class*="border"][class*="bg-white"]:hover {
+    border-color: var(--theme-accent) !important;
+    box-shadow: 0 16px 42px rgba(var(--theme-accent-rgb), 0.12);
+  }
+}
+
+@media (max-width: 639px) {
+  html[data-theme] body {
+    background:
+      radial-gradient(circle at 50% -8%, rgba(var(--theme-accent-rgb), 0.18), transparent 24rem),
+      var(--theme-page);
+    background-attachment: scroll;
+  }
+}
