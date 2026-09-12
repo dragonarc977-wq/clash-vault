@@ -75,8 +75,21 @@ export default function GamePage() {
   const [price, setPrice] = useState([]);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [fullAccess, setFullAccess] = useState(false);
-  const [sort, setSort] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    if (!showFilters) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setShowFilters(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [showFilters]);
 
   useEffect(() => {
     let active = true;
@@ -135,11 +148,9 @@ export default function GamePage() {
     if (verifiedOnly) result = result.filter((item) => item.verified !== false);
     if (fullAccess) result = result.filter((item) => item.full_email_access === true);
     if (price.length) result = result.filter((item) => price.some((id) => priceRanges.find((range) => range.id === id)?.matches(Number(item.price || 0))));
-    if (sort === 'price-low') result.sort((a, b) => (a.price || 0) - (b.price || 0));
-    else if (sort === 'price-high') result.sort((a, b) => (b.price || 0) - (a.price || 0));
-    else result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     return result;
-  }, [accounts, category, delivery, fullAccess, level, platform, price, region, search, serviceTime, sort, type, verifiedOnly]);
+  }, [accounts, category, delivery, fullAccess, level, platform, price, region, search, serviceTime, type, verifiedOnly]);
 
   const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', category !== 'All categories', serviceTime !== 'Any duration', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
   const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
@@ -157,28 +168,33 @@ export default function GamePage() {
     </section>
 
     <section className="border-b border-zinc-200 bg-zinc-50/70 px-5 py-4 sm:px-8">
-      <div className="mx-auto flex max-w-7xl gap-3"><label className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 focus-within:border-[#c68d00] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-100"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters((value) => !value)} className="relative inline-flex h-12 items-center gap-2 rounded-2xl border border-zinc-200 px-4 text-sm font-bold transition hover:border-zinc-400 lg:hidden"><FilterIcon /> Filters{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button><select value={sort} onChange={(event) => setSort(event.target.value)} className="hidden h-12 rounded-2xl border border-zinc-200 bg-white px-4 text-sm font-bold outline-none sm:block"><option value="newest">Newest</option><option value="price-low">Price: Low to high</option><option value="price-high">Price: High to low</option></select></div>
+      <div className="mx-auto flex max-w-7xl gap-3"><label className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 focus-within:border-[#c68d00] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-100"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters(true)} className="relative inline-flex h-12 shrink-0 items-center gap-2 rounded-2xl border border-zinc-950 bg-zinc-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 sm:px-5"><FilterIcon /><span>Filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button></div>
     </section>
 
-    <section className="mx-auto grid max-w-7xl gap-7 px-5 py-7 sm:px-8 lg:grid-cols-[minmax(0,1fr)_270px]">
-      <aside className={`${showFilters ? 'block' : 'hidden'} rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm lg:sticky lg:top-24 lg:order-2 lg:block lg:self-start`}>
-        <div className="flex items-center justify-between"><h2 className="font-black">Filters</h2>{activeFilterCount > 0 && <button onClick={clearFilters} className="text-xs font-bold text-[#a87300]">Clear all</button>}</div>
-        <div className="mt-6 space-y-5">
-          {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
-          {type === 'Items' && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Item category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All item categories</option>{itemCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>}
-          {type === 'Services' && <><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Service category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All service categories</option>{serviceCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Completion time</span><select value={serviceTime} onChange={(event) => setServiceTime(event.target.value)} className={selectClass}><option>Any duration</option><option>1 day</option><option>Up to 3 days</option><option>More than 3 days</option></select></label></>}
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-          <div><span className="mb-3 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Price</span><div className="space-y-3">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-yellow-400" />{range.label}</label>)}</div></div>
-          <div className="border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Verified listings</label>{(type === 'All' || type === 'Accounts') && <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-yellow-400" />Full email access</label>}</div>
-        </div>
-      </aside>
-
-      <div className="min-w-0 lg:order-1">
-        <div className="mb-6 flex items-center justify-between"><div><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div><select value={sort} onChange={(event) => setSort(event.target.value)} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-bold outline-none sm:hidden"><option value="newest">Newest</option><option value="price-low">Price: Low</option><option value="price-high">Price: High</option></select></div>
+    <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
+      <div className="min-w-0">
+        <div className="mb-6"><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div>
         {loading ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[430px] animate-pulse rounded-3xl bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
       </div>
     </section>
+
+    {showFilters && <div className="fixed inset-0 z-[100] flex items-end justify-end bg-zinc-950/25 backdrop-blur-sm sm:items-stretch" role="dialog" aria-modal="true" aria-label="Listing filters" onMouseDown={() => setShowFilters(false)}>
+      <aside className="flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[28px] border border-zinc-200 bg-white shadow-2xl sm:max-h-none sm:w-[420px] sm:rounded-none sm:border-y-0 sm:border-r-0" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-5 sm:px-7"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">Refine results</p><h2 className="mt-1 text-2xl font-black">Filters</h2></div><button type="button" onClick={() => setShowFilters(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-full border border-zinc-200 text-2xl font-light text-zinc-600 transition hover:bg-zinc-100">×</button></div>
+        <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-7">
+          <div className="space-y-5">
+            {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
+            {type === 'Items' && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Item category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All item categories</option>{itemCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>}
+            {type === 'Services' && <><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Service category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All service categories</option>{serviceCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Completion time</span><select value={serviceTime} onChange={(event) => setServiceTime(event.target.value)} className={selectClass}><option>Any duration</option><option>1 day</option><option>Up to 3 days</option><option>More than 3 days</option></select></label></>}
+            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
+            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
+            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            <div><span className="mb-3 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Price</span><div className="grid gap-3 sm:grid-cols-2">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-zinc-950" />{range.label}</label>)}</div></div>
+            <div className="space-y-3 border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Verified listings</label>{(type === 'All' || type === 'Accounts') && <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Full email access</label>}</div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 border-t border-zinc-200 bg-white px-5 py-4 sm:px-7"><button type="button" onClick={clearFilters} className="h-12 rounded-xl border border-zinc-200 text-sm font-bold text-zinc-700 transition hover:bg-zinc-50">Clear all</button><button type="button" onClick={() => setShowFilters(false)} className="h-12 rounded-xl bg-zinc-950 text-sm font-bold text-white transition hover:bg-zinc-800">Show {filtered.length} results</button></div>
+      </aside>
+    </div>}
   </main>;
 }
