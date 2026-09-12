@@ -124,7 +124,7 @@ export default function Support() {
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">ClashVault care</p>
-          <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">Buyer support</h1>
+          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">Buyer support</h1>
           <p className="mt-3 text-sm text-zinc-500 sm:text-base">Private help from our support team.</p>
         </div>
         <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700"><span className="mr-2 h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />Support team online</div>

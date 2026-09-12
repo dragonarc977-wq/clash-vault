@@ -42,34 +42,34 @@ export default function FAQ() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans pt-24 pb-20">
-      <div className="max-w-3xl mx-auto px-6">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <h1 className="text-4xl md:text-5xl font-black mb-4">
-            Frequently Asked <span className="text-yellow-400">Questions</span>
+    <main className="min-h-screen px-5 pb-20 pt-24 text-zinc-950 sm:px-8 sm:pt-28">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-9 text-center sm:mb-11">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Help centre</p>
+          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">
+            Frequently asked questions
           </h1>
-          <p className="text-zinc-400 text-lg">
+          <p className="mt-3 text-sm text-zinc-500">
             Everything you need to know before buying an account.
           </p>
         </div>
 
-        {/* FAQ Accordion */}
-        <div className="space-y-4">
+        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white/90 shadow-sm backdrop-blur-sm">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-zinc-900/80 border border-zinc-800 rounded-2xl overflow-hidden"
+              className="border-b border-zinc-100 last:border-0"
             >
               <button
                 onClick={() => toggle(index)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left"
+                className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-zinc-50 sm:px-6 sm:py-5"
+                aria-expanded={openIndex === index}
               >
-                <span className="font-semibold text-white pr-4">
+                <span className="pr-4 text-sm font-bold text-zinc-900 sm:text-base">
                   {faq.question}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-yellow-400 flex-shrink-0 transition-transform duration-200 ${
+                  className={`h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -86,8 +86,8 @@ export default function FAQ() {
               </button>
 
               {openIndex === index && (
-                <div className="px-6 pb-5">
-                  <p className="text-zinc-400 text-sm leading-relaxed">
+                <div className="px-5 pb-5 sm:px-6">
+                  <p className="max-w-2xl text-sm leading-6 text-zinc-500">
                     {faq.answer}
                   </p>
                 </div>
@@ -96,17 +96,16 @@ export default function FAQ() {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-zinc-400 mb-6">Still have questions?</p>
+        <div className="mt-10 text-center">
+          <p className="mb-4 text-sm text-zinc-500">Still have questions?</p>
           <Link
-            to="/#games"
-            className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-3.5 px-8 rounded-xl transition-all"
+            to="/support"
+            className="inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white hover:bg-zinc-800"
           >
-            Browse Accounts
+            Contact support
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -114,7 +114,7 @@ export default function SellerProfile() {
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border-2 border-white bg-zinc-950 text-xl font-black text-white shadow-md sm:h-24 sm:w-24 sm:rounded-3xl sm:border-4 sm:text-3xl">{seller.avatar_url ? <img src={seller.avatar_url} alt={`${seller.display_name} profile`} className="h-full w-full object-cover" /> : seller.display_name.charAt(0).toUpperCase()}</span>
             <div className="min-w-0 flex-1">
-              <h1 className="w-full truncate text-xl font-black tracking-[-0.035em] sm:text-4xl">{seller.display_name}</h1>
+              <h1 className="w-full truncate text-xl font-black tracking-[-0.035em] sm:text-3xl">{seller.display_name}</h1>
               <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-black uppercase text-emerald-700 sm:px-2.5 sm:text-[9px]">✓ Verified</span>
                 <span className="text-xs font-bold text-zinc-500 sm:text-sm">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>

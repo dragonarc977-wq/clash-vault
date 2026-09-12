@@ -73,7 +73,7 @@ export default function Notifications() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">Buyer account</p>
-          <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">Notifications</h1>
+          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">Notifications</h1>
           <p className="mt-3 text-sm text-zinc-500 sm:text-base">Order and support updates, all in one place.</p>
         </div>
         {unreadCount > 0 && <button onClick={markAllRead} className="w-fit rounded-full border border-zinc-200 bg-white px-5 py-3 text-sm font-bold shadow-sm transition hover:border-zinc-400">Mark all as read</button>}

@@ -1,7 +1,145 @@
 @import "tailwindcss";
 
+/* Shared visual system: compact, calm and fast across every page. */
+:root {
+  color: #18181b;
+  background: #f5f5f3;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #0a0a0f;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(24, 24, 27, 0.045), transparent 26rem),
+    linear-gradient(180deg, #fafaf9 0%, #f4f4f2 100%);
+  color: #18181b;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #18181b;
+  outline-offset: 3px;
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(161, 161, 170, 0.1), transparent 24rem),
+    transparent;
+}
+
+.app-wrapper > main[class*="bg-white"],
+.app-wrapper > main[class*="bg-zinc-50"] {
+  background-color: transparent;
+}
+
+.app-wrapper main {
+  animation: page-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-wrapper main h1,
+.app-wrapper main h2,
+.app-wrapper main h3 {
+  text-wrap: balance;
+}
+
+::selection {
+  background: #18181b;
+  color: #fff;
+}
+
+* {
+  scrollbar-color: #a1a1aa transparent;
+  scrollbar-width: thin;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-wrapper main a,
+  .app-wrapper main button {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: 180ms;
+    transition-timing-function: ease-out;
+  }
+
+  .app-wrapper main a:active,
+  .app-wrapper main button:active {
+    transform: scale(0.98);
+  }
+
+  .app-wrapper main [class*="rounded-3xl"][class*="border"][class*="bg-white"] {
+    transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+
+  .app-wrapper main [class*="rounded-3xl"][class*="border"][class*="bg-white"]:hover {
+    border-color: #d4d4d8;
+    box-shadow: 0 14px 36px rgba(24, 24, 27, 0.06);
+  }
+}
+
+@media (max-width: 639px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    background: linear-gradient(180deg, #fafaf9 0%, #f5f5f3 100%);
+  }
+
+  .app-wrapper main {
+    animation-duration: 220ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

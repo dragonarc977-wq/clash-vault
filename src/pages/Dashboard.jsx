@@ -105,7 +105,7 @@ export default function Dashboard() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">Buyer account</p>
-          <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">Welcome, {displayName}</h1>
+          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">Welcome, {displayName}</h1>
           <p className="mt-3 text-sm text-zinc-500 sm:text-base">Manage your identity and marketplace preferences.</p>
         </div>
         <Link to="/my-orders" className="inline-flex w-fit items-center rounded-full border border-zinc-200 bg-white px-5 py-3 text-sm font-bold shadow-sm transition hover:border-zinc-300 hover:shadow-md">View my orders <span className="ml-2">→</span></Link>

@@ -35,7 +35,7 @@ export default function Balance() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">Buyer account</p>
-          <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">My balance</h1>
+          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">My balance</h1>
           <p className="mt-3 text-sm text-zinc-500 sm:text-base">View your ClashVault credit and balance activity.</p>
         </div>
         <Link to="/dashboard" className="inline-flex w-fit rounded-full border border-zinc-200 bg-white px-5 py-3 text-sm font-bold shadow-sm transition hover:border-zinc-400">Account settings</Link>
@@ -45,12 +45,12 @@ export default function Balance() {
         <section className="relative overflow-hidden rounded-3xl bg-zinc-950 p-7 text-white shadow-xl sm:min-h-72 sm:p-9">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-yellow-300/10 blur-2xl" />
           <div className="relative flex items-start justify-between"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-yellow-300"><WalletIcon /></span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wider text-zinc-300">{currency}</span></div>
-          <div className="relative mt-12"><p className="text-sm font-semibold text-zinc-400">Available balance</p><p className="mt-2 text-5xl font-black tracking-[-0.05em] sm:text-6xl">{symbol}0.00</p><p className="mt-5 max-w-md text-sm leading-6 text-zinc-400">Account credit can be applied to eligible purchases at checkout.</p></div>
+          <div className="relative mt-10"><p className="text-sm font-semibold text-zinc-400">Available balance</p><p className="mt-2 text-4xl font-black tracking-[-0.045em] sm:text-5xl">{symbol}0.00</p><p className="mt-5 max-w-md text-sm leading-6 text-zinc-400">Account credit can be applied to eligible purchases at checkout.</p></div>
         </section>
 
         <section className="rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm sm:min-h-72 sm:p-9">
           <div className="flex items-start justify-between"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-yellow-100 text-[#9a6a00]"><ClockIcon /></span><span className="rounded-full bg-zinc-100 px-3 py-1.5 text-[10px] font-black tracking-wider text-zinc-500">PENDING</span></div>
-          <div className="mt-12"><p className="text-sm font-semibold text-zinc-500">Pending balance</p><p className="mt-2 text-5xl font-black tracking-[-0.05em] sm:text-6xl">{symbol}0.00</p><p className="mt-5 max-w-md text-sm leading-6 text-zinc-500">Approved refunds or promotional credit will appear here while being processed.</p></div>
+          <div className="mt-10"><p className="text-sm font-semibold text-zinc-500">Pending balance</p><p className="mt-2 text-4xl font-black tracking-[-0.045em] sm:text-5xl">{symbol}0.00</p><p className="mt-5 max-w-md text-sm leading-6 text-zinc-500">Approved refunds or promotional credit will appear here while being processed.</p></div>
         </section>
       </div>
 

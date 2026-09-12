@@ -60,7 +60,7 @@ export default function Login() {
     <div className="mx-auto max-w-5xl">
       <div className="mb-7 text-center sm:mb-9">
         <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500">Buyer account</p>
-        <h1 className="mt-2 text-3xl font-black tracking-[-0.045em] sm:text-5xl">{isSignUp ? 'Create your account.' : 'Welcome back.'}</h1>
+        <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">{isSignUp ? 'Create your account.' : 'Welcome back.'}</h1>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-zinc-500 sm:text-base">Sign in to manage your orders, balance, notifications and support.</p>
       </div>
 
@@ -69,7 +69,7 @@ export default function Login() {
           <div>
             <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/15 bg-white/10"><ShieldIcon /></span>
             <p className="mt-8 text-xs font-black uppercase tracking-[0.18em] text-zinc-400">ClashVault access</p>
-            <h2 className="mt-3 max-w-sm text-3xl font-black tracking-[-0.04em] sm:text-4xl">Everything you buy, in one secure place.</h2>
+            <h2 className="mt-3 max-w-sm text-2xl font-black tracking-[-0.035em] sm:text-3xl">Everything you buy, in one secure place.</h2>
             <p className="mt-4 max-w-md text-sm leading-7 text-zinc-400">Access purchases, account delivery and buyer support from your personal dashboard.</p>
           </div>
           <div className="mt-10 grid grid-cols-3 gap-3 border-t border-white/10 pt-6 text-center">

@@ -43,9 +43,9 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(null);
 
   return <main className="min-h-screen bg-white pt-16 text-zinc-950">
-    <section className="border-b border-zinc-100 bg-[radial-gradient(circle_at_50%_0%,rgba(255,227,108,0.45),rgba(255,255,255,0)_52%)] px-5 pb-9 pt-16 text-center sm:px-8 sm:pb-12 sm:pt-20">
+    <section className="border-b border-zinc-200/70 bg-[radial-gradient(circle_at_50%_0%,rgba(161,161,170,0.16),rgba(255,255,255,0)_55%)] px-5 pb-9 pt-14 text-center sm:px-8 sm:pb-12 sm:pt-16">
       <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#b77e00]">The game marketplace, refined</p>
-      <h1 className="mx-auto mt-4 max-w-3xl text-4xl font-black tracking-[-0.055em] text-zinc-950 sm:text-6xl">Built for the way you play.</h1>
+      <h1 className="mx-auto mt-4 max-w-3xl text-3xl font-black tracking-[-0.045em] text-zinc-950 sm:text-5xl">Built for the way you play.</h1>
       <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-500 sm:text-base">Accounts, items, top-ups and gaming services—curated in one place.</p>
     </section>
 
@@ -62,7 +62,7 @@ export default function Home() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center sm:mb-12">
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#b77e00]">Help centre</p>
-          <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-zinc-950 sm:text-4xl">Frequently asked questions</h2>
+          <h2 className="mt-3 text-2xl font-black tracking-[-0.035em] text-zinc-950 sm:text-3xl">Frequently asked questions</h2>
           <p className="mt-3 text-sm leading-6 text-zinc-500 sm:text-base">Everything you need to know before placing an order.</p>
         </div>
 
