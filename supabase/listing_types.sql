@@ -38,6 +38,19 @@ begin
   new.attributes := coalesce(new.attributes, '{}'::jsonb);
   new.instant_delivery := new.delivery_method = 'instant';
 
+  -- Seller-created and seller-edited products always require admin review.
+  -- Admin and payment-service updates are not changed by this rule.
+  if auth.uid() is not null and auth.role() <> 'service_role' and not public.is_admin() then
+    if tg_op = 'INSERT' then
+      new.seller_id := auth.uid();
+      new.status := 'available';
+    else
+      new.seller_id := old.seller_id;
+      new.status := old.status;
+    end if;
+    new.moderation_status := 'pending';
+  end if;
+
   if new.listing_type = 'item' then
     if nullif(trim(new.attributes->>'item_name'), '') is null then raise exception 'Item name is required'; end if;
     if coalesce((new.attributes->>'quantity')::integer, 0) < 1 then raise exception 'Item quantity must be at least 1'; end if;
@@ -57,6 +70,18 @@ for each row execute function public.validate_marketplace_listing();
 
 create index if not exists accounts_game_type_available_idx
 on public.accounts(game_id, listing_type, status, moderation_status);
+
+-- Only currently approved sellers may change or remove their unsold products.
+drop policy if exists "sellers update unsold listings" on public.accounts;
+create policy "sellers update unsold listings" on public.accounts
+for update to authenticated
+using (seller_id = auth.uid() and status <> 'sold' and public.is_approved_seller())
+with check (seller_id = auth.uid() and status <> 'sold' and public.is_approved_seller());
+
+drop policy if exists "sellers delete unsold listings" on public.accounts;
+create policy "sellers delete unsold listings" on public.accounts
+for delete to authenticated
+using (seller_id = auth.uid() and status <> 'sold' and public.is_approved_seller());
 
 -- Delivery requirements depend on the product sold.
 create or replace function public.deliver_marketplace_order(p_order_id uuid, p_delivery_payload jsonb)

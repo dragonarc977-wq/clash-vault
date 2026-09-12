@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { accountFieldValue, getAccountFields } from '../lib/listingOptions';
 
 const gameNames = {
   'clash-of-clans': 'Clash of Clans', 'brawl-stars': 'Brawl Stars', valorant: 'Valorant',
@@ -102,8 +103,8 @@ export default function AccountDetail() {
     { label: 'Service', value: attributes.service_name || title }, { label: 'Category', value: attributes.service_category || 'Service' }, { label: 'Completion', value: attributes.estimated_days ? `${attributes.estimated_days} day${Number(attributes.estimated_days) === 1 ? '' : 's'}` : 'Agreed with seller' },
     { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
   ] : [
-    { label: account.game_id === 'clash-of-clans' ? 'Town Hall' : 'Primary level', value: account.town_hall ? `${account.game_id === 'clash-of-clans' ? 'TH' : ''}${account.town_hall}` : attributes.rank || 'High' },
-    { label: 'Rank', value: attributes.rank || account.walls_level || '—' }, { label: 'Access', value: attributes.access || (account.full_email_access ? 'Full email access' : 'Game login') },
+    ...getAccountFields(account.game_id).map((field) => ({ label: field.label, value: accountFieldValue(account, field.key) })).filter((stat) => stat.value !== null && stat.value !== undefined && stat.value !== ''),
+    { label: 'Access', value: attributes.access || (account.full_email_access ? 'Full email access' : 'Game login') },
     { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
   ];
 

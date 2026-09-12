@@ -2,6 +2,7 @@ import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from './lib/supabase';
 import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from './lib/imageProcessing';
+import { accountFieldValue, getAccountFields } from './lib/listingOptions';
 import AdminSupport from './pages/AdminSupport';
 import AdminSellers from './pages/AdminSellers';
 const games = [
@@ -71,6 +72,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddModal, setShowAddModal] = useState(false);
   const [addListingType, setAddListingType] = useState('account');
+  const [addGame, setAddGame] = useState('clash-of-clans');
   const [editingAccount, setEditingAccount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -173,7 +175,7 @@ export default function Admin() {
     const value = (name) => form.elements.namedItem(name)?.value?.trim() || '';
     const deliveryMethod = addListingType === 'service' ? 'scheduled' : value('deliveryMethod');
     const attributes = addListingType === 'account'
-      ? { level: Number(value('level')) || null, rank: value('rank') || null, access: value('access') || null, features: value('features') || null }
+      ? getAccountFields(value('game')).reduce((details, field) => ({ ...details, [field.key]: field.type === 'number' ? Number(value(field.key)) || null : value(field.key) || null }), { access: value('access') || null })
       : addListingType === 'item'
         ? { item_name: value('itemName'), item_category: value('itemCategory'), quantity: Number(value('quantity')) || 1 }
         : { service_name: value('serviceName'), service_category: value('serviceCategory'), estimated_days: Number(value('estimatedDays')) || 1, requirements: value('requirements') || null };
@@ -187,8 +189,12 @@ export default function Admin() {
       platform: value('platform') || null,
       region: value('region') || null,
       attributes,
-      town_hall: addListingType === 'account' ? Number(value('level')) || null : null,
-      heroes_level: addListingType === 'account' ? value('features') || null : null,
+      town_hall: addListingType === 'account' ? Number(attributes[getAccountFields(value('game')).find((field) => field.type === 'number')?.key]) || null : null,
+      builder_hall: addListingType === 'account' ? Number(attributes.builder_hall) || null : null,
+      exp_level: addListingType === 'account' ? Number(attributes.experience_level || attributes.account_level || attributes.trainer_level || attributes.farm_level) || null : null,
+      gems: addListingType === 'account' ? Number(attributes.gems || attributes.diamonds || attributes.v_bucks || attributes.coins) || null : null,
+      heroes_level: addListingType === 'account' ? attributes.heroes_level || attributes.rare_skins || null : null,
+      walls_level: addListingType === 'account' ? attributes.walls_level || attributes.rank || attributes.highest_rank || null : null,
       full_email_access: addListingType === 'account' ? value('access') === 'Full email access' : false,
       instant_delivery: deliveryMethod === 'instant',
       price: Number(value('price')),
@@ -209,6 +215,7 @@ export default function Admin() {
     }
     form.reset();
     setAddListingType('account');
+    setAddGame('clash-of-clans');
     setShowAddModal(false);
     setNotice('Listing added successfully.');
     fetchData();
@@ -337,11 +344,11 @@ export default function Admin() {
 
     {editingAccount && <EditListingModal key={editingAccount.id} account={editingAccount} saving={saving} onClose={() => setEditingAccount(null)} onSave={saveAccountEdits} />}
 
-    {showAddModal && <AddListingModal listingType={addListingType} setListingType={setAddListingType} saving={saving} onClose={() => setShowAddModal(false)} onSubmit={addAccount} />}
+    {showAddModal && <AddListingModal listingType={addListingType} setListingType={setAddListingType} gameId={addGame} setGameId={setAddGame} saving={saving} onClose={() => setShowAddModal(false)} onSubmit={addAccount} />}
   </div>;
 }
 
-function AddListingModal({ listingType, setListingType, saving, onClose, onSubmit }) {
+function AddListingModal({ listingType, setListingType, gameId, setGameId, saving, onClose, onSubmit }) {
   return <div className="fixed inset-0 z-[3000] overflow-y-auto bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={onClose}>
     <form onSubmit={onSubmit} onMouseDown={(event) => event.stopPropagation()} className="relative mx-auto my-8 w-full max-w-3xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
       <button type="button" onClick={onClose} className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-zinc-500 hover:bg-zinc-50"><Icon name="close" /></button>
@@ -350,16 +357,11 @@ function AddListingModal({ listingType, setListingType, saving, onClose, onSubmi
       <p className="mt-2 text-sm text-zinc-500">Choose a product type to see its relevant information and delivery options.</p>
       <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl bg-zinc-100 p-1.5">{listingTypes.map(([value, label]) => <button key={value} type="button" onClick={() => setListingType(value)} className={`rounded-xl px-3 py-3 text-sm font-black transition ${listingType === value ? 'bg-zinc-950 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-950'}`}>{label}</button>)}</div>
       <div className="mt-7 grid gap-5 sm:grid-cols-2">
-        <AdminField label="Game"><select name="game" required>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></AdminField>
+        <AdminField label="Game"><select name="game" required value={gameId} onChange={(event) => setGameId(event.target.value)}>{games.map(([id, name]) => <option value={id} key={id}>{name}</option>)}</select></AdminField>
         <AdminField label="Listing title *"><input name="title" required placeholder={listingType === 'account' ? 'Example: TH15 Maxed Account' : listingType === 'item' ? 'Example: 1,000 Diamonds' : 'Example: Rank Boost to Diamond'} /></AdminField>
         <AdminField label="Platform"><select name="platform"><option value="">Any platform</option>{platforms.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
         <AdminField label="Region"><select name="region"><option value="">Any region</option>{regions.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
-        {listingType === 'account' && <>
-          <AdminField label="Primary level *"><input name="level" type="number" min="1" required placeholder="Example: 15" /></AdminField>
-          <AdminField label="Rank"><input name="rank" placeholder="Example: Legendary" /></AdminField>
-          <AdminField label="Account access"><select name="access"><option>Full email access</option><option>Login details only</option><option>Transfer assistance</option></select></AdminField>
-          <AdminField label="Features"><input name="features" placeholder="Heroes, skins, rare items..." /></AdminField>
-        </>}
+        {listingType === 'account' && <><AdminField label="Account access"><select name="access"><option>Full email access</option><option>Game login only</option><option>Transfer assistance</option></select></AdminField>{getAccountFields(gameId).map((field) => <AdminField key={`${gameId}-${field.key}`} label={`${field.label}${field.required ? ' *' : ''}`}><input name={field.key} type={field.type} min={field.type === 'number' ? 0 : undefined} required={field.required} placeholder={field.placeholder} /></AdminField>)}</>}
         {listingType === 'item' && <>
           <AdminField label="Item name *"><input name="itemName" required placeholder="Example: Diamonds" /></AdminField>
           <AdminField label="Item category *"><select name="itemCategory" required>{itemCategories.map((value) => <option key={value}>{value}</option>)}</select></AdminField>
@@ -406,6 +408,7 @@ function EditListingModal({ account, saving, onClose, onSave }) {
   const [gallery, setGallery] = useState(existingImages.map((url, index) => ({ id: url, type: 'existing', url, thumbnail: existingThumbnails[index] || url, preview: existingThumbnails[index] || url })));
   const [error, setError] = useState('');
   const [listingType, setListingType] = useState(account.listing_type || 'account');
+  const [gameId, setGameId] = useState(account.game_id || 'clash-of-clans');
   const inputClass = 'min-h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100';
 
   function addPictures(event) {
@@ -449,7 +452,7 @@ function EditListingModal({ account, saving, onClose, onSave }) {
     const value = (name) => form.elements.namedItem(name)?.value?.trim() || '';
     const deliveryMethod = listingType === 'service' ? 'scheduled' : value('deliveryMethod');
     const attributes = listingType === 'account'
-      ? { level: Number(value('level')) || null, rank: value('rank') || null, access: value('access') || null, features: value('features') || null }
+      ? getAccountFields(value('game')).reduce((details, field) => ({ ...details, [field.key]: field.type === 'number' ? Number(value(field.key)) || null : value(field.key) || null }), { access: value('access') || null })
       : listingType === 'item'
         ? { item_name: value('itemName'), item_category: value('itemCategory'), quantity: Number(value('quantity')) || 1 }
         : { service_name: value('serviceName'), service_category: value('serviceCategory'), estimated_days: Number(value('estimatedDays')) || 1, requirements: value('requirements') || null };
@@ -464,8 +467,12 @@ function EditListingModal({ account, saving, onClose, onSave }) {
         platform: value('platform') || null,
         region: value('region') || null,
         attributes,
-        town_hall: listingType === 'account' ? Number(value('level')) || null : null,
-        heroes_level: listingType === 'account' ? value('features') || null : null,
+        town_hall: listingType === 'account' ? Number(attributes[getAccountFields(value('game')).find((field) => field.type === 'number')?.key]) || null : null,
+        builder_hall: listingType === 'account' ? Number(attributes.builder_hall) || null : null,
+        exp_level: listingType === 'account' ? Number(attributes.experience_level || attributes.account_level || attributes.trainer_level || attributes.farm_level) || null : null,
+        gems: listingType === 'account' ? Number(attributes.gems || attributes.diamonds || attributes.v_bucks || attributes.coins) || null : null,
+        heroes_level: listingType === 'account' ? attributes.heroes_level || attributes.rare_skins || null : null,
+        walls_level: listingType === 'account' ? attributes.walls_level || attributes.rank || attributes.highest_rank || null : null,
         full_email_access: listingType === 'account' ? value('access') === 'Full email access' : false,
         instant_delivery: deliveryMethod === 'instant',
         price: Number(value('price')),
@@ -481,17 +488,12 @@ function EditListingModal({ account, saving, onClose, onSave }) {
     <div className="mt-7"><div className="flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-700">Listing pictures</p><p className="mt-1 text-[10px] text-zinc-400">Use the arrows to set the buyer gallery order. Picture 1 is the cover.</p></div><span className="rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black text-zinc-500">{gallery.length} / {MAX_LISTING_IMAGES}</span></div>{gallery.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">{gallery.map((image, index) => <div key={image.id} className={`relative aspect-square overflow-hidden rounded-2xl border-2 bg-zinc-100 ${index === 0 ? 'border-zinc-950' : 'border-zinc-200'}`}><img src={image.preview} alt={`Listing picture ${index + 1}`} className="h-full w-full object-cover" /><span className="absolute left-2 top-2 rounded-full bg-zinc-950/80 px-2 py-1 text-[8px] font-black text-white">{index + 1}</span><div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-zinc-950/80 p-2 backdrop-blur"><div className="flex gap-1"><button type="button" disabled={index === 0} onClick={() => moveImage(index, -1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image left">←</button><button type="button" disabled={index === gallery.length - 1} onClick={() => moveImage(index, 1)} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-xs text-white disabled:opacity-25" aria-label="Move image right">→</button></div>{index > 0 && <button type="button" onClick={() => makeCover(index)} className="text-[8px] font-black uppercase text-white">Cover</button>}<button type="button" onClick={() => setGallery((current) => current.filter((item) => item.id !== image.id))} className="grid h-6 w-6 place-items-center rounded-full bg-white/15 text-white hover:bg-red-500" aria-label="Remove image"><Icon name="close" className="h-3.5 w-3.5" /></button></div></div>)}</div>}<label className="mt-3 flex min-h-20 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50 text-center transition hover:border-zinc-950 hover:bg-white"><span><span className="text-sm font-black">+ Add more pictures</span><span className="mt-1 block text-[10px] text-zinc-400">JPG, PNG or WebP · up to 12 MB · automatically optimized</span></span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addPictures} className="sr-only" /></label></div>
     <div className="mt-6 grid grid-cols-3 gap-2 rounded-2xl bg-zinc-100 p-1.5">{listingTypes.map(([value, label]) => <button key={value} type="button" onClick={() => setListingType(value)} className={`rounded-xl px-3 py-3 text-sm font-black transition ${listingType === value ? 'bg-zinc-950 text-white shadow-sm' : 'text-zinc-500'}`}>{label}</button>)}</div>
     <div className="mt-7 grid gap-5 sm:grid-cols-2">
-      <EditField label="Game" inputClass={inputClass}><select name="game" defaultValue={account.game_id || 'clash-of-clans'}>{games.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></EditField>
+      <EditField label="Game" inputClass={inputClass}><select name="game" value={gameId} onChange={(event) => setGameId(event.target.value)}>{games.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></EditField>
       <EditField label="Status" inputClass={inputClass}><select name="status" defaultValue={account.status || 'available'}><option value="available">Available</option><option value="sold">Sold</option></select></EditField>
       <EditField label="Listing title *" inputClass={inputClass}><input name="title" required defaultValue={account.title || ''} /></EditField>
       <EditField label="Platform" inputClass={inputClass}><select name="platform" defaultValue={account.platform || ''}><option value="">Any platform</option>{platforms.map((value) => <option key={value}>{value}</option>)}</select></EditField>
       <EditField label="Region" inputClass={inputClass}><select name="region" defaultValue={account.region || ''}><option value="">Any region</option>{regions.map((value) => <option key={value}>{value}</option>)}</select></EditField>
-      {listingType === 'account' && <>
-        <EditField label="Primary level *" inputClass={inputClass}><input name="level" type="number" min="1" required defaultValue={account.attributes?.level || account.town_hall || ''} /></EditField>
-        <EditField label="Rank" inputClass={inputClass}><input name="rank" defaultValue={account.attributes?.rank || ''} /></EditField>
-        <EditField label="Account access" inputClass={inputClass}><select name="access" defaultValue={account.attributes?.access || (account.full_email_access ? 'Full email access' : 'Login details only')}><option>Full email access</option><option>Login details only</option><option>Transfer assistance</option></select></EditField>
-        <EditField label="Features" inputClass={inputClass}><input name="features" defaultValue={account.attributes?.features || account.heroes_level || ''} /></EditField>
-      </>}
+      {listingType === 'account' && <><EditField label="Account access" inputClass={inputClass}><select name="access" defaultValue={account.attributes?.access || (account.full_email_access ? 'Full email access' : 'Game login only')}><option>Full email access</option><option>Game login only</option><option>Transfer assistance</option></select></EditField>{getAccountFields(gameId).map((field) => <EditField key={`${gameId}-${field.key}`} label={`${field.label}${field.required ? ' *' : ''}`} inputClass={inputClass}><input name={field.key} type={field.type} min={field.type === 'number' ? 0 : undefined} required={field.required} defaultValue={accountFieldValue(account, field.key)} placeholder={field.placeholder} /></EditField>)}</>}
       {listingType === 'item' && <>
         <EditField label="Item name *" inputClass={inputClass}><input name="itemName" required defaultValue={account.attributes?.item_name || ''} /></EditField>
         <EditField label="Item category *" inputClass={inputClass}><select name="itemCategory" required defaultValue={account.attributes?.item_category || 'Currency'}>{itemCategories.map((value) => <option key={value}>{value}</option>)}</select></EditField>

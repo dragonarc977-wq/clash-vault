@@ -15,6 +15,7 @@ import Notifications from "./pages/Notifications";
 import Balance from "./pages/Balance";
 import SellerOnboarding from "./pages/SellerOnboarding";
 import SellerDashboard from "./pages/SellerDashboard";
+import MyProducts from "./pages/MyProducts";
 import GamePage from "./pages/GamePage";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route path="/balance" element={<Balance />} />
         <Route path="/become-a-seller" element={<SellerOnboarding />} />
         <Route path="/seller" element={<SellerDashboard />} />
+        <Route path="/my-products" element={<MyProducts />} />
         <Route path="/game/:gameId" element={<GamePage />} />
 
         {/* ✅ ADMIN SUPPORT */}
