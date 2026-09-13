@@ -31,6 +31,13 @@ const priceRanges = [
 const SearchIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m21 21-4.4-4.4M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>;
 const FilterIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 6h16M7 12h10m-7 6h4" /></svg>;
 const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
+const ShieldIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 3 5 6v5c0 4.8 2.8 8.3 7 10 4.2-1.7 7-5.2 7-10V6l-7-3Zm-3 9 2 2 4-4" /></svg>;
+const UsersIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 19v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V19m6.5-9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.5 2a3 3 0 0 1 3 3v1.5M15.5 4.2a3 3 0 0 1 0 5.6" /></svg>;
+const BoltIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z" /></svg>;
+
+function TrustItem({ icon, title, text }) {
+  return <div className="flex min-w-[170px] items-center gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300">{icon}</span><span><strong className="block text-xs font-semibold text-white">{title}</strong><small className="mt-0.5 block text-[10px] text-zinc-400">{text}</small></span></div>;
+}
 
 function ListingCard({ account, game, seller }) {
   const navigate = useNavigate();
@@ -54,29 +61,38 @@ function ListingCard({ account, game, seller }) {
     { label: 'Heroes', value: attributes.heroes_count || attributes.brawlers_count },
   ].filter((stat) => stat.value !== null && stat.value !== undefined && stat.value !== '');
 
-  return <article onClick={() => navigate(`/account/${account.id}`)} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[22px] border border-zinc-200/90 bg-white shadow-[0_12px_35px_-26px_rgba(24,24,27,0.55)] transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-[0_20px_45px_-25px_rgba(24,24,27,0.35)]">
-    <div className="relative h-44 shrink-0 overflow-hidden bg-zinc-100 sm:h-48">
-      {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/55 via-transparent to-zinc-950/5" />
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3.5"><span className="rounded-full border border-white/50 bg-white/90 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-zinc-700 shadow-sm backdrop-blur-md">{category}</span>{discount > 0 && <span className="rounded-full bg-zinc-950 px-2.5 py-1 text-[9px] font-semibold text-white shadow-sm">-{discount}%</span>}</div>
-    </div>
-    <div className="flex flex-1 flex-col bg-gradient-to-b from-white to-zinc-50/40 p-4">
-      <h2 className="line-clamp-2 min-h-10 text-[15px] font-semibold leading-5 tracking-[-0.01em]"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
-      {accountStats.length > 0 && <div className="mt-3 grid grid-cols-3 gap-1.5">{accountStats.map((stat) => <span key={stat.label} title={`${stat.label}: ${stat.value}`} className="min-w-0 rounded-lg border border-zinc-200 bg-white px-1.5 py-1.5 text-center text-zinc-600 shadow-sm"><span className="block truncate text-[8px] font-normal text-zinc-500">{stat.label}</span><span className="mt-0.5 block truncate text-[11px] font-medium text-zinc-900">{stat.value}</span></span>)}</div>}
-      {type === 'item' && attributes.quantity && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Qty {attributes.quantity}</span></div>}
-      {type === 'service' && attributes.estimated_days && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Delivery {attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span></div>}
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-4">
-        <div className="min-w-0">
-          {discount > 0 && <p className="mb-0.5 text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</p>}
-          <p className="flex flex-wrap items-baseline gap-1.5"><span className="text-xl font-semibold leading-tight tracking-tight">₹{Number(account.price || 0).toLocaleString('en-IN')}</span><span className="text-[9px] font-normal text-zinc-400">INR</span></p>
-        </div>
-        <Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-zinc-950 px-3.5 text-[11px] font-medium text-white transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">Buy now <span aria-hidden="true">→</span></Link>
+  const imageCount = account.image_urls?.length || (account.image_url ? 1 : 0);
+  const sellerRating = Number(seller?.average_rating || 0);
+
+  return <article onClick={() => navigate(`/account/${account.id}`)} className="premium-listing-card group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1">
+    <div className="relative aspect-[16/10] shrink-0 overflow-hidden bg-zinc-100">
+      {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.035]" loading="lazy" decoding="async" />}
+      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/45 via-transparent to-zinc-950/10" />
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-zinc-950/80 px-2.5 py-1.5 text-[9px] font-bold text-white shadow-sm"><span className="listing-verified-mark grid h-3.5 w-3.5 place-items-center rounded-full text-[8px]"><CheckIcon /></span> Verified</span>
+        <span className="flex items-center gap-1.5">{discount > 0 && <span className="rounded-lg bg-red-500 px-2 py-1.5 text-[9px] font-bold text-white">-{discount}%</span>}<span className="rounded-lg border border-white/20 bg-zinc-950/80 px-2 py-1.5 text-[9px] font-semibold text-white">▧ {imageCount || 1}</span></span>
       </div>
     </div>
-    {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2 border-t border-zinc-100 bg-white px-4 py-2.5 transition hover:bg-zinc-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-950">
+
+    <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+      <div className="flex items-center gap-2"><span className="text-[9px] font-bold uppercase tracking-[0.14em] text-violet-500">{category}</span><span className="h-1 w-1 rounded-full bg-zinc-300" /><span className="truncate text-[9px] text-zinc-400">{game.name}</span></div>
+      <h2 className="mt-2 line-clamp-2 min-h-10 text-[15px] font-semibold leading-5 tracking-[-0.015em]"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
+      {account.description && <p className="mt-1 line-clamp-1 text-[11px] text-zinc-500">{account.description}</p>}
+
+      {accountStats.length > 0 && <div className="mt-3 grid grid-cols-4 gap-1.5">{accountStats.slice(0, 4).map((stat) => <span key={stat.label} title={`${stat.label}: ${stat.value}`} className="min-w-0 rounded-lg border border-zinc-200 bg-zinc-50 px-1 py-2 text-center"><span className="block truncate text-[7px] font-medium text-zinc-400">{stat.label}</span><span className="mt-0.5 block truncate text-[11px] font-semibold text-zinc-900">{stat.value}</span></span>)}</div>}
+      {type === 'item' && attributes.quantity && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-[10px] text-zinc-600">Quantity {attributes.quantity}</span></div>}
+      {type === 'service' && attributes.estimated_days && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-[10px] text-zinc-600">Delivery in {attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span></div>}
+
+      <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+        <div className="min-w-0">{discount > 0 && <p className="mb-0.5 text-[10px] text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</p>}<p className="flex items-baseline gap-1.5"><span className="text-xl font-bold leading-none tracking-tight">₹{Number(account.price || 0).toLocaleString('en-IN')}</span><span className="text-[8px] text-zinc-400">INR</span></p></div>
+        <Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-[11px] font-semibold text-white transition hover:bg-zinc-800">Buy now <span aria-hidden="true">→</span></Link>
+      </div>
+    </div>
+
+    {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2.5 border-t border-zinc-200 bg-zinc-50 px-3.5 py-2.5 transition hover:bg-zinc-100">
       {seller.avatar_url ? <img src={seller.avatar_url} alt="" loading="lazy" className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zinc-950 text-[9px] font-bold text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}
-      <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-xs font-normal text-zinc-800">{seller.display_name}</span><span title="Verified seller" aria-label="Verified seller" className="grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700"><CheckIcon /></span></span>
-      <span className="shrink-0 text-[10px] font-normal tabular-nums text-zinc-500">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
+      <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-[11px] font-semibold text-zinc-800">{seller.display_name}</span><span title="Verified seller" className="listing-verified-mark grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full"><CheckIcon /></span></span>
+      <span className="shrink-0 text-[10px] text-zinc-500"><span className="text-amber-500">★</span> {sellerRating > 0 ? sellerRating.toFixed(1) : 'New'} <span className="text-zinc-400">({Number(seller.total_sales || 0).toLocaleString('en-IN')})</span></span>
     </Link>}
   </article>;
 }
@@ -100,6 +116,8 @@ export default function GamePage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [fullAccess, setFullAccess] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [minimumRating, setMinimumRating] = useState('Any rating');
+  const [sort, setSort] = useState('popular');
 
   useEffect(() => {
     if (!showFilters) return undefined;
@@ -132,7 +150,7 @@ export default function GamePage() {
         setAccounts(listings);
         const sellerIds = [...new Set(listings.map((item) => item.seller_id).filter(Boolean))];
         if (sellerIds.length) {
-          const { data: sellerRows } = await supabase.from('public_sellers').select('user_id,display_name,avatar_url,total_sales').in('user_id', sellerIds);
+          const { data: sellerRows } = await supabase.from('public_sellers').select('user_id,display_name,avatar_url,total_sales,average_rating,feedback_count').in('user_id', sellerIds);
           if (active) setSellers(Object.fromEntries((sellerRows || []).map((seller) => [seller.user_id, seller])));
         } else setSellers({});
       }
@@ -180,33 +198,52 @@ export default function GamePage() {
     if (verifiedOnly) result = result.filter((item) => item.verified !== false);
     if (fullAccess) result = result.filter((item) => item.full_email_access === true);
     if (price.length) result = result.filter((item) => price.some((id) => priceRanges.find((range) => range.id === id)?.matches(Number(item.price || 0))));
-    result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    if (minimumRating !== 'Any rating') result = result.filter((item) => Number(sellers[item.seller_id]?.average_rating || 0) >= Number(minimumRating));
+    result.sort((a, b) => sort === 'price-low' ? Number(a.price || 0) - Number(b.price || 0) : sort === 'price-high' ? Number(b.price || 0) - Number(a.price || 0) : sort === 'newest' ? new Date(b.created_at) - new Date(a.created_at) : Number(sellers[b.seller_id]?.total_sales || 0) - Number(sellers[a.seller_id]?.total_sales || 0));
     return result;
-  }, [accounts, category, delivery, fullAccess, level, platform, price, region, search, serviceTime, type, verifiedOnly]);
+  }, [accounts, category, delivery, fullAccess, level, minimumRating, platform, price, region, search, sellers, serviceTime, sort, type, verifiedOnly]);
 
-  const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', category !== 'All categories', serviceTime !== 'Any duration', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
-  const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
+  const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', category !== 'All categories', serviceTime !== 'Any duration', minimumRating !== 'Any rating', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
+  const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setMinimumRating('Any rating'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
   const selectClass = 'h-12 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-700 outline-none transition focus:border-[#c68d00] focus:ring-4 focus:ring-yellow-100';
+  const quickSelectClass = 'h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-xs font-semibold text-zinc-700 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10';
 
   if (!game) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">GAME NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This marketplace is unavailable.</h1><Link to="/#games" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">View all games</Link></div></main>;
 
   return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
-    <section className="border-b border-zinc-200 bg-white px-5 py-6 sm:px-8 sm:py-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex items-center gap-2 text-[11px] font-semibold text-zinc-400"><Link to="/" className="hover:text-zinc-950">Home</Link><span>›</span><Link to="/#games" className="hover:text-zinc-950">Games</Link><span>›</span><span className="text-zinc-700">{game.name}</span></div>
-        <div className="mt-5 flex items-center gap-4"><img src={`/games/${gameId}.png`} alt="" className="h-14 w-14 rounded-2xl object-cover shadow-sm ring-1 ring-zinc-200 sm:h-16 sm:w-16" /><div><p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#a87300]">{game.short} marketplace</p><h1 className="mt-1 text-2xl font-black tracking-[-0.035em] sm:text-3xl">{game.name} marketplace</h1><p className="mt-1 text-sm text-zinc-500">{game.description}</p></div></div>
-        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">{listingTypes.map((item) => <button key={item} onClick={() => { setType(item); setCategory('All categories'); setLevel('All'); setServiceTime('Any duration'); setFullAccess(false); }} className={`shrink-0 rounded-full border px-5 py-2.5 text-xs font-black transition ${type === item ? 'border-zinc-950 bg-zinc-950 text-white shadow-sm' : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400'}`}>{item}</button>)}</div>
+    <section className="premium-marketplace-hero border-b border-zinc-800 bg-zinc-950 px-5 py-7 text-white sm:px-8 sm:py-9">
+      <div className="mx-auto max-w-[1600px]">
+        <div className="flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
+          <div className="min-w-0">
+            <div className="flex items-center gap-3"><img src={`/games/${gameId}.png`} alt="" className="h-10 w-10 rounded-xl object-cover ring-1 ring-white/15" /><div><p className="text-[9px] font-bold uppercase tracking-[0.18em] text-violet-300">{game.short} marketplace</p><p className="mt-0.5 text-xs text-zinc-400">{game.name}</p></div></div>
+            <h1 className="mt-4 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">Available listings</h1>
+            <p className="mt-2 max-w-xl text-sm text-zinc-400">Browse {game.description.toLowerCase()} from reviewed marketplace sellers.</p>
+          </div>
+          <div className="flex gap-6 overflow-x-auto pb-1 xl:justify-end">
+            <TrustItem icon={<ShieldIcon />} title="Protected checkout" text="Payments held securely" />
+            <TrustItem icon={<UsersIcon />} title="Verified sellers" text="Identity reviewed" />
+            <TrustItem icon={<BoltIcon />} title="Clear delivery" text="Terms shown upfront" />
+          </div>
+        </div>
+        <div className="mt-7 flex gap-2 overflow-x-auto border-t border-white/10 pt-5">{listingTypes.map((item) => <button key={item} onClick={() => { setType(item); setCategory('All categories'); setLevel('All'); setServiceTime('Any duration'); setFullAccess(false); }} className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${type === item ? 'border-violet-400 bg-violet-500 text-white shadow-sm' : 'border-white/10 bg-white/5 text-zinc-300 hover:border-white/25 hover:bg-white/10'}`}>{item}</button>)}</div>
       </div>
     </section>
 
-    <section className="border-b border-zinc-200 bg-zinc-50/70 px-5 py-4 sm:px-8">
-      <div className="mx-auto flex max-w-7xl gap-3"><label className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 focus-within:border-[#c68d00] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-100"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters(true)} className="relative inline-flex h-12 shrink-0 items-center gap-2 rounded-2xl border border-zinc-950 bg-zinc-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 sm:px-5"><FilterIcon /><span>Filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button></div>
+    <section className="premium-marketplace-toolbar border-b border-zinc-200 bg-zinc-50 px-5 py-4 sm:px-8">
+      <div className="mx-auto flex max-w-[1600px] gap-2.5">
+        <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-500/10"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-11 min-w-0 flex-1 bg-transparent text-xs outline-none sm:text-sm" /></label>
+        {(type === 'All' || type === 'Accounts') && <label className="hidden w-36 lg:block"><span className="sr-only">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={quickSelectClass}><option value="All">{game.levelLabel}</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
+        <label className="hidden w-40 lg:block"><span className="sr-only">Price range</span><select value={price[0] || ''} onChange={(event) => setPrice(event.target.value ? [event.target.value] : [])} className={quickSelectClass}><option value="">Price range</option>{priceRanges.map((range) => <option key={range.id} value={range.id}>{range.label}</option>)}</select></label>
+        <label className="hidden w-36 xl:block"><span className="sr-only">Seller rating</span><select value={minimumRating} onChange={(event) => setMinimumRating(event.target.value)} className={quickSelectClass}><option>Any rating</option><option value="4.5">4.5+ rating</option><option value="4">4.0+ rating</option></select></label>
+        <label className="hidden w-36 md:block"><span className="sr-only">Sort listings</span><select value={sort} onChange={(event) => setSort(event.target.value)} className={quickSelectClass}><option value="popular">Popular</option><option value="newest">Newest</option><option value="price-low">Price: low</option><option value="price-high">Price: high</option></select></label>
+        <button onClick={() => setShowFilters(true)} className="relative inline-flex h-11 shrink-0 items-center gap-2 rounded-xl border border-violet-500 bg-violet-500 px-4 text-xs font-semibold text-white shadow-sm transition hover:brightness-110 sm:px-5"><FilterIcon /><span className="hidden sm:inline">More filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1 text-[9px] text-zinc-950">{activeFilterCount}</span>}</button>
+      </div>
     </section>
 
-    <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
+    <section className="mx-auto max-w-[1600px] px-5 py-7 sm:px-8">
       <div className="min-w-0">
-        <div className="mb-6"><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div>
-        {loading ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-[355px] animate-pulse rounded-[22px] bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
+        <div className="mb-5 flex items-end justify-between gap-4"><div><h2 className="text-lg font-semibold sm:text-xl">Marketplace offers</h2><p className="mt-1 text-xs text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div><span className="hidden text-[10px] text-zinc-400 sm:block">Reviewed sellers · protected checkout</span></div>
+        {loading ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{[1, 2, 3, 4, 5, 6, 7, 8].map((item) => <div key={item} className="h-[390px] animate-pulse rounded-2xl bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
       </div>
     </section>
 
@@ -221,6 +258,7 @@ export default function GamePage() {
             <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
             <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
             <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Seller rating</span><select value={minimumRating} onChange={(event) => setMinimumRating(event.target.value)} className={selectClass}><option>Any rating</option><option value="4.5">4.5+ rating</option><option value="4">4.0+ rating</option></select></label>
             <div><span className="mb-3 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Price</span><div className="grid gap-3 sm:grid-cols-2">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-zinc-950" />{range.label}</label>)}</div></div>
             <div className="space-y-3 border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Verified listings</label>{(type === 'All' || type === 'Accounts') && <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Full email access</label>}</div>
           </div>
