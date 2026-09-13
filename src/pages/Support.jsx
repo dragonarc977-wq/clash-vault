@@ -150,15 +150,15 @@ export default function Support() {
               <div className="min-w-0"><h2 className="truncate text-lg font-black sm:text-xl">{active.subject}</h2><p className="mt-1 text-xs text-zinc-500">{active.status === 'open' ? 'Our team will reply here.' : 'This conversation is resolved.'}</p></div>
               <span className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ring-1 ${active.status === 'open' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-zinc-100 text-zinc-600 ring-zinc-200'}`}>{active.status}</span>
             </div>
-            <div className="support-chat-canvas flex-1 overflow-y-auto p-5 sm:p-7">
+            <div className="flex-1 overflow-y-auto bg-zinc-50/70 p-5 sm:p-7">
               {messages.length === 0 && <div className="mx-auto mt-20 max-w-sm text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-500 shadow-sm ring-1 ring-zinc-200"><ChatIcon /></span><h3 className="mt-5 text-xl font-black">How can we help?</h3><p className="mt-2 text-sm leading-6 text-zinc-500">Send a message and our support team will respond in this private conversation.</p></div>}
-              {messages.map((message) => <div key={message.id} className={`mb-4 flex max-w-[85%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
-                <div className={`support-message ${message.sender_role === 'buyer' ? 'support-message-buyer' : 'support-message-agent'}`}>{message.body}</div>
-                <small className="support-message-meta mt-1.5 px-1 text-[10px]">{message.sender_role === 'buyer' ? 'You' : 'ClashVault Support'} · {formatTime(message.created_at)}</small>
+              {messages.map((message) => <div key={message.id} className={`mb-5 flex max-w-[85%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
+                <div className={`rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${message.sender_role === 'buyer' ? 'rounded-br-md bg-zinc-950 text-white' : 'rounded-bl-md border border-zinc-200 bg-white text-zinc-800'}`}>{message.body}</div>
+                <small className="mt-1.5 px-1 text-[10px] text-zinc-400">{message.sender_role === 'buyer' ? 'You' : 'ClashVault Support'} · {formatTime(message.created_at)}</small>
               </div>)}
               <div ref={bottomRef} />
             </div>
-            <form onSubmit={sendMessage} className="support-chat-composer flex gap-2 border-t border-zinc-200 bg-white p-3 sm:gap-3 sm:p-5">
+            <form onSubmit={sendMessage} className="flex gap-2 border-t border-zinc-200 bg-white p-3 sm:gap-3 sm:p-5">
               <input value={text} onChange={(event) => setText(event.target.value)} placeholder={active.status === 'open' ? 'Write a message…' : 'This conversation is resolved'} maxLength="2000" disabled={active.status !== 'open'} className="min-w-0 flex-1 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 disabled:cursor-not-allowed" />
               <button disabled={sending || active.status !== 'open'} className="rounded-2xl bg-yellow-300 px-5 text-sm font-black text-zinc-950 transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7">{sending ? 'Sending…' : 'Send'}</button>
             </form>
