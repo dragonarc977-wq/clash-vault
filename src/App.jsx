@@ -23,7 +23,18 @@ const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const GamePage = lazy(() => import("./pages/GamePage"));
 
 function PageLoading() {
-  return <main className="grid min-h-screen place-items-center px-5 pt-16"><div className="flex items-center gap-3 text-xs font-bold text-zinc-500"><span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-900" />Loading</div></main>;
+  return <main className="page-loading grid min-h-screen place-items-center px-5 pt-16" aria-live="polite" aria-busy="true">
+    <div className="w-full max-w-sm">
+      <div className="flex items-center gap-3">
+        <span className="page-loading-mark">CV</span>
+        <div><p className="text-sm font-bold text-zinc-900">Loading marketplace</p><p className="mt-0.5 text-xs text-zinc-500">Preparing the next page…</p></div>
+      </div>
+      <div className="page-loading-track mt-5"><span /></div>
+      <div className="mt-5 grid grid-cols-3 gap-2" aria-hidden="true">
+        {[0, 1, 2].map((item) => <span key={item} className="page-loading-card" />)}
+      </div>
+    </div>
+  </main>;
 }
 
 function App() {
