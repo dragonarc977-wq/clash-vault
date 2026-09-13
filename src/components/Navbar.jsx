@@ -56,12 +56,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const syncTheme = (event) => setTheme(event.detail?.theme || getTheme());
-    window.addEventListener('marketplace-theme-change', syncTheme);
-    return () => window.removeEventListener('marketplace-theme-change', syncTheme);
-  }, []);
-
-  useEffect(() => {
     const closeOnOutsideClick = (event) => {
       if (!searchAreaRef.current?.contains(event.target)) setSearchOpen(false);
     };

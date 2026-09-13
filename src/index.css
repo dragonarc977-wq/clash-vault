@@ -84,7 +84,7 @@ textarea:focus-visible {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translate3d(0, 4px, 0);
+    transform: translate3d(0, 8px, 0);
   }
   to {
     opacity: 1;
@@ -160,16 +160,6 @@ html[data-theme="classic-light"] {
   --theme-accent: #facc15;
   --theme-accent-bright: #a87300;
   --theme-accent-rgb: 250, 204, 21;
-  --theme-on-accent: #171206;
-  --theme-success: #059669;
-  --theme-success-rgb: 5, 150, 105;
-  --theme-danger: #dc2626;
-  --theme-danger-rgb: 220, 38, 38;
-  --theme-info: #2563eb;
-  --theme-info-rgb: 37, 99, 235;
-  --theme-violet: #7c3aed;
-  --theme-violet-rgb: 124, 58, 237;
-  --theme-shadow: 24, 24, 27;
 }
 
 html[data-theme="electric-blue"] {
@@ -187,16 +177,6 @@ html[data-theme="electric-blue"] {
   --theme-accent: #2563eb;
   --theme-accent-bright: #38bdf8;
   --theme-accent-rgb: 37, 99, 235;
-  --theme-on-accent: #ffffff;
-  --theme-success: #34d399;
-  --theme-success-rgb: 52, 211, 153;
-  --theme-danger: #fb7185;
-  --theme-danger-rgb: 251, 113, 133;
-  --theme-info: #60a5fa;
-  --theme-info-rgb: 96, 165, 250;
-  --theme-violet: #a78bfa;
-  --theme-violet-rgb: 167, 139, 250;
-  --theme-shadow: 1, 5, 12;
 }
 
 html[data-theme="cyber-violet"] {
@@ -214,16 +194,6 @@ html[data-theme="cyber-violet"] {
   --theme-accent: #7c3aed;
   --theme-accent-bright: #d946ef;
   --theme-accent-rgb: 124, 58, 237;
-  --theme-on-accent: #ffffff;
-  --theme-success: #34d399;
-  --theme-success-rgb: 52, 211, 153;
-  --theme-danger: #fb7185;
-  --theme-danger-rgb: 251, 113, 133;
-  --theme-info: #60a5fa;
-  --theme-info-rgb: 96, 165, 250;
-  --theme-violet: #c4b5fd;
-  --theme-violet-rgb: 196, 181, 253;
-  --theme-shadow: 2, 1, 10;
 }
 
 html[data-theme="aurora-teal"] {
@@ -241,22 +211,11 @@ html[data-theme="aurora-teal"] {
   --theme-accent: #14b8a6;
   --theme-accent-bright: #5eead4;
   --theme-accent-rgb: 20, 184, 166;
-  --theme-on-accent: #03211f;
-  --theme-success: #6ee7b7;
-  --theme-success-rgb: 110, 231, 183;
-  --theme-danger: #fb7185;
-  --theme-danger-rgb: 251, 113, 133;
-  --theme-info: #67e8f9;
-  --theme-info-rgb: 103, 232, 249;
-  --theme-violet: #c4b5fd;
-  --theme-violet-rgb: 196, 181, 253;
-  --theme-shadow: 1, 8, 9;
 }
 
 html[data-theme] {
   color-scheme: dark;
   background: var(--theme-page-deep);
-  accent-color: var(--theme-accent);
 }
 
 html[data-theme] body {
@@ -276,26 +235,18 @@ html[data-theme] .app-wrapper > main[class*="bg-zinc-50"] {
   background-color: transparent !important;
 }
 
-html[data-theme] [class~="bg-white"] {
+html[data-theme] [class~="bg-white"],
+html[data-theme] [class*="bg-white/"] {
   background-color: var(--theme-surface) !important;
 }
 
-html[data-theme] [class*="bg-white/95"],
-html[data-theme] [class*="bg-white/90"],
-html[data-theme] [class*="bg-white/80"] {
-  background-color: rgba(var(--theme-surface-rgb), 0.92) !important;
-}
-
-html[data-theme] [class*="bg-white/15"],
-html[data-theme] [class*="bg-white/10"] {
-  background-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-html[data-theme] [class~="bg-zinc-50"] {
+html[data-theme] [class~="bg-zinc-50"],
+html[data-theme] [class*="bg-zinc-50/"] {
   background-color: var(--theme-surface-soft) !important;
 }
 
-html[data-theme] [class~="bg-zinc-100"] {
+html[data-theme] [class~="bg-zinc-100"],
+html[data-theme] [class*="bg-zinc-100/"] {
   background-color: var(--theme-surface-raised) !important;
 }
 
@@ -309,69 +260,16 @@ html[data-theme] [class~="bg-black"] {
   background-color: var(--theme-page-deep) !important;
 }
 
-html[data-theme] [class~="bg-zinc-950"] {
-  background-color: var(--theme-page-deep) !important;
-}
-
-html[data-theme] button[class~="bg-zinc-950"],
-html[data-theme] a[class~="bg-zinc-950"],
-html[data-theme] label[class~="bg-zinc-950"],
-html[data-theme] [class~="bg-yellow-300"],
-html[data-theme] [class~="bg-yellow-400"] {
+html[data-theme] [class~="bg-zinc-950"],
+html[data-theme] [class*="bg-yellow-"],
+html[data-theme] [class*="bg-amber-"] {
   background-color: var(--theme-accent) !important;
-  color: var(--theme-on-accent) !important;
-}
-
-html[data-theme] [class*="bg-yellow-50"],
-html[data-theme] [class*="bg-yellow-100"],
-html[data-theme] [class*="bg-amber-50"],
-html[data-theme] [class*="bg-amber-100"] {
-  background-color: rgba(var(--theme-accent-rgb), 0.18) !important;
 }
 
 html[data-theme] [class*="bg-blue-"],
-html[data-theme] [class*="bg-cyan-"] {
-  background-color: rgba(var(--theme-info-rgb), 0.16) !important;
-}
-
 html[data-theme] [class*="bg-violet-"],
 html[data-theme] [class*="bg-indigo-"] {
-  background-color: rgba(var(--theme-violet-rgb), 0.16) !important;
-}
-
-html[data-theme] [class~="bg-emerald-50"],
-html[data-theme] [class~="bg-emerald-100"],
-html[data-theme] [class~="bg-green-50"],
-html[data-theme] [class~="bg-green-100"] {
-  background-color: rgba(var(--theme-success-rgb), 0.16) !important;
-}
-
-html[data-theme] [class~="bg-emerald-400"],
-html[data-theme] [class~="bg-emerald-500"],
-html[data-theme] [class~="bg-emerald-600"],
-html[data-theme] [class~="bg-emerald-700"] {
-  background-color: var(--theme-success) !important;
-  color: var(--theme-page-deep) !important;
-}
-
-html[data-theme] [class~="bg-red-50"],
-html[data-theme] [class~="bg-red-100"],
-html[data-theme] [class~="bg-rose-50"],
-html[data-theme] [class~="bg-rose-100"] {
-  background-color: rgba(var(--theme-danger-rgb), 0.16) !important;
-}
-
-html[data-theme] [class~="bg-red-500"],
-html[data-theme] [class~="bg-red-600"],
-html[data-theme] [class~="bg-rose-500"],
-html[data-theme] [class~="bg-rose-600"] {
-  background-color: var(--theme-danger) !important;
-  color: #fff !important;
-}
-
-html[data-theme] [class*="bg-zinc-950/"],
-html[data-theme] [class*="bg-black/"] {
-  background-color: rgba(2, 6, 12, 0.66) !important;
+  background-color: rgba(var(--theme-accent-rgb), 0.18) !important;
 }
 
 html[data-theme] [class~="text-zinc-950"],
@@ -394,6 +292,9 @@ html[data-theme] [class~="text-zinc-300"] {
 
 html[data-theme] [class*="text-yellow-"],
 html[data-theme] [class*="text-amber-"],
+html[data-theme] [class*="text-blue-"],
+html[data-theme] [class*="text-violet-"],
+html[data-theme] [class*="text-indigo-"],
 html[data-theme] [class*="text-[#b77e00]"],
 html[data-theme] [class*="text-[#a87300]"],
 html[data-theme] [class*="text-[#9a6a00]"],
@@ -402,33 +303,8 @@ html[data-theme] [class*="text-[#c68d00]"] {
   color: var(--theme-accent-bright) !important;
 }
 
-html[data-theme] [class*="text-blue-"],
-html[data-theme] [class*="text-cyan-"] {
-  color: var(--theme-info) !important;
-}
-
-html[data-theme] [class*="text-violet-"],
-html[data-theme] [class*="text-indigo-"] {
-  color: var(--theme-violet) !important;
-}
-
-html[data-theme] [class*="text-emerald-"],
-html[data-theme] [class*="text-green-"] {
-  color: var(--theme-success) !important;
-}
-
-html[data-theme] [class*="text-red-"],
-html[data-theme] [class*="text-rose-"] {
-  color: var(--theme-danger) !important;
-}
-
-html[data-theme] [class~="bg-yellow-300"],
-html[data-theme] [class~="bg-yellow-400"] {
-  color: var(--theme-on-accent) !important;
-}
-
 html[data-theme] [class*="text-[#171206]"] {
-  color: var(--theme-on-accent) !important;
+  color: #fff !important;
 }
 
 html[data-theme] [class*="bg-[#c68d00]"] {
@@ -444,26 +320,6 @@ html[data-theme] [class*="border-[#c68d00]"] {
   border-color: var(--theme-border) !important;
 }
 
-html[data-theme] [class*="border-red-"],
-html[data-theme] [class*="border-rose-"] {
-  border-color: rgba(var(--theme-danger-rgb), 0.4) !important;
-}
-
-html[data-theme] [class*="border-emerald-"],
-html[data-theme] [class*="border-green-"] {
-  border-color: rgba(var(--theme-success-rgb), 0.4) !important;
-}
-
-html[data-theme] [class*="border-blue-"],
-html[data-theme] [class*="border-cyan-"] {
-  border-color: rgba(var(--theme-info-rgb), 0.4) !important;
-}
-
-html[data-theme] [class*="border-violet-"],
-html[data-theme] [class*="border-indigo-"] {
-  border-color: rgba(var(--theme-violet-rgb), 0.4) !important;
-}
-
 html[data-theme] [class~="border-white"],
 html[data-theme] [class*="border-white/"] {
   border-color: rgba(var(--theme-surface-rgb), 0.9) !important;
@@ -476,22 +332,6 @@ html[data-theme] [class*="divide-zinc-"] > :not(:last-child) {
 html[data-theme] [class*="ring-zinc-"],
 html[data-theme] [class*="ring-yellow-"] {
   --tw-ring-color: rgba(var(--theme-accent-rgb), 0.28) !important;
-}
-
-html[data-theme] [class*="ring-red-"] {
-  --tw-ring-color: rgba(var(--theme-danger-rgb), 0.3) !important;
-}
-
-html[data-theme] [class*="ring-emerald-"] {
-  --tw-ring-color: rgba(var(--theme-success-rgb), 0.3) !important;
-}
-
-html[data-theme] [class*="ring-blue-"] {
-  --tw-ring-color: rgba(var(--theme-info-rgb), 0.3) !important;
-}
-
-html[data-theme] [class*="ring-violet-"] {
-  --tw-ring-color: rgba(var(--theme-violet-rgb), 0.3) !important;
 }
 
 html[data-theme] input,
@@ -534,316 +374,7 @@ html[data-theme] textarea:focus-visible {
 
 html[data-theme] ::selection {
   background: var(--theme-accent);
-  color: var(--theme-on-accent);
-}
-
-html[data-theme] nav {
-  box-shadow: 0 1px 0 rgba(var(--theme-shadow), 0.04), 0 8px 28px rgba(var(--theme-shadow), 0.035);
-}
-
-html[data-theme] dialog,
-html[data-theme] [role="dialog"] > div,
-html[data-theme] form[class*="shadow-2xl"] {
-  border: 1px solid var(--theme-border);
-}
-
-html[data-theme] main section[class*="border"][class*="bg-white"],
-html[data-theme] main article[class*="border"][class*="bg-white"],
-html[data-theme] main header[class*="border"][class*="bg-white"] {
-  box-shadow: 0 8px 30px rgba(var(--theme-shadow), 0.055);
-}
-
-html[data-theme] input,
-html[data-theme] select,
-html[data-theme] textarea {
-  box-shadow: inset 0 1px 0 rgba(var(--theme-shadow), 0.035);
-}
-
-html[data-theme] input:focus,
-html[data-theme] select:focus,
-html[data-theme] textarea:focus {
-  border-color: var(--theme-accent) !important;
-  box-shadow: 0 0 0 3px rgba(var(--theme-accent-rgb), 0.14) !important;
-}
-
-html[data-theme] button:disabled,
-html[data-theme] input:disabled,
-html[data-theme] select:disabled,
-html[data-theme] textarea:disabled {
-  cursor: not-allowed;
-  filter: saturate(0.7);
-}
-
-html[data-theme] * {
-  scrollbar-color: var(--theme-border) transparent;
-}
-
-html[data-theme] dialog::backdrop {
-  background: rgba(2, 6, 12, 0.66);
-}
-
-.page-loading {
-  background: transparent !important;
-  color: var(--theme-text);
-}
-
-.page-loading-mark {
-  display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 0.8rem;
-  background: var(--theme-accent);
-  color: var(--theme-on-accent);
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: -0.08em;
-  box-shadow: 0 8px 24px rgba(var(--theme-accent-rgb), 0.2);
-}
-
-.page-loading-track {
-  height: 3px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--theme-border-soft);
-}
-
-.page-loading-track span {
-  display: block;
-  width: 42%;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--theme-accent);
-  animation: loading-track 1.15s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-.page-loading-card {
-  height: 4.25rem;
-  overflow: hidden;
-  border: 1px solid var(--theme-border);
-  border-radius: 0.9rem;
-  background: linear-gradient(110deg, var(--theme-surface-soft) 25%, var(--theme-surface-raised) 42%, var(--theme-surface-soft) 58%);
-  background-size: 240% 100%;
-  animation: loading-sheen 1.35s ease-in-out infinite;
-}
-
-.page-loading-card:nth-child(2) {
-  animation-delay: 90ms;
-}
-
-.page-loading-card:nth-child(3) {
-  animation-delay: 180ms;
-}
-
-.support-chat-canvas {
-  background-color: var(--theme-surface-soft) !important;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(var(--theme-accent-rgb), 0.13) 1px, transparent 1.2px),
-    linear-gradient(180deg, rgba(var(--theme-surface-rgb), 0.18), transparent 28%);
-  background-size: 24px 24px, 100% 100%;
-  box-shadow: inset 0 1px 0 var(--theme-border-soft);
-}
-
-.support-message {
-  max-width: 100%;
-  border-radius: 1rem;
-  padding: 0.7rem 0.9rem;
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  overflow-wrap: anywhere;
-  box-shadow: 0 5px 16px rgba(var(--theme-shadow), 0.08);
-}
-
-.support-message-buyer {
-  border-bottom-right-radius: 0.3rem;
-  background: var(--theme-page-deep);
   color: #fff;
-}
-
-.support-message-agent {
-  border: 1px solid var(--theme-border);
-  border-bottom-left-radius: 0.3rem;
-  background: var(--theme-surface);
-  color: var(--theme-text);
-}
-
-.support-message-meta {
-  color: var(--theme-muted);
-}
-
-.support-chat-composer {
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 -10px 28px rgba(var(--theme-shadow), 0.055);
-}
-
-.premium-marketplace-hero {
-  background:
-    radial-gradient(circle at 78% 0%, rgba(var(--theme-accent-rgb), 0.2), transparent 32rem),
-    linear-gradient(135deg, var(--theme-page-deep), color-mix(in srgb, var(--theme-page-deep) 88%, var(--theme-accent))) !important;
-}
-
-.premium-marketplace-hero button[class*="bg-violet-500"],
-.premium-marketplace-toolbar button[class*="bg-violet-500"] {
-  border-color: var(--theme-accent) !important;
-  background: var(--theme-accent) !important;
-  color: var(--theme-on-accent) !important;
-  box-shadow: 0 8px 22px rgba(var(--theme-accent-rgb), 0.2);
-}
-
-.premium-marketplace-toolbar {
-  background: color-mix(in srgb, var(--theme-surface-soft) 94%, var(--theme-accent)) !important;
-}
-
-.premium-listing-card {
-  border-color: color-mix(in srgb, var(--theme-border) 82%, var(--theme-accent)) !important;
-  background: var(--theme-surface) !important;
-  box-shadow: 0 12px 34px -20px rgba(var(--theme-shadow), 0.42);
-}
-
-.listing-verified-mark {
-  background: var(--theme-accent);
-  color: var(--theme-on-accent);
-}
-
-@keyframes loading-track {
-  from { transform: translateX(-110%); }
-  to { transform: translateX(340%); }
-}
-
-@keyframes loading-sheen {
-  from { background-position: 120% 0; }
-  to { background-position: -120% 0; }
-}
-
-/* Compact account workspace: shared rhythm for buyer and seller tools. */
-.account-area main {
-  font-size: 0.875rem;
-}
-
-.account-area main[class*="pt-28"],
-.account-area main [class*="pt-28"] {
-  padding-top: 6rem !important;
-}
-
-.account-area main[class*="pb-20"] {
-  padding-bottom: 3.5rem !important;
-}
-
-.account-area main h1 {
-  font-size: 1.75rem !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.035em !important;
-}
-
-.account-area main h2 {
-  font-size: 1.125rem !important;
-  line-height: 1.3 !important;
-  font-weight: 700 !important;
-}
-
-.account-area main h3 {
-  font-size: 1rem !important;
-  line-height: 1.35 !important;
-  font-weight: 700 !important;
-}
-
-.account-area main [class~="text-base"] {
-  font-size: 0.875rem !important;
-}
-
-.account-area main [class~="text-xl"] {
-  font-size: 1.0625rem !important;
-}
-
-.account-area main [class~="text-2xl"] {
-  font-size: 1.25rem !important;
-}
-
-.account-area main [class~="text-3xl"] {
-  font-size: 1.625rem !important;
-}
-
-.account-area main [class~="text-4xl"],
-.account-area main [class~="text-5xl"] {
-  font-size: 2rem !important;
-}
-
-.account-area main [class~="rounded-3xl"] {
-  border-radius: 1rem !important;
-}
-
-.account-area main [class~="p-9"],
-.account-area main [class~="p-8"],
-.account-area main [class~="p-7"] {
-  padding: 1.5rem !important;
-}
-
-.account-area main [class~="p-6"],
-.account-area main [class~="p-5"] {
-  padding: 1.125rem !important;
-}
-
-.account-area main [class~="mt-9"],
-.account-area main [class~="mt-8"],
-.account-area main [class~="mt-7"] {
-  margin-top: 1.5rem !important;
-}
-
-.account-area main [class~="gap-6"] {
-  gap: 1rem !important;
-}
-
-.account-area main [class~="h-14"] {
-  height: 2.75rem !important;
-}
-
-.account-area main [class~="h-16"] {
-  height: 3.25rem !important;
-}
-
-.account-area main [class~="w-16"] {
-  width: 3.25rem !important;
-}
-
-.account-area main [class~="h-20"] {
-  height: 4rem !important;
-}
-
-.account-area main [class~="w-20"] {
-  width: 4rem !important;
-}
-
-.account-area main [class~="py-4"] {
-  padding-top: 0.75rem !important;
-  padding-bottom: 0.75rem !important;
-}
-
-.account-area main [class~="py-16"],
-.account-area main [class~="py-20"],
-.account-area main [class~="py-24"] {
-  padding-top: 3rem !important;
-  padding-bottom: 3rem !important;
-}
-
-.account-area main input,
-.account-area main select,
-.account-area main textarea,
-.account-area main button,
-.account-area main a {
-  font-size: 0.8125rem;
-}
-
-.account-area main input,
-.account-area main select,
-.account-area main textarea {
-  border-radius: 0.75rem !important;
-}
-
-.account-area main [class*="shadow-xl"],
-.account-area main [class*="shadow-2xl"] {
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Preserve the original white marketplace appearance as the default theme. */
@@ -864,12 +395,6 @@ html[data-theme="classic-light"] .app-wrapper {
 
 html[data-theme="classic-light"] [class~="bg-zinc-950"] {
   background-color: #09090b !important;
-}
-
-html[data-theme="classic-light"] button[class~="bg-zinc-950"],
-html[data-theme="classic-light"] a[class~="bg-zinc-950"],
-html[data-theme="classic-light"] label[class~="bg-zinc-950"] {
-  color: #fff !important;
 }
 
 html[data-theme="classic-light"] [class*="hover:bg-zinc-800"]:hover {
@@ -956,47 +481,5 @@ html[data-theme="classic-light"] [class*="text-violet-"] {
   html[data-theme] [class*="shadow-2xl"],
   html[data-theme] [class*="shadow-xl"] {
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14) !important;
-  }
-
-  .account-area main {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-
-  .account-area main[class*="pt-28"],
-  .account-area main[class*="pt-24"] {
-    padding-top: 5.5rem !important;
-  }
-
-  .account-area main h1 {
-    font-size: 1.4rem !important;
-  }
-
-  .account-area main h2 {
-    font-size: 1.05rem !important;
-  }
-
-  .account-area main [class~="text-4xl"],
-  .account-area main [class~="text-5xl"] {
-    font-size: 1.75rem !important;
-  }
-
-  .account-area main [class~="p-9"],
-  .account-area main [class~="p-8"],
-  .account-area main [class~="p-7"],
-  .account-area main [class~="p-6"],
-  .account-area main [class~="p-5"] {
-    padding: 1rem !important;
-  }
-
-  .account-area main [class~="mt-9"],
-  .account-area main [class~="mt-8"],
-  .account-area main [class~="mt-7"] {
-    margin-top: 1.25rem !important;
-  }
-
-  .account-area main [class~="gap-5"],
-  .account-area main [class~="gap-6"] {
-    gap: 0.875rem !important;
   }
 }
