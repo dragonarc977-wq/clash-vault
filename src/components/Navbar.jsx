@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { applyTheme, getTheme, MARKETPLACE_THEMES } from '../lib/theme';
 import ProfileDropdown from './ProfileDropdown';
@@ -29,6 +29,8 @@ function listingKind(listing) {
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMarketplace = location.pathname.startsWith('/game/');
   const searchAreaRef = useRef(null);
   const [user, setUser] = useState(null);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -108,10 +110,11 @@ export default function Navbar() {
     else openSearch();
   };
 
-  return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white/95 backdrop-blur-xl">
+  return <nav className={`${isMarketplace ? 'reference-marketplace-nav ' : ''}fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white/95 backdrop-blur-xl`}>
     <div className="mx-auto flex h-16 max-w-[1600px] min-w-0 items-center gap-2 px-3 sm:gap-4 sm:px-7 lg:px-10">
       <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="ClashVault home"><span className="grid h-9 w-9 place-items-center rounded-xl bg-yellow-300 text-[12px] font-black tracking-[-0.14em] text-[#171206]">CV</span><span className="hidden text-[17px] font-black tracking-[0.07em] text-zinc-950 lg:block">CLASH<span className="text-[#c68d00]">VAULT</span></span></Link>
 
+      {isMarketplace && <div className="reference-nav-links"><Link to="/#games">Games⌄</Link><Link to={location.pathname} aria-current="page">Accounts</Link><Link to="/faq">How it works</Link><Link to="/support">Support</Link></div>}
       <div ref={searchAreaRef} className="relative min-w-0 flex-1 sm:mx-auto sm:max-w-xl">
         <form onSubmit={submitSearch} className={`flex w-full min-w-0 items-center gap-2 rounded-full border bg-zinc-50 px-3 py-1.5 transition sm:px-4 ${searchOpen ? 'border-zinc-400 ring-4 ring-zinc-100' : 'border-zinc-200'}`}>
           <svg className="h-4 w-4 shrink-0 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m21 21-4.35-4.35M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" /></svg>
