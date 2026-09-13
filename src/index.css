@@ -13,7 +13,16 @@
 
 /* Keep the simple marketplace cards, with a theme-colored edge glow on hover. */
 .shop-listing-card {
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 355px;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.game-tile {
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 256px;
 }
 
 html[data-theme] .shop-search-strip {
@@ -89,9 +98,7 @@ textarea:focus-visible {
 
 .app-wrapper {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 92% 8%, rgba(161, 161, 170, 0.1), transparent 24rem),
-    transparent;
+  background: transparent;
 }
 
 .app-wrapper > main[class*="bg-white"],
@@ -100,7 +107,7 @@ textarea:focus-visible {
 }
 
 .app-wrapper main {
-  animation: page-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-enter 160ms ease-out both;
 }
 
 .app-wrapper main h1,
@@ -122,11 +129,9 @@ textarea:focus-visible {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translate3d(0, 4px, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -1007,5 +1012,21 @@ html[data-theme="classic-light"] [class*="text-violet-"] {
   .account-area main [class~="gap-5"],
   .account-area main [class~="gap-6"] {
     gap: 0.875rem !important;
+  }
+}
+
+/* Lightweight rendering on phones and tablets. */
+@media (max-width: 1024px) {
+  html[data-theme] body {
+    background: var(--theme-page);
+  }
+
+  html[data-theme] [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .app-wrapper {
+    background: transparent;
   }
 }

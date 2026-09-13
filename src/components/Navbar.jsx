@@ -108,7 +108,7 @@ export default function Navbar() {
     else openSearch();
   };
 
-  return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white/95 backdrop-blur-xl">
+  return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white">
     <div className="mx-auto flex h-16 max-w-[1600px] min-w-0 items-center gap-2 px-3 sm:gap-4 sm:px-7 lg:px-10">
       <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="ClashVault home"><span className="grid h-9 w-9 place-items-center rounded-xl bg-yellow-300 text-[12px] font-black tracking-[-0.14em] text-[#171206]">CV</span><span className="hidden text-[17px] font-black tracking-[0.07em] text-zinc-950 lg:block">CLASH<span className="text-[#c68d00]">VAULT</span></span></Link>
 
