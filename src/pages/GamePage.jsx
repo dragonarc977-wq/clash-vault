@@ -62,8 +62,6 @@ function ListingCard({ account, game, seller }) {
   ].filter((stat) => stat.value !== null && stat.value !== undefined && stat.value !== '');
 
   const imageCount = account.image_urls?.length || (account.image_url ? 1 : 0);
-  const sellerRating = Number(seller?.average_rating || 0);
-
   return <article onClick={() => navigate(`/account/${account.id}`)} className="premium-listing-card group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition duration-300 hover:-translate-y-1">
     <div className="reference-card-image relative aspect-[16/10] shrink-0 overflow-hidden bg-zinc-100">
       {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.035]" loading="lazy" decoding="async" />}
@@ -89,7 +87,7 @@ function ListingCard({ account, game, seller }) {
     {seller && <Link to={`/seller/${seller.user_id}`} onClick={(event) => event.stopPropagation()} className="reference-seller flex min-w-0 items-center gap-2.5 border-t border-zinc-200 bg-zinc-50 px-3.5 py-2.5 transition hover:bg-zinc-100">
       {seller.avatar_url ? <img src={seller.avatar_url} alt="" loading="lazy" className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-zinc-200" /> : <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-zinc-950 text-[9px] font-bold text-white">{seller.display_name?.charAt(0).toUpperCase()}</span>}
       <span className="flex min-w-0 flex-1 items-center gap-1.5"><span className="truncate text-[11px] font-semibold text-zinc-800">{seller.display_name}</span><span title="Verified seller" className="listing-verified-mark grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full"><CheckIcon /></span></span>
-      <span className="shrink-0 text-[10px] text-zinc-500"><span className="text-amber-500">★</span> {sellerRating > 0 ? sellerRating.toFixed(1) : 'New'} <span className="text-zinc-400">({Number(seller.total_sales || 0).toLocaleString('en-IN')} orders)</span></span>
+      <span className="shrink-0 text-[10px] text-zinc-400">{Number(seller.total_sales || 0).toLocaleString('en-IN')} orders</span>
     </Link>}
   </article>;
 }
