@@ -636,6 +636,48 @@ html[data-theme] dialog::backdrop {
   animation-delay: 180ms;
 }
 
+.support-chat-canvas {
+  background-color: var(--theme-surface-soft) !important;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(var(--theme-accent-rgb), 0.13) 1px, transparent 1.2px),
+    linear-gradient(180deg, rgba(var(--theme-surface-rgb), 0.18), transparent 28%);
+  background-size: 24px 24px, 100% 100%;
+  box-shadow: inset 0 1px 0 var(--theme-border-soft);
+}
+
+.support-message {
+  max-width: 100%;
+  border-radius: 1rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  box-shadow: 0 5px 16px rgba(var(--theme-shadow), 0.08);
+}
+
+.support-message-buyer {
+  border-bottom-right-radius: 0.3rem;
+  background: var(--theme-page-deep);
+  color: #fff;
+}
+
+.support-message-agent {
+  border: 1px solid var(--theme-border);
+  border-bottom-left-radius: 0.3rem;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.support-message-meta {
+  color: var(--theme-muted);
+}
+
+.support-chat-composer {
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 -10px 28px rgba(var(--theme-shadow), 0.055);
+}
+
 @keyframes loading-track {
   from { transform: translateX(-110%); }
   to { transform: translateX(340%); }
