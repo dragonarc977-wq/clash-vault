@@ -199,8 +199,8 @@ export default function GamePage() {
       </div>
     </section>
 
-    <section className="border-b border-zinc-200 bg-zinc-50/70 px-5 py-4 sm:px-8">
-      <div className="mx-auto flex max-w-7xl gap-3"><label className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 focus-within:border-[#c68d00] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-100"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters(true)} className="relative inline-flex h-12 shrink-0 items-center gap-2 rounded-2xl border border-zinc-950 bg-zinc-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 sm:px-5"><FilterIcon /><span>Filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button></div>
+    <section className="shop-search-strip border-b px-5 py-4 sm:px-8">
+      <div className="mx-auto flex max-w-7xl gap-3"><label className="shop-search-field flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 focus-within:ring-4"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters(true)} className="relative inline-flex h-12 shrink-0 items-center gap-2 rounded-2xl border border-zinc-950 bg-zinc-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 sm:px-5"><FilterIcon /><span>Filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button></div>
     </section>
 
     <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">

@@ -16,6 +16,23 @@
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
+html[data-theme] .shop-search-strip {
+  border-color: var(--theme-border) !important;
+  background: var(--theme-page) !important;
+}
+
+html[data-theme] .shop-search-field {
+  border-color: var(--theme-border) !important;
+  background: var(--theme-surface-soft) !important;
+  color: var(--theme-text);
+  --tw-ring-color: rgba(var(--theme-accent-rgb), 0.18) !important;
+}
+
+html[data-theme] .shop-search-field:focus-within {
+  border-color: var(--theme-accent) !important;
+  background: var(--theme-surface-raised) !important;
+}
+
 .shop-listing-card:hover {
   border-color: var(--theme-accent) !important;
   box-shadow:
