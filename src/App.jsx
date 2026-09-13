@@ -31,9 +31,20 @@ function App() {
 
   // ✅ Hide navbar on admin pages (SaaS style)
   const hideNavbar = location.pathname.startsWith("/admin");
+  const compactAccountPage = [
+    "/dashboard",
+    "/balance",
+    "/my-orders",
+    "/notifications",
+    "/support",
+    "/seller",
+    "/seller-chat",
+    "/my-products",
+    "/become-a-seller",
+  ].some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`));
 
   return (
-    <div className="app-wrapper">
+    <div className={`app-wrapper${compactAccountPage ? " account-area" : ""}`}>
       
       {!hideNavbar && <Navbar />}
 

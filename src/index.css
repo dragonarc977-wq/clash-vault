@@ -377,6 +377,135 @@ html[data-theme] ::selection {
   color: #fff;
 }
 
+/* Compact account workspace: shared rhythm for buyer and seller tools. */
+.account-area main {
+  font-size: 0.875rem;
+}
+
+.account-area main[class*="pt-28"],
+.account-area main [class*="pt-28"] {
+  padding-top: 6rem !important;
+}
+
+.account-area main[class*="pb-20"] {
+  padding-bottom: 3.5rem !important;
+}
+
+.account-area main h1 {
+  font-size: 1.75rem !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.035em !important;
+}
+
+.account-area main h2 {
+  font-size: 1.125rem !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+}
+
+.account-area main h3 {
+  font-size: 1rem !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+}
+
+.account-area main [class~="text-base"] {
+  font-size: 0.875rem !important;
+}
+
+.account-area main [class~="text-xl"] {
+  font-size: 1.0625rem !important;
+}
+
+.account-area main [class~="text-2xl"] {
+  font-size: 1.25rem !important;
+}
+
+.account-area main [class~="text-3xl"] {
+  font-size: 1.625rem !important;
+}
+
+.account-area main [class~="text-4xl"],
+.account-area main [class~="text-5xl"] {
+  font-size: 2rem !important;
+}
+
+.account-area main [class~="rounded-3xl"] {
+  border-radius: 1rem !important;
+}
+
+.account-area main [class~="p-9"],
+.account-area main [class~="p-8"],
+.account-area main [class~="p-7"] {
+  padding: 1.5rem !important;
+}
+
+.account-area main [class~="p-6"],
+.account-area main [class~="p-5"] {
+  padding: 1.125rem !important;
+}
+
+.account-area main [class~="mt-9"],
+.account-area main [class~="mt-8"],
+.account-area main [class~="mt-7"] {
+  margin-top: 1.5rem !important;
+}
+
+.account-area main [class~="gap-6"] {
+  gap: 1rem !important;
+}
+
+.account-area main [class~="h-14"] {
+  height: 2.75rem !important;
+}
+
+.account-area main [class~="h-16"] {
+  height: 3.25rem !important;
+}
+
+.account-area main [class~="w-16"] {
+  width: 3.25rem !important;
+}
+
+.account-area main [class~="h-20"] {
+  height: 4rem !important;
+}
+
+.account-area main [class~="w-20"] {
+  width: 4rem !important;
+}
+
+.account-area main [class~="py-4"] {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.account-area main [class~="py-16"],
+.account-area main [class~="py-20"],
+.account-area main [class~="py-24"] {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.account-area main input,
+.account-area main select,
+.account-area main textarea,
+.account-area main button,
+.account-area main a {
+  font-size: 0.8125rem;
+}
+
+.account-area main input,
+.account-area main select,
+.account-area main textarea {
+  border-radius: 0.75rem !important;
+}
+
+.account-area main [class*="shadow-xl"],
+.account-area main [class*="shadow-2xl"] {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1) !important;
+}
+
 /* Preserve the original white marketplace appearance as the default theme. */
 html[data-theme="classic-light"] {
   color-scheme: light;
@@ -481,5 +610,47 @@ html[data-theme="classic-light"] [class*="text-violet-"] {
   html[data-theme] [class*="shadow-2xl"],
   html[data-theme] [class*="shadow-xl"] {
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  .account-area main {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .account-area main[class*="pt-28"],
+  .account-area main[class*="pt-24"] {
+    padding-top: 5.5rem !important;
+  }
+
+  .account-area main h1 {
+    font-size: 1.4rem !important;
+  }
+
+  .account-area main h2 {
+    font-size: 1.05rem !important;
+  }
+
+  .account-area main [class~="text-4xl"],
+  .account-area main [class~="text-5xl"] {
+    font-size: 1.75rem !important;
+  }
+
+  .account-area main [class~="p-9"],
+  .account-area main [class~="p-8"],
+  .account-area main [class~="p-7"],
+  .account-area main [class~="p-6"],
+  .account-area main [class~="p-5"] {
+    padding: 1rem !important;
+  }
+
+  .account-area main [class~="mt-9"],
+  .account-area main [class~="mt-8"],
+  .account-area main [class~="mt-7"] {
+    margin-top: 1.25rem !important;
+  }
+
+  .account-area main [class~="gap-5"],
+  .account-area main [class~="gap-6"] {
+    gap: 0.875rem !important;
   }
 }
