@@ -15,7 +15,7 @@
 .shop-listing-card {
   contain: layout style;
   content-visibility: auto;
-  contain-intrinsic-size: 355px;
+  contain-intrinsic-size: 400px;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
