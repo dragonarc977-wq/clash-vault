@@ -774,6 +774,28 @@ html[data-theme] dialog::backdrop {
   box-shadow: 0 -10px 28px rgba(var(--theme-shadow), 0.055);
 }
 
+.support-page-shell {
+  animation: support-page-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes support-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .support-page-shell {
+    animation: none;
+  }
+}
+
 @keyframes loading-track {
   from { transform: translateX(-110%); }
   to { transform: translateX(340%); }

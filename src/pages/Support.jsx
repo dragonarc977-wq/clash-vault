@@ -119,50 +119,46 @@ export default function Support() {
     setSending(false);
   }
 
-  return <main className="min-h-screen bg-zinc-50 px-4 pb-16 pt-24 text-zinc-950 sm:px-8 sm:pt-28">
-    <div className="mx-auto max-w-6xl">
-      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">ClashVault care</p>
-          <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">Buyer support</h1>
-          <p className="mt-3 text-sm text-zinc-500 sm:text-base">Private help from our support team.</p>
-        </div>
-        <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-700"><span className="mr-2 h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100" />Support team online</div>
+  return <main className="h-[100dvh] overflow-hidden bg-zinc-50 px-3 pt-16 text-zinc-950 sm:px-6 lg:px-8">
+    <div className="support-page-shell mx-auto flex h-full max-w-6xl min-h-0 flex-col py-3 sm:py-4">
+      <header className="flex shrink-0 items-center justify-between gap-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">ClashVault care</p>
+        <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] font-bold text-emerald-700"><span className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[3px] ring-emerald-100" />Support team online</div>
       </header>
 
-      {notice && <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold text-amber-800">{notice}</div>}
+      {notice && <div className="mt-2 shrink-0 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-800">{notice}</div>}
 
-      {loading ? <div className="mt-8 h-[620px] animate-pulse rounded-3xl border border-zinc-200 bg-white" /> : <div className="mt-8 overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm lg:grid lg:h-[680px] lg:grid-cols-[320px_1fr]">
-        <aside className="border-b border-zinc-200 bg-white p-4 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-5">
-          <button onClick={() => setShowModal(true)} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-5 py-4 text-sm font-black text-white transition hover:bg-[#b77e00]"><span className="text-lg leading-none">+</span> Start a conversation</button>
-          <div className="mt-6 flex items-center justify-between px-1"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">Your conversations</p><span className="rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-bold text-zinc-500">{tickets.length}</span></div>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-2 lg:overflow-visible">
-            {tickets.length ? tickets.map((ticket) => <button key={ticket.id} onClick={() => setActiveTicket(ticket.id)} className={`min-w-[230px] rounded-2xl border p-4 text-left transition lg:w-full lg:min-w-0 ${activeTicket === ticket.id ? 'border-yellow-300 bg-yellow-50' : 'border-transparent bg-zinc-50 hover:border-zinc-200'}`}>
+      {loading ? <div className="mt-3 min-h-0 flex-1 animate-pulse rounded-2xl border border-zinc-200 bg-white" /> : <div className="support-workspace mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm lg:grid lg:grid-cols-[280px_1fr]">
+        <aside className="shrink-0 border-b border-zinc-200 bg-white p-3 lg:min-h-0 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-4">
+          <button onClick={() => setShowModal(true)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#b77e00]"><span className="text-base leading-none">+</span> Start a conversation</button>
+          <div className="mt-3 flex items-center justify-between px-1 lg:mt-4"><p className="text-[9px] font-black uppercase tracking-[0.16em] text-zinc-400">Your conversations</p><span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[9px] font-bold text-zinc-500">{tickets.length}</span></div>
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-0.5 lg:block lg:space-y-2 lg:overflow-visible">
+            {tickets.length ? tickets.map((ticket) => <button key={ticket.id} onClick={() => setActiveTicket(ticket.id)} className={`min-w-[205px] rounded-xl border px-3 py-2.5 text-left transition lg:w-full lg:min-w-0 ${activeTicket === ticket.id ? 'border-yellow-300 bg-yellow-50' : 'border-transparent bg-zinc-50 hover:border-zinc-200'}`}>
               <span className="block truncate text-sm font-bold text-zinc-900">{ticket.subject}</span>
-              <span className="mt-2 flex items-center justify-between gap-2 text-[11px] text-zinc-500"><span className={`font-bold capitalize ${ticket.status === 'open' ? 'text-emerald-600' : 'text-zinc-500'}`}>{ticket.status}</span><span>{formatTime(ticket.last_message_at)}</span></span>
+              <span className="mt-1 flex items-center justify-between gap-2 text-[10px] text-zinc-500"><span className={`font-bold capitalize ${ticket.status === 'open' ? 'text-emerald-600' : 'text-zinc-500'}`}>{ticket.status}</span><span>{formatTime(ticket.last_message_at)}</span></span>
             </button>) : <p className="px-2 py-5 text-sm text-zinc-500">No conversations yet.</p>}
           </div>
         </aside>
 
-        <section className="flex min-h-[560px] min-w-0 flex-col bg-white lg:min-h-0">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
           {active ? <>
-            <div className="flex items-center justify-between gap-4 border-b border-zinc-200 px-5 py-5 sm:px-7">
-              <div className="min-w-0"><h2 className="truncate text-lg font-black sm:text-xl">{active.subject}</h2><p className="mt-1 text-xs text-zinc-500">{active.status === 'open' ? 'Our team will reply here.' : 'This conversation is resolved.'}</p></div>
-              <span className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ring-1 ${active.status === 'open' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-zinc-100 text-zinc-600 ring-zinc-200'}`}>{active.status}</span>
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3 sm:px-5">
+              <div className="min-w-0"><h2 className="truncate text-sm font-bold sm:text-base">{active.subject}</h2><p className="mt-0.5 text-[10px] text-zinc-500">{active.status === 'open' ? 'Our team will reply here.' : 'This conversation is resolved.'}</p></div>
+              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ring-1 ${active.status === 'open' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-zinc-100 text-zinc-600 ring-zinc-200'}`}>{active.status}</span>
             </div>
-            <div className="support-chat-canvas flex-1 overflow-y-auto p-5 sm:p-7">
-              {messages.length === 0 && <div className="mx-auto mt-20 max-w-sm text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-500 shadow-sm ring-1 ring-zinc-200"><ChatIcon /></span><h3 className="mt-5 text-xl font-black">How can we help?</h3><p className="mt-2 text-sm leading-6 text-zinc-500">Send a message and our support team will respond in this private conversation.</p></div>}
-              {messages.map((message) => <div key={message.id} className={`mb-4 flex max-w-[85%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
+            <div className="support-chat-canvas min-h-0 flex-1 overscroll-contain overflow-y-auto p-4 sm:p-5">
+              {messages.length === 0 && <div className="mx-auto flex h-full max-w-xs flex-col items-center justify-center text-center"><span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-zinc-500 shadow-sm ring-1 ring-zinc-200"><ChatIcon className="h-5 w-5" /></span><h3 className="mt-3 text-base font-bold">How can we help?</h3><p className="mt-1.5 text-xs leading-5 text-zinc-500">Send a message and our support team will respond here.</p></div>}
+              {messages.map((message) => <div key={message.id} className={`mb-3 flex max-w-[88%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
                 <div className={`support-message ${message.sender_role === 'buyer' ? 'support-message-buyer' : 'support-message-agent'}`}>{message.body}</div>
-                <small className="support-message-meta mt-1.5 px-1 text-[10px]">{message.sender_role === 'buyer' ? 'You' : 'ClashVault Support'} · {formatTime(message.created_at)}</small>
+                <small className="support-message-meta mt-1 px-1 text-[9px]">{message.sender_role === 'buyer' ? 'You' : 'ClashVault Support'} · {formatTime(message.created_at)}</small>
               </div>)}
               <div ref={bottomRef} />
             </div>
-            <form onSubmit={sendMessage} className="support-chat-composer flex gap-2 border-t border-zinc-200 bg-white p-3 sm:gap-3 sm:p-5">
-              <input value={text} onChange={(event) => setText(event.target.value)} placeholder={active.status === 'open' ? 'Write a message…' : 'This conversation is resolved'} maxLength="2000" disabled={active.status !== 'open'} className="min-w-0 flex-1 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100 disabled:cursor-not-allowed" />
-              <button disabled={sending || active.status !== 'open'} className="rounded-2xl bg-yellow-300 px-5 text-sm font-black text-zinc-950 transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7">{sending ? 'Sending…' : 'Send'}</button>
+            <form onSubmit={sendMessage} className="support-chat-composer flex shrink-0 gap-2 border-t border-zinc-200 bg-white p-2.5 sm:p-3">
+              <input value={text} onChange={(event) => setText(event.target.value)} placeholder={active.status === 'open' ? 'Write a message…' : 'This conversation is resolved'} maxLength="2000" disabled={active.status !== 'open'} className="h-10 min-w-0 flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 text-xs outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-2 focus:ring-yellow-100 disabled:cursor-not-allowed" />
+              <button disabled={sending || active.status !== 'open'} className="h-10 rounded-xl bg-yellow-300 px-4 text-xs font-bold text-zinc-950 transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6">{sending ? 'Sending…' : 'Send'}</button>
             </form>
-          </> : <div className="m-auto max-w-sm px-6 py-20 text-center"><span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-zinc-100 text-zinc-500"><ChatIcon /></span><h2 className="mt-5 text-2xl font-black">Welcome to buyer support</h2><p className="mt-2 text-sm leading-6 text-zinc-500">Start a private conversation whenever you need help with an order.</p><button onClick={() => setShowModal(true)} className="mt-6 rounded-full bg-yellow-300 px-6 py-3 text-sm font-black transition hover:bg-yellow-400">Start a conversation</button></div>}
+          </> : <div className="m-auto max-w-xs px-5 py-8 text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-zinc-100 text-zinc-500"><ChatIcon className="h-5 w-5" /></span><h2 className="mt-3 text-lg font-bold">Need help?</h2><p className="mt-1.5 text-xs leading-5 text-zinc-500">Start a conversation about an order or account.</p><button onClick={() => setShowModal(true)} className="mt-4 rounded-xl bg-yellow-300 px-5 py-2.5 text-xs font-bold transition hover:bg-yellow-400">Start a conversation</button></div>}
         </section>
       </div>}
     </div>
