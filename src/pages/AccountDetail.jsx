@@ -114,7 +114,10 @@ export default function AccountDetail() {
             {images.length > 1 && <><button type="button" onClick={previousImage} aria-label="Previous image" className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:left-4"><ArrowLeft /></button><button type="button" onClick={nextImage} aria-label="Next image" className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:right-4"><ArrowRight /></button><span className="absolute bottom-3 right-3 rounded-full bg-zinc-950/80 px-3 py-1.5 text-[10px] font-bold text-white">{activeImage + 1} / {images.length}</span></>}
           </div>
           {images.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-2">{images.map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(index)} className={`h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-zinc-100 transition ${activeImage === index ? 'border-zinc-950 opacity-100' : 'border-transparent opacity-55 hover:opacity-100'}`} aria-label={`Show image ${index + 1}`} aria-current={activeImage === index}><img src={thumbnails[index]} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" /></button>)}</div>}
-          <p className="mt-4 hidden whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500 lg:block">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          <section className="mt-6 hidden lg:block">
+            <h2 className="text-base font-bold">Account description</h2>
+            <p className="mt-3 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          </section>
         </section>
 
         <section className="lg:sticky lg:top-20">
@@ -155,7 +158,10 @@ export default function AccountDetail() {
             })}</div>
           </section>
 
-          <p className="mt-6 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500 lg:hidden">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          <section className="mt-8 lg:hidden">
+            <h2 className="text-base font-bold">Account description</h2>
+            <p className="mt-3 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          </section>
 
           <div className="mt-5 hidden gap-2 lg:grid lg:grid-cols-1 xl:grid-cols-3">{['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item) => <div key={item} className="flex items-center gap-2 rounded-xl bg-zinc-50 px-3 py-2.5 text-[10px] font-bold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>{item}</div>)}</div>
 
