@@ -114,14 +114,37 @@ export default function AccountDetail() {
             {images.length > 1 && <><button type="button" onClick={previousImage} aria-label="Previous image" className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:left-4"><ArrowLeft /></button><button type="button" onClick={nextImage} aria-label="Next image" className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:right-4"><ArrowRight /></button><span className="absolute bottom-3 right-3 rounded-full bg-zinc-950/80 px-3 py-1.5 text-[10px] font-bold text-white">{activeImage + 1} / {images.length}</span></>}
           </div>
           {images.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-2">{images.map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(index)} className={`h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-zinc-100 transition ${activeImage === index ? 'border-zinc-950 opacity-100' : 'border-transparent opacity-55 hover:opacity-100'}`} aria-label={`Show image ${index + 1}`} aria-current={activeImage === index}><img src={thumbnails[index]} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" /></button>)}</div>}
-          <p className="mt-4 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          <p className="mt-4 hidden whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500 lg:block">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
         </section>
 
         <section className="lg:sticky lg:top-20">
           <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-zinc-100 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-zinc-700">{gameName}</span><span className="rounded-full bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-blue-700">{typeLabel}</span><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-wider ${isAvailable ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-zinc-400'}`} />{isAvailable ? 'Available' : 'Purchased'}</span></div>
-          <h1 className="mt-4 break-words text-[17px] font-bold leading-[1.25] tracking-[-0.02em] sm:text-[21px]">{title}</h1>
+          <h1 className="mt-4 break-words text-[17px] font-bold leading-[1.25] tracking-[-0.02em] lg:text-[21px]">{title}</h1>
 
-          <div className="mt-5 rounded-3xl border border-zinc-200 bg-zinc-50 p-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-3xl font-black tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-sm text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-emerald-700 ring-1 ring-zinc-200"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-zinc-700 ring-1 ring-zinc-200"><CheckIcon />Reviewed</span></div></div></div>
+          <div className="mt-5 overflow-hidden rounded-[22px] border border-violet-500/70 bg-zinc-50 p-4 shadow-[0_18px_40px_-28px_rgba(124,58,237,0.85)] lg:hidden">
+            <div className="flex items-center justify-between gap-4 border-b border-violet-500/40 pb-4">
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.12em] text-zinc-400">Price</p>
+                <div className="mt-0.5 flex items-baseline gap-2">
+                  <span className="text-[32px] font-black leading-none tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>
+                  {account.original_price > account.price && <span className="text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}
+                </div>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-emerald-600"><ShieldIcon />Secure</span>
+            </div>
+
+            <div className="grid grid-cols-3 border-b border-violet-500/40 py-3">
+              {['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item, index) => <div key={item} className={`flex min-w-0 items-start gap-1.5 px-2 text-[9px] font-bold leading-3.5 text-zinc-600 ${index < 2 ? 'border-r border-violet-500/35' : ''}`}><span className="mt-px shrink-0 text-emerald-600"><CheckIcon /></span><span>{item}</span></div>)}
+            </div>
+
+            {purchaseError && <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700">{purchaseError}</p>}
+            <div className="mt-3 grid gap-2">
+              {isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Open my order</button>}
+              <button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button>
+            </div>
+          </div>
+
+          <div className="mt-5 hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-5 lg:block"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-3xl font-black tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-sm text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-emerald-700 ring-1 ring-zinc-200"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-zinc-700 ring-1 ring-zinc-200"><CheckIcon />Reviewed</span></div></div></div>
 
           <section className="mt-5">
             <h2 className="text-base font-bold">Account details</h2>
@@ -132,10 +155,12 @@ export default function AccountDetail() {
             })}</div>
           </section>
 
-          <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">{['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item) => <div key={item} className="flex items-center gap-2 rounded-xl bg-zinc-50 px-3 py-2.5 text-[10px] font-bold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>{item}</div>)}</div>
+          <p className="mt-6 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500 lg:hidden">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
 
-          {purchaseError && <p className="mt-7 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{purchaseError}</p>}
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">{isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Open my order</button>}<button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
+          <div className="mt-5 hidden gap-2 lg:grid lg:grid-cols-1 xl:grid-cols-3">{['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item) => <div key={item} className="flex items-center gap-2 rounded-xl bg-zinc-50 px-3 py-2.5 text-[10px] font-bold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>{item}</div>)}</div>
+
+          {purchaseError && <p className="mt-7 hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 lg:block">{purchaseError}</p>}
+          <div className="mt-5 hidden gap-3 lg:grid lg:grid-cols-2">{isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Open my order</button>}<button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
         </section>
       </div>
     </div>
