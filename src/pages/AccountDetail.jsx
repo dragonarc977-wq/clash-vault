@@ -123,7 +123,14 @@ export default function AccountDetail() {
 
           <div className="mt-5 rounded-3xl border border-zinc-200 bg-zinc-50 p-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-3xl font-black tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-sm text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-emerald-700 ring-1 ring-zinc-200"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-zinc-700 ring-1 ring-zinc-200"><CheckIcon />Reviewed</span></div></div></div>
 
-          <section className="mt-5 overflow-hidden rounded-3xl border border-zinc-200 bg-white"><div className="border-b border-zinc-100 px-5 py-4"><h2 className="text-base font-black">Product details</h2><p className="mt-1 text-xs text-zinc-400">Information supplied by the verified seller</p></div><div className="grid sm:grid-cols-2">{stats.map((stat) => <div key={stat.label} className="flex min-w-0 items-center justify-between gap-4 border-b border-zinc-100 px-5 py-3.5 sm:odd:border-r"><p className="text-xs font-semibold text-zinc-500">{stat.label}</p><p className="max-w-[58%] truncate text-right text-sm font-black">{stat.value}</p></div>)}</div></section>
+          <section className="mt-5">
+            <h2 className="text-base font-bold">Account details</h2>
+            <div className="mt-3 grid grid-cols-3">{stats.map((stat, index) => {
+              const finalRowSize = stats.length % 3 || 3;
+              const isFinalRow = index >= stats.length - finalRowSize;
+              return <div key={stat.label} className={`min-w-0 py-3 pr-2 sm:pr-4 ${isFinalRow ? '' : 'border-b border-zinc-200'}`}><p className="truncate text-[10px] font-medium text-zinc-500" title={stat.label}>{stat.label}</p><p className="mt-1 break-words text-sm font-semibold leading-5 text-zinc-950">{stat.value}</p></div>;
+            })}</div>
+          </section>
 
           <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">{['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item) => <div key={item} className="flex items-center gap-2 rounded-xl bg-zinc-50 px-3 py-2.5 text-[10px] font-bold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>{item}</div>)}</div>
 
