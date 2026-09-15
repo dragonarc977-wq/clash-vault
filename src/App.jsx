@@ -28,6 +28,7 @@ const CookiePolicy = lazy(() => import("./CookiePolicy"));
 const RefundPolicy = lazy(() => import("./RefundPolicy"));
 const MarketplaceRules = lazy(() => import("./MarketplaceRules"));
 const TransferRisks = lazy(() => import("./TransferRisks"));
+const Blog = lazy(() => import("./pages/Blog"));
 
 function PageLoading() {
   return <main className="page-loading grid min-h-screen place-items-center px-5 pt-16" aria-live="polite" aria-busy="true">
@@ -93,6 +94,7 @@ function App() {
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/marketplace-rules" element={<MarketplaceRules />} />
           <Route path="/account-transfer-risks" element={<TransferRisks />} />
+          <Route path="/blog" element={<Blog />} />
 
           <Route path="/admin/support" element={<AdminSupport />} />
 
