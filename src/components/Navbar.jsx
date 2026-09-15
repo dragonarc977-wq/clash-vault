@@ -114,7 +114,7 @@ export default function Navbar() {
     window.setTimeout(() => {
       navigate('/login');
       setLoginRedirecting(false);
-    }, 500);
+    }, 800);
   };
 
   return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white">
