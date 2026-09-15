@@ -122,7 +122,7 @@ export default function Support() {
   return <main className="h-[100dvh] overflow-hidden bg-zinc-50 px-3 pt-16 text-zinc-950 sm:px-6 lg:px-8">
     <div className="support-page-shell mx-auto flex h-full max-w-6xl min-h-0 flex-col py-3 sm:py-4">
       <header className="flex shrink-0 items-center justify-between gap-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">AllGamersMarket care</p>
+        <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">AllGamersMarket care</p><a href="mailto:support@allgamersmarket.com" className="mt-1 block text-[10px] font-semibold text-zinc-500 transition hover:text-zinc-950">support@allgamersmarket.com</a></div>
         <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] font-bold text-emerald-700"><span className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[3px] ring-emerald-100" />Support team online</div>
       </header>
 
