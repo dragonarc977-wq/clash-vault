@@ -68,7 +68,7 @@ export default function Login() {
         <div className="flex flex-col justify-between bg-zinc-950 p-7 text-white sm:p-10">
           <div>
             <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/15 bg-white/10"><ShieldIcon /></span>
-            <p className="mt-8 text-xs font-black uppercase tracking-[0.18em] text-zinc-400">ClashVault access</p>
+            <p className="mt-8 text-xs font-black uppercase tracking-[0.18em] text-zinc-400">AllGamersMarket access</p>
             <h2 className="mt-3 max-w-sm text-2xl font-black tracking-[-0.035em] sm:text-3xl">Everything you buy, in one secure place.</h2>
             <p className="mt-4 max-w-md text-sm leading-7 text-zinc-400">Access purchases, account delivery and buyer support from your personal dashboard.</p>
           </div>
@@ -81,7 +81,7 @@ export default function Login() {
 
         <div className="p-6 sm:p-10">
           <div className="mb-7">
-            <h2 className="text-2xl font-black tracking-[-0.035em]">{isSignUp ? 'Join ClashVault' : 'Sign in to ClashVault'}</h2>
+            <h2 className="text-2xl font-black tracking-[-0.035em]">{isSignUp ? 'Join AllGamersMarket' : 'Sign in to AllGamersMarket'}</h2>
             <p className="mt-2 text-sm text-zinc-500">{isSignUp ? 'Use Google or create an account with your email.' : 'Continue with Google or enter your account details.'}</p>
           </div>
 
@@ -107,7 +107,7 @@ export default function Login() {
             <button type="submit" disabled={loading} className="flex h-13 w-full items-center justify-center rounded-2xl bg-zinc-950 px-5 text-sm font-black text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}</button>
           </form>
 
-          <button type="button" onClick={switchMode} className="mt-5 w-full text-center text-sm font-semibold text-zinc-600 transition hover:text-zinc-950">{isSignUp ? 'Already have an account? Sign in' : 'New to ClashVault? Create an account'}</button>
+          <button type="button" onClick={switchMode} className="mt-5 w-full text-center text-sm font-semibold text-zinc-600 transition hover:text-zinc-950">{isSignUp ? 'Already have an account? Sign in' : 'New to AllGamersMarket? Create an account'}</button>
 
           <div className="mt-8 border-t border-zinc-200 pt-6">
             <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-zinc-600 transition hover:text-zinc-950"><span className="rotate-180"><ArrowIcon /></span>Back to marketplace</Link>

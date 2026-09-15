@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import supabase from './lib/supabase';
 
 const PackageIcon = () => <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="m4 7 8-4 8 4-8 4-8-4Zm0 0v10l8 4 8-4V7m-8 4v10" /></svg>;
@@ -10,10 +10,11 @@ const formatDate = (value) => value ? new Intl.DateTimeFormat('en-IN', { day: 'n
 
 export default function MyOrders() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState(() => searchParams.get('payment') === 'success' ? 'Payment confirmed. Your order is ready for seller delivery.' : searchParams.get('payment') === 'pending' ? 'Payment received. Confirmation may take a moment; this page will update automatically.' : '');
   const [deliveryOrder, setDeliveryOrder] = useState(null);
   const [disputeOrder, setDisputeOrder] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -34,9 +35,10 @@ export default function MyOrders() {
   }, [navigate]);
 
   useEffect(() => {
-    const timer = window.setTimeout(fetchOrders, 0);
-    return () => window.clearTimeout(timer);
-  }, [fetchOrders]);
+    const delays = searchParams.has('payment') ? [0, 2000, 5000] : [0];
+    const timers = delays.map((delay) => window.setTimeout(fetchOrders, delay));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [fetchOrders, searchParams]);
 
   const confirmDelivery = async (order) => {
     setSaving(true); setNotice('');

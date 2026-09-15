@@ -36,7 +36,7 @@ export default function Balance() {
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b77e00]">Buyer account</p>
           <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">My balance</h1>
-          <p className="mt-3 text-sm text-zinc-500 sm:text-base">View your ClashVault credit and balance activity.</p>
+          <p className="mt-3 text-sm text-zinc-500 sm:text-base">View your AllGamersMarket credit and balance activity.</p>
         </div>
         <Link to="/dashboard" className="inline-flex w-fit rounded-full border border-zinc-200 bg-white px-5 py-3 text-sm font-bold shadow-sm transition hover:border-zinc-400">Account settings</Link>
       </div>

@@ -21,12 +21,14 @@ const MyProducts = lazy(() => import("./pages/MyProducts"));
 const SellerMessages = lazy(() => import("./pages/SellerMessages"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const GamePage = lazy(() => import("./pages/GamePage"));
+const Legal = lazy(() => import("./Legal"));
+const Privacy = lazy(() => import("./Privacy"));
 
 function PageLoading() {
   return <main className="page-loading grid min-h-screen place-items-center px-5 pt-16" aria-live="polite" aria-busy="true">
     <div className="w-full max-w-sm">
       <div className="flex items-center gap-3">
-        <span className="page-loading-mark">CV</span>
+        <span className="page-loading-mark">AGM</span>
         <div><p className="text-sm font-bold text-zinc-900">Loading marketplace</p><p className="mt-0.5 text-xs text-zinc-500">Preparing the next page…</p></div>
       </div>
       <div className="page-loading-track mt-5"><span /></div>
@@ -80,6 +82,8 @@ function App() {
           <Route path="/seller-chat" element={<SellerMessages />} />
           <Route path="/seller-chat/:listingId" element={<SellerMessages />} />
           <Route path="/game/:gameId" element={<GamePage />} />
+          <Route path="/terms" element={<Legal />} />
+          <Route path="/privacy" element={<Privacy />} />
 
           <Route path="/admin/support" element={<AdminSupport />} />
 

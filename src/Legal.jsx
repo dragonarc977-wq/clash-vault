@@ -1,14 +1,13 @@
-import React from 'react';
 import './App.css';
 
 export default function Legal() {
   return (
     <div className="legal-container">
-      <h1>Clash Vault - Terms of Service</h1>
+      <h1>AllGamersMarket - Terms of Service</h1>
       <p>Last Updated: September 2026</p>
       
       <h2>1. Introduction</h2>
-      <p>Welcome to Clash Vault. By accessing or purchasing from this website, you agree to be bound by these Terms of Service.</p>
+      <p>Welcome to AllGamersMarket. By accessing or purchasing from this website, you agree to be bound by these Terms of Service.</p>
 
       <h2>2. Account Purchases</h2>
       <p>All account purchases are final. The buyer receives the account details immediately after payment confirmation through Razorpay.</p>

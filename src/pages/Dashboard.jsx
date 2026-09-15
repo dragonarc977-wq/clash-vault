@@ -115,7 +115,7 @@ export default function Dashboard() {
         <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex items-start gap-4">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-yellow-100 text-[#9a6a00]"><UserIcon /></span>
-            <div><h2 className="text-xl font-black tracking-tight sm:text-2xl">Account details</h2><p className="mt-1 text-sm leading-6 text-zinc-500">Your buyer identity on ClashVault.</p></div>
+            <div><h2 className="text-xl font-black tracking-tight sm:text-2xl">Account details</h2><p className="mt-1 text-sm leading-6 text-zinc-500">Your buyer identity on AllGamersMarket.</p></div>
           </div>
 
           <div className="mt-7 flex items-center gap-4 rounded-2xl bg-zinc-50 p-4">

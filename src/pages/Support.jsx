@@ -122,7 +122,7 @@ export default function Support() {
   return <main className="h-[100dvh] overflow-hidden bg-zinc-50 px-3 pt-16 text-zinc-950 sm:px-6 lg:px-8">
     <div className="support-page-shell mx-auto flex h-full max-w-6xl min-h-0 flex-col py-3 sm:py-4">
       <header className="flex shrink-0 items-center justify-between gap-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">ClashVault care</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">AllGamersMarket care</p>
         <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] font-bold text-emerald-700"><span className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[3px] ring-emerald-100" />Support team online</div>
       </header>
 
@@ -150,7 +150,7 @@ export default function Support() {
               {messages.length === 0 && <div className="mx-auto flex h-full max-w-xs flex-col items-center justify-center text-center"><span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-zinc-500 shadow-sm ring-1 ring-zinc-200"><ChatIcon className="h-5 w-5" /></span><h3 className="mt-3 text-base font-bold">How can we help?</h3><p className="mt-1.5 text-xs leading-5 text-zinc-500">Send a message and our support team will respond here.</p></div>}
               {messages.map((message) => <div key={message.id} className={`mb-3 flex max-w-[88%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
                 <div className={`support-message ${message.sender_role === 'buyer' ? 'support-message-buyer' : 'support-message-agent'}`}>{message.body}</div>
-                <small className="support-message-meta mt-1 px-1 text-[9px]">{message.sender_role === 'buyer' ? 'You' : 'ClashVault Support'} · {formatTime(message.created_at)}</small>
+                <small className="support-message-meta mt-1 px-1 text-[9px]">{message.sender_role === 'buyer' ? 'You' : 'AllGamersMarket Support'} · {formatTime(message.created_at)}</small>
               </div>)}
               <div ref={bottomRef} />
             </div>

@@ -18,7 +18,7 @@ const faqs = [
     answer: 'Most accounts are delivered within 5–15 minutes after successful payment. In rare cases it can take up to 1 hour. You will receive the login details on the website and by email.',
   },
   {
-    question: 'Is it safe to buy accounts from ClashVault?',
+    question: 'Is it safe to buy accounts from AllGamersMarket?',
     answer: 'Every listing is carefully reviewed before it appears in the marketplace. Payments are processed securely, and our support team is available if you need help with an order.',
   },
   {

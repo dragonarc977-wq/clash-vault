@@ -1,16 +1,55 @@
-# React + Vite
+# AllGamersMarket
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AllGamersMarket is a React and Cloudflare Pages marketplace for gaming accounts, items, and services. Supabase provides authentication, data storage, realtime chat, and protected marketplace records. Razorpay provides hosted checkout.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Run the project checks before deployment:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run lint
+npm run build
+```
 
-## Expanding the ESLint configuration
+## Environment variables
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Public Vite build variables:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Cloudflare Pages Function variables and encrypted secrets:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` — encrypted secret; never expose with a `VITE_` prefix
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET` — encrypted secret
+- `RAZORPAY_WEBHOOK_SECRET` — encrypted secret
+
+Never commit `.env.local` or any live secret.
+
+## Razorpay setup
+
+1. Begin with Razorpay Test Mode keys.
+2. Enable automatic capture so fulfillment happens only after a captured payment.
+3. Create a webhook for `https://allgamersmarket.com/webhook`.
+4. Subscribe the webhook to `payment.captured`.
+5. Use the same webhook secret in `RAZORPAY_WEBHOOK_SECRET` on Cloudflare Pages.
+6. Complete a full test purchase and verify the order appears in **My orders** before switching to Live Mode.
+
+The checkout price is read server-side from the approved listing. Payment callback and webhook signatures are verified before the purchase finalization database function is called.
+
+## Deployment
+
+Cloudflare Pages deploys the connected Git repository. The production custom domains are:
+
+- `allgamersmarket.com`
+- `www.allgamersmarket.com`
+
+Keep Cloudflare DNS, HTTPS, and DNSSEC enabled. Configure secrets separately for Preview and Production when testing both environments.

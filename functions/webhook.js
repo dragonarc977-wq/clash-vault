@@ -50,7 +50,7 @@ export async function onRequestPost(context) {
 
   const payment = payload.payload?.payment?.entity;
   const orderNotes = payload.payload?.order?.entity?.notes;
-  const notes = payment?.notes || orderNotes || {};
+  const notes = { ...(orderNotes || {}), ...(payment?.notes || {}) };
   const accountId = notes.account_id;
   const buyerId = notes.buyer_id;
   const buyerEmail = notes.buyer_email || payment?.email || '';
