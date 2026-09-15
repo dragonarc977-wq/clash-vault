@@ -39,6 +39,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [inventory, setInventory] = useState([]);
   const [inventoryLoading, setInventoryLoading] = useState(false);
+  const [loginRedirecting, setLoginRedirecting] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => { const { data: { session } } = await supabase.auth.getSession(); setUser(session?.user || null); };
@@ -107,6 +108,14 @@ export default function Navbar() {
     if (search.trim() && filteredGames.length) openGame(filteredGames[0].id);
     else openSearch();
   };
+  const openLogin = () => {
+    if (loginRedirecting) return;
+    setLoginRedirecting(true);
+    window.setTimeout(() => {
+      navigate('/login');
+      setLoginRedirecting(false);
+    }, 500);
+  };
 
   return <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white">
     <div className="mx-auto flex h-16 max-w-[1600px] min-w-0 items-center gap-2 px-3 sm:gap-4 sm:px-7 lg:px-10">
@@ -145,8 +154,9 @@ export default function Navbar() {
         <div className="relative hidden sm:block"><IconButton label="Notifications" onClick={() => { closeMenus(); navigate('/notifications'); }}><svg className="h-[17px] w-[17px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M18.5 14V10a6.5 6.5 0 0 0-13 0v4L3.8 16h16.4L18.5 14ZM10 20h4" /></svg></IconButton></div>
         <div className="relative hidden md:block"><button type="button" onClick={() => { setLanguageOpen((value) => !value); setThemeOpen(false); setSearchOpen(false); }} className="flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-bold text-zinc-600 transition hover:bg-zinc-50"><span className="text-[#c68d00]">◎</span>{language}</button>{languageOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-28 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl"><button type="button" onClick={() => { setLanguage('EN'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">English</button><button type="button" onClick={() => { setLanguage('HI'); setLanguageOpen(false); }} className="w-full rounded-lg px-3 py-2 text-left text-xs hover:bg-zinc-50">Hindi</button></div>}</div>
         <div className="relative"><IconButton label="Change color theme" onClick={() => { setThemeOpen((value) => !value); setLanguageOpen(false); setSearchOpen(false); }} className={themeOpen ? 'border-zinc-400 bg-zinc-50 text-zinc-950' : ''}><svg className="h-[17px] w-[17px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="8" cy="8" r="3" strokeWidth="1.8"/><circle cx="16" cy="8" r="3" strokeWidth="1.8"/><circle cx="12" cy="16" r="3" strokeWidth="1.8"/></svg></IconButton>{themeOpen && <div className="absolute right-0 top-[calc(100%+10px)] w-48 rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"><p className="px-2 pb-1.5 pt-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Choose theme</p>{MARKETPLACE_THEMES.map((option) => <button key={option.id} type="button" onClick={() => { setTheme(applyTheme(option.id)); setThemeOpen(false); }} className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-xs transition hover:bg-zinc-50 ${theme === option.id ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-600'}`}><span className="flex -space-x-1">{option.colors.map((color) => <span key={color} className="h-4 w-4 rounded-full border border-white/40" style={{ backgroundColor: color }} />)}</span><span className="flex-1 font-medium">{option.label}</span>{theme === option.id && <ThemeCheckIcon />}</button>)}</div>}</div>
-        {user ? <ProfileDropdown user={user} onLogout={async () => { closeMenus(); await supabase.auth.signOut(); navigate('/login'); }} /> : <Link to="/login" className="grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206]">→</Link>}
+        {user ? <ProfileDropdown user={user} onLogout={async () => { closeMenus(); await supabase.auth.signOut(); navigate('/login'); }} /> : <button type="button" onClick={openLogin} aria-label="Open login" className="grid h-9 w-9 place-items-center rounded-full bg-yellow-300 text-xs font-black text-[#171206]">→</button>}
       </div>
     </div>
+    {loginRedirecting && <div className="fixed inset-0 z-[1100] grid place-items-center bg-white/90 px-5 backdrop-blur-sm" role="status" aria-live="polite"><div className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-5 py-4 shadow-xl shadow-zinc-950/10"><span className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-950" aria-hidden="true" /><div><p className="text-sm font-black text-zinc-950">Opening your account</p><p className="mt-0.5 text-xs text-zinc-500">Just a moment…</p></div></div></div>}
   </nav>;
 }
