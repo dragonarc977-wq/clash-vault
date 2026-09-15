@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import SiteFooter from "./components/SiteFooter";
 
 const Home = lazy(() => import("./pages/Home"));
 const AccountDetail = lazy(() => import("./pages/AccountDetail"));
@@ -23,6 +24,10 @@ const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const GamePage = lazy(() => import("./pages/GamePage"));
 const Legal = lazy(() => import("./Legal"));
 const Privacy = lazy(() => import("./Privacy"));
+const CookiePolicy = lazy(() => import("./CookiePolicy"));
+const RefundPolicy = lazy(() => import("./RefundPolicy"));
+const MarketplaceRules = lazy(() => import("./MarketplaceRules"));
+const TransferRisks = lazy(() => import("./TransferRisks"));
 
 function PageLoading() {
   return <main className="page-loading grid min-h-screen place-items-center px-5 pt-16" aria-live="polite" aria-busy="true">
@@ -84,12 +89,17 @@ function App() {
           <Route path="/game/:gameId" element={<GamePage />} />
           <Route path="/terms" element={<Legal />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/marketplace-rules" element={<MarketplaceRules />} />
+          <Route path="/account-transfer-risks" element={<TransferRisks />} />
 
           <Route path="/admin/support" element={<AdminSupport />} />
 
           <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>
+      {!hideNavbar && <SiteFooter />}
     </div>
   );
 }

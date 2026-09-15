@@ -18,8 +18,8 @@ const faqs = [
     answer: 'Most accounts are delivered within 5–15 minutes after successful payment. In rare cases it can take up to 1 hour. You will receive the login details on the website and by email.',
   },
   {
-    question: 'Is it safe to buy accounts from AllGamersMarket?',
-    answer: 'Every listing is carefully reviewed before it appears in the marketplace. Payments are processed securely, and our support team is available if you need help with an order.',
+    question: 'What risks apply to account transfers?',
+    answer: 'Many publishers prohibit account sales and may suspend, close or recover a transferred account. Marketplace review cannot override publisher rules or guarantee permanent access. Buy only where the publisher expressly permits transfer.',
   },
   {
     question: 'What happens if the account gets banned?',
@@ -27,11 +27,11 @@ const faqs = [
   },
   {
     question: 'Can I change the email and password after purchase?',
-    answer: 'Yes. When the listing includes full access, you can update the login details after delivery. We recommend securing the account as soon as you receive it.',
+    answer: 'A listing may allow credential changes, but this does not guarantee ownership, remove recovery risk or create publisher support. Check the written access terms and publisher rules before paying.',
   },
   {
     question: 'Do you offer refunds?',
-    answer: 'Refund eligibility depends on the order and its delivery status. If credentials are incorrect or a listing is not as described, open a support ticket and our team will review it.',
+    answer: 'Refund eligibility depends on payment, delivery, listing accuracy, evidence, publisher action and mandatory consumer rights. Review the Refund Policy before paying and open a support ticket promptly if something is wrong.',
   },
   {
     question: 'How do I contact support?',

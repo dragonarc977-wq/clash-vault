@@ -1,0 +1,12 @@
+import { Link } from 'react-router-dom';
+import PolicyPage, { Section } from './components/PolicyPage';
+
+export default function MarketplaceRules() {
+  return <PolicyPage title="Marketplace and Seller Rules" summary="Approval is conditional. Every seller and listing may be rechecked, held or removed. Publisher authorization, lawful ownership and accurate disclosure are mandatory.">
+    <Section title="Seller eligibility"><p>Sellers must be 18+, provide accurate legal/contact information, complete any identity, tax, banking and beneficial-owner checks requested, and maintain one accountable seller profile. Approval is not transferable.</p></Section>
+    <Section title="Allowed listings"><p>A listing must be lawfully owned, authentic, accurately described and expressly transferable under the publisher’s current rules. The seller must keep evidence of acquisition and transfer permission. All region, platform, recovery, lock, subscription, debt, moderation and delivery limitations must be disclosed.</p></Section>
+    <Section title="Prohibited listings and conduct"><ul className="list-disc space-y-2 pl-5"><li>Any account or item whose publisher prohibits sale or transfer.</li><li>Stolen, hacked, phished, shared, duplicated, botted, cheated, counterfeit, financed, recalled or fraudulently obtained products.</li><li>Unlicensed currency, unauthorized top-ups, exploits, malware, boosting that violates game rules, gambling or chance-based products.</li><li>Misleading screenshots, fake scarcity, hidden defects, review manipulation, off-platform payment or attempts to regain delivered access.</li></ul></Section>
+    <Section title="Delivery and disputes"><p>Use only the platform’s protected delivery process. Keep verifiable pre-delivery ownership and condition evidence, respond promptly, and never place credentials in public messages. Seller funds may remain pending during the disclosed protection period and longer during a compliance or dispute review.</p></Section>
+    <Section title="Enforcement"><p>We may reject, remove, refund, withhold, suspend, disclose to competent authorities, or preserve records where needed to protect users or comply with law, publisher rights and payment-provider requirements. Serious fraud may be reported. Review the <Link to="/terms" className="font-bold underline">Terms</Link> and <Link to="/refund-policy" className="font-bold underline">Refund Policy</Link>.</p></Section>
+  </PolicyPage>;
+}

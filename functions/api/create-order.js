@@ -4,6 +4,7 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status,
   headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
 });
+const TERMS_VERSION = '2026-09-15';
 
 export async function onRequestPost({ request, env }) {
   if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY || !env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) {
@@ -17,6 +18,9 @@ export async function onRequestPost({ request, env }) {
   let body;
   try { body = await request.json(); } catch { return json({ error: 'Invalid request.' }, 400); }
   if (!body.accountId) return json({ error: 'Listing is required.' }, 400);
+  if (body.termsAccepted !== true || body.termsVersion !== TERMS_VERSION) {
+    return json({ error: 'Accept the current Terms, Refund Policy and transfer-risk disclosure before paying.' }, 400);
+  }
 
   const supabase = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -43,7 +47,7 @@ export async function onRequestPost({ request, env }) {
       amount,
       currency: 'INR',
       receipt,
-      notes: { account_id: account.id, buyer_id: user.id, buyer_email: user.email || '' },
+      notes: { account_id: account.id, buyer_id: user.id, buyer_email: user.email || '', terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString() },
     }),
   });
   const order = await razorpayResponse.json();

@@ -32,6 +32,7 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -59,6 +60,7 @@ export default function Checkout() {
 
   const startPayment = async () => {
     if (paying || !account) return;
+    if (!acceptedTerms) { setError('Confirm the Terms, Refund Policy and transfer-risk disclosure before paying.'); return; }
     setPaying(true);
     setError('');
     try {
@@ -73,7 +75,7 @@ export default function Checkout() {
       const orderResponse = await fetch('/api/create-order', {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accountId: account.id }),
+        body: JSON.stringify({ accountId: account.id, termsAccepted: true, termsVersion: '2026-09-15' }),
       });
       const order = await orderResponse.json();
       if (!orderResponse.ok) throw new Error(order.error || 'We could not start the payment. Please try again.');
@@ -146,11 +148,13 @@ export default function Checkout() {
           <div className="mt-2 flex items-baseline gap-2"><span className="text-4xl font-black tracking-[-0.06em]">₹{price.toLocaleString('en-IN')}</span>{originalPrice > price && <span className="text-sm text-zinc-400 line-through">₹{originalPrice.toLocaleString('en-IN')}</span>}</div>
           <p className="mt-2 text-xs text-zinc-500">Inclusive of applicable charges</p>
           <div className="my-6 border-t border-zinc-100" />
-          <button onClick={startPayment} disabled={paying} className="w-full rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-60">{paying ? 'Opening secure payment…' : `Pay ₹${price.toLocaleString('en-IN')}`}</button>
+          {String(account.listing_type || 'account').toLowerCase() === 'account' && <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-5 text-amber-950"><b>High-risk digital transfer.</b> Many publishers prohibit account sales and may suspend, close or recover an account. Payment does not override publisher rules.</div>}
+          <label className="mb-5 flex items-start gap-3 text-xs leading-5 text-zinc-600"><input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-zinc-950" /><span>I am 18+, the publisher permits this transaction, and I agree to the <Link to="/terms" target="_blank" className="font-bold underline">Terms</Link>, <Link to="/refund-policy" target="_blank" className="font-bold underline">Refund Policy</Link> and <Link to="/account-transfer-risks" target="_blank" className="font-bold underline">Transfer Risk Disclosure</Link>.</span></label>
+          <button onClick={startPayment} disabled={paying || !acceptedTerms} className="w-full rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-45">{paying ? 'Opening secure payment…' : `Pay ₹${price.toLocaleString('en-IN')}`}</button>
           <p className="mt-4 text-center text-[11px] leading-5 text-zinc-500">Available payment methods are shown securely by Razorpay. We never receive or store your card or UPI credentials.</p>
           <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-700"><ShieldIcon />Encrypted payment</div>
           {error && <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold leading-5 text-red-700">{error}</p>}
-          <p className="mt-5 text-center text-[10px] leading-4 text-zinc-400">By paying, you agree to the marketplace terms and delivery process.</p>
+          <p className="mt-5 text-center text-[10px] leading-4 text-zinc-400">Your acceptance is required before the payment window can open.</p>
         </aside>
       </div>}
     </div>

@@ -5,27 +5,27 @@ const faqs = [
   {
     question: "How fast will I receive the account?",
     answer:
-      "Most accounts are delivered within 5–15 minutes after successful payment. In rare cases it can take up to 1 hour. You will receive the login details instantly on the website and also via email.",
+      "The listing states its delivery method and expected timing. Delivery begins only after payment capture and order verification. Open My orders to track delivery and contact support if the stated time passes.",
   },
   {
-    question: "Is it safe to buy accounts from AllGamersMarket?",
+    question: "What risks apply to account transfers?",
     answer:
-      "Yes. Every account is carefully verified before listing. We only sell accounts with clean history and no active bans. Payments are processed securely through Razorpay.",
+      "Many publishers prohibit account sales and may suspend, close or recover a transferred account. Marketplace review cannot override publisher rules or guarantee permanent access. Buy only where the publisher expressly permits transfer.",
   },
   {
     question: "What happens if the account gets banned?",
     answer:
-      "We offer a replacement guarantee if the account is banned due to previous owner activity within the warranty period (usually 7–30 days depending on the account). Contact support immediately with proof and we will help you.",
+      "Publisher action is a known transfer risk and is not automatically covered. If the seller hid a prior restriction or the listing included a specific protection period, contact support promptly with non-sensitive evidence for review under the Refund Policy.",
   },
   {
     question: "Can I change the email and password after purchase?",
     answer:
-      "Yes, and we strongly recommend doing so immediately after receiving the account for maximum security.",
+      "A listing may allow credential changes, but this does not guarantee ownership, remove recovery risk or create publisher support. Check the written access terms and publisher rules before paying.",
   },
   {
     question: "Do you offer refunds?",
     answer:
-      "Refunds are only possible if the account credentials are incorrect or the account is not as described. Once the account is delivered and working, refunds are not available (standard marketplace policy).",
+      "Refund eligibility depends on payment, delivery, listing accuracy, evidence, publisher action and mandatory consumer rights. Review the Refund Policy before paying and open a support ticket promptly if something is wrong.",
   },
   {
     question: "How do I contact support?",
