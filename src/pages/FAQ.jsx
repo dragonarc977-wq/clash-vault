@@ -47,7 +47,7 @@ export default function FAQ() {
         <div className="mb-9 text-center sm:mb-11">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Help centre</p>
           <h1 className="mt-2 text-2xl font-black tracking-[-0.04em] sm:text-4xl">
-            Frequently asked questions
+            FAQ
           </h1>
           <p className="mt-3 text-sm text-zinc-500">
             Everything you need to know before buying an account.

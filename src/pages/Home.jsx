@@ -15,26 +15,26 @@ const games = [
 const faqs = [
   {
     question: 'How fast will I receive the account?',
-    answer: 'Most accounts are delivered within 5–15 minutes after successful payment. In rare cases it can take up to 1 hour. You will receive the login details on the website and by email.',
+    answer: 'Most accounts are delivered within 5–15 minutes after successful payment. In rare cases it can take up to 1 hour. You will receive the account credentials provided by the seller.',
   },
   {
-    question: 'What risks apply to account transfers?',
-    answer: 'Many publishers prohibit account sales and may suspend, close or recover a transferred account. Marketplace review cannot override publisher rules or guarantee permanent access. Buy only where the publisher expressly permits transfer.',
+    question: 'What is AllGamersMarket and how does it work?',
+    answer: 'AllGamersMarket is a marketplace that connects buyers with sellers of gaming accounts. Browse available listings, review the account details, choose the one that suits you, and complete your purchase through the platform. Once your order is confirmed, follow the provided delivery instructions and track everything from My Orders. If you need help at any stage, our support team is available to assist.',
   },
   {
     question: 'What happens if the account gets banned?',
-    answer: 'Eligible purchases include a warranty period shown on the listing. If an issue is caused by previous owner activity during that period, contact support with your order details so our team can investigate.',
+    answer: 'If you experience an issue with the account after delivery, contact our support team as soon as possible and provide your order details. We will review the account details, order information, and available evidence to determine what assistance may be available under our marketplace policies.',
   },
   {
     question: 'Can I change the email and password after purchase?',
-    answer: 'A listing may allow credential changes, but this does not guarantee ownership, remove recovery risk or create publisher support. Check the written access terms and publisher rules before paying.',
+    answer: 'After receiving the login details from the seller, we recommend securing the account as soon as possible by updating the available email, password, and security settings. The credentials you can change may vary by account, so always check the account details before purchasing.',
   },
   {
-    question: 'Do you offer refunds?',
-    answer: 'Refund eligibility depends on payment, delivery, listing accuracy, evidence, publisher action and mandatory consumer rights. Review the Refund Policy before paying and open a support ticket promptly if something is wrong.',
+    question: 'How does account delivery work?',
+    answer: 'After your payment is confirmed, your order will appear in My Orders, where you can securely access the account details provided with your purchase. Review the credentials and account details after delivery. If anything is missing or doesn’t match what you purchased, open a support ticket and link the order so our team can review it.',
   },
   {
-    question: 'How do I contact support?',
+    question: 'How can i contact your customer support?',
     answer: 'Sign in, open your profile menu, and select Ticket. You can start a private conversation, link an order, and view every reply in one place.',
   },
 ];
@@ -49,21 +49,21 @@ export default function Home() {
       <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-500 sm:text-base">Accounts, items, top-ups and gaming services—curated in one place.</p>
     </section>
 
-    <section id="games" className="mx-auto max-w-[1200px] scroll-mt-20 px-5 py-9 sm:px-8 sm:py-12">
+    <section id="games" className="mx-auto max-w-300 scroll-mt-20 px-5 py-9 sm:px-8 sm:py-12">
       <div className="mb-5"><h2 className="text-lg font-bold tracking-tight sm:text-xl">Explore games</h2></div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-        {games.map(([name, image, short, detail]) => <Link key={name} to={`/game/${image}`} className="game-tile group relative h-56 overflow-hidden rounded-2xl bg-zinc-900 transition duration-200 hover:-translate-y-1 hover:shadow-lg sm:h-64"><img src={`/games/${image}.png`} alt="" loading="lazy" decoding="async" className={`absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105 ${['brawl-stars', 'clash-of-clans'].includes(image) ? 'opacity-100 group-hover:opacity-100' : 'opacity-80 group-hover:opacity-95'}`} /><div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" /><span className="absolute left-3 top-3 rounded-full bg-zinc-950/75 px-2.5 py-1 text-[10px] font-black tracking-[0.12em] text-white">{short}</span><div className="absolute inset-x-0 bottom-0 p-4"><h3 className="text-base font-bold text-white sm:text-lg">{name}</h3><p className="mt-1 text-xs text-white/70">{detail}</p></div></Link>)}
+        {games.map(([name, image, short, detail]) => <Link key={name} to={`/game/${image}`} className="game-tile group relative h-56 overflow-hidden rounded-2xl bg-zinc-900 transition duration-200 hover:-translate-y-1 hover:shadow-lg sm:h-64"><img src={`/games/${image}.png`} alt="" loading="lazy" decoding="async" className={`absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105 ${['brawl-stars', 'clash-of-clans'].includes(image) ? 'opacity-100 group-hover:opacity-100' : 'opacity-80 group-hover:opacity-95'}`} /><div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/20 to-transparent" /><span className="absolute left-3 top-3 rounded-full bg-zinc-950/75 px-2.5 py-1 text-[10px] font-black tracking-[0.12em] text-white">{short}</span><div className="absolute inset-x-0 bottom-0 p-4"><h3 className="text-base font-bold text-white sm:text-lg">{name}</h3><p className="mt-1 text-xs text-white/70">{detail}</p></div></Link>)}
       </div>
     </section>
 
-    <section className="mx-auto max-w-[1200px] px-5 pb-14 pt-2 sm:px-8 sm:pb-20"><div className="grid gap-px overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-200 sm:grid-cols-3"><div className="bg-white p-6"><p className="text-sm font-bold">Reviewed listings</p><p className="mt-2 text-sm leading-6 text-zinc-500">Clear account information before you buy.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Secure checkout</p><p className="mt-2 text-sm leading-6 text-zinc-500">A smooth, protected buying experience.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Real support</p><p className="mt-2 text-sm leading-6 text-zinc-500">Helpful people when you need an answer.</p></div></div></section>
+    <section className="mx-auto max-w-300 px-5 pb-14 pt-2 sm:px-8 sm:pb-20"><div className="grid gap-px overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-200 sm:grid-cols-3"><div className="bg-white p-6"><p className="text-sm font-bold">Reviewed listings</p><p className="mt-2 text-sm leading-6 text-zinc-500">Clear account information before you buy.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Secure checkout</p><p className="mt-2 text-sm leading-6 text-zinc-500">A smooth, protected buying experience.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Real support</p><p className="mt-2 text-sm leading-6 text-zinc-500">Helpful people when you need an answer.</p></div></div></section>
 
     <section className="border-t border-zinc-100 bg-white px-5 py-16 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center sm:mb-12">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#b77e00]">Help centre</p>
-          <h2 className="mt-3 text-2xl font-black tracking-[-0.035em] text-zinc-950 sm:text-3xl">Frequently asked questions</h2>
-          <p className="mt-3 text-sm leading-6 text-zinc-500 sm:text-base">Everything you need to know before placing an order.</p>
+          
+          <h2 className="mt-1 text-3xl font-black tracking-[-0.035em] text-zinc-950 sm:text-3xl">FAQ</h2>
+          <p className="mt-3 text-lg font-bold leading-6 text-zinc-950 sm:text-base">Everything you need to know before placing an order.</p>
         </div>
 
         <div className="divide-y divide-zinc-200 border-y border-zinc-200">
