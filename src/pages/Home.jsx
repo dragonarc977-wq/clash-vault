@@ -62,8 +62,8 @@ export default function Home() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center sm:mb-12">
           
-          <h2 className="mt-1 text-3xl font-black tracking-[-0.035em] text-zinc-950 sm:text-3xl">FAQ</h2>
-          <p className="mt-3 text-lg font-bold leading-6 text-zinc-950 sm:text-base">Everything you need to know before placing an order.</p>
+          <h2 className="mt-1 text-3xl font-bold tracking-[-0.035em] text-zinc-950 sm:text-3xl">FAQ</h2>
+          <p className="mt-3 text-lg font-medium leading-6 text-zinc-950 sm:text-base">Everything you need to know before placing an order.</p>
         </div>
 
         <div className="divide-y divide-zinc-200 border-y border-zinc-200">
@@ -73,17 +73,17 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setOpenFaq(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-5 py-5 text-left transition hover:text-[#b77e00] sm:py-6"
+                className="flex w-full items-center justify-between gap-5 py-5 text-left transition hover:text-[#b74300] sm:py-6"
                 aria-expanded={isOpen}
               >
-                <span className="text-sm font-bold sm:text-base">{faq.question}</span>
-                <svg className={`h-5 w-5 shrink-0 text-[#b77e00] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <span className="text-xl font-medium sm:text-base">{faq.question}</span>
+                <svg className={`h-5 w-5 shrink-0 text-[#b74300] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m6 9 6 6 6-6" />
                 </svg>
               </button>
               <div className={`grid transition-all duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                 <div className="overflow-hidden">
-                  <p className="max-w-2xl pb-5 pr-10 text-sm leading-7 text-zinc-500 sm:pb-6">{faq.answer}</p>
+                  <p className="max-w-2xl pb-5 font-medium pr-10 text-base leading-7 text-zinc-950 sm:pb-6">{faq.answer}</p>
                 </div>
               </div>
             </div>;
@@ -91,7 +91,7 @@ export default function Home() {
         </div>
 
         <div className="mt-10 text-center">
-          <p className="text-sm text-zinc-500">Still have a question?</p>
+          <p className="text-xl font-medium text-zinc-950">Still have a question?</p>
           <Link to="/support" className="mt-4 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white transition hover:bg-[#b77e00]">Contact support</Link>
         </div>
       </div>
