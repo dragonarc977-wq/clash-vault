@@ -50,7 +50,7 @@ export default function Home() {
     </section>
 
     <section id="games" className="mx-auto max-w-300 scroll-mt-20 px-5 py-9 sm:px-8 sm:py-12">
-      <div className="mb-5"><h2 className="text-lg font-bold tracking-tight sm:text-xl">Explore games</h2></div>
+      <div className="mb-5"><h2 className="text-xl font-bold tracking-tight text-green-400 sm:text-xl">Explore Games</h2></div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
         {games.map(([name, image, short, detail]) => <Link key={name} to={`/game/${image}`} className="game-tile group relative h-56 overflow-hidden rounded-2xl bg-zinc-900 transition duration-200 hover:-translate-y-1 hover:shadow-lg sm:h-64"><img src={`/games/${image}.png`} alt="" loading="lazy" decoding="async" className={`absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105 ${['brawl-stars', 'clash-of-clans'].includes(image) ? 'opacity-100 group-hover:opacity-100' : 'opacity-80 group-hover:opacity-95'}`} /><div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/20 to-transparent" /><span className="absolute left-3 top-3 rounded-full bg-zinc-950/75 px-2.5 py-1 text-[10px] font-black tracking-[0.12em] text-white">{short}</span><div className="absolute inset-x-0 bottom-0 p-4"><h3 className="text-base font-bold text-white sm:text-lg">{name}</h3><p className="mt-1 text-xs text-white/70">{detail}</p></div></Link>)}
       </div>
