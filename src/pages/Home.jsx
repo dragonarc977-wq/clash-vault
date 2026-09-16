@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const games = [
-  ['Clash of Clans', 'clash-of-clans', 'COC', 'Accounts & gems'],
-  ['Brawl Stars', 'brawl-stars', 'BRAWL', 'Accounts & coins'],
-  ['Valorant', 'valorant', 'VAL', 'Ranks & skins'],
-  ['Clash Royale', 'clash-royale', 'CR', 'Cards & chests'],
-  ['Fortnite', 'fortnite', 'FN', 'Skins & V-Bucks'],
-  ['Pokémon GO', 'pokemon-go', 'POGO', 'Accounts & items'],
-  ['Mobile Legends', 'mobile-legends', 'MLBB', 'Ranks & diamonds'],
-  ['Free Fire', 'free-fire', 'FF', 'Accounts & diamonds'],
+  ['Clash of Clans', 'clash-of-clans'],
+  ['Brawl Stars', 'brawl-stars',],
+  ['Valorant', 'valorant',],
+  ['Clash Royale', 'clash-royale',],
+  ['Fortnite', 'fortnite',],
+  ['Pokémon GO', 'pokemon-go',],
+  ['Mobile Legends', 'mobile-legends',],
+  ['Free Fire', 'free-fire',],
 ];
 
 const faqs = [
@@ -44,9 +44,9 @@ export default function Home() {
 
   return <main className="min-h-screen bg-white pt-16 text-zinc-950">
     <section className="border-b border-zinc-200/70 bg-[radial-gradient(circle_at_50%_0%,rgba(161,161,170,0.16),rgba(255,255,255,0)_55%)] px-5 pb-9 pt-14 text-center sm:px-8 sm:pb-12 sm:pt-16">
-      <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#b77e00]">The game marketplace, refined</p>
-      <h1 className="mx-auto mt-4 max-w-3xl text-3xl font-black tracking-[-0.045em] text-zinc-950 sm:text-5xl">Built for the way you play.</h1>
-      <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-500 sm:text-base">Accounts, items, top-ups and gaming services—curated in one place.</p>
+      <p className="text-[13px] font-black uppercase tracking-[0.22em] text-[#b77e00]">Ultimate games marketplace</p>
+      <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-black tracking-[-0.045em] text-zinc-950 sm:text-5xl">Built for the way you play.</h1>
+      <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-500 sm:text-base">Accounts, items, top-ups and gaming services. All in one place.</p>
     </section>
 
     <section id="games" className="mx-auto max-w-300 scroll-mt-20 px-5 py-9 sm:px-8 sm:py-12">
@@ -56,7 +56,7 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="mx-auto max-w-300 px-5 pb-14 pt-2 sm:px-8 sm:pb-20"><div className="grid gap-px overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-200 sm:grid-cols-3"><div className="bg-white p-6"><p className="text-sm font-bold">Reviewed listings</p><p className="mt-2 text-sm leading-6 text-zinc-500">Clear account information before you buy.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Secure checkout</p><p className="mt-2 text-sm leading-6 text-zinc-500">A smooth, protected buying experience.</p></div><div className="bg-white p-6"><p className="text-sm font-bold">Real support</p><p className="mt-2 text-sm leading-6 text-zinc-500">Helpful people when you need an answer.</p></div></div></section>
+    <section className="mx-auto max-w-300 px-5 pb-14 pt-2 sm:px-8 sm:pb-20"><div className="grid gap-px overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-200 sm:grid-cols-3"><div className="bg-white p-6"><p className="text-xl font-bold">Popular Games</p><p className="mt-2 text-base leading-6 text-zinc-500">Deals in popular mobile game accounts.</p></div><div className="bg-white p-6"><p className="text-xl font-bold">Secured Payments</p><p className="mt-2 text-base leading-6 text-zinc-500">A smooth, protected buying experience.</p></div><div className="bg-white p-6"><p className="text-xl font-bold">24/7 Support</p><p className="mt-2 text-base leading-6 text-zinc-500">Helpful people when you need an answer.</p></div></div></section>
 
     <section className="border-t border-zinc-100 bg-white px-5 py-16 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-3xl">
@@ -83,17 +83,14 @@ export default function Home() {
               </button>
               <div className={`grid transition-all duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                 <div className="overflow-hidden">
-                  <p className="max-w-2xl pb-5 font-medium pr-10 text-base leading-7 text-zinc-950 sm:pb-6">{faq.answer}</p>
+                  <p className="max-w-2xl pb-5 font-semibold pr-10 text-lg leading-8 text-zinc-950 sm:pb-6">{faq.answer}</p>
                 </div>
               </div>
             </div>;
           })}
         </div>
 
-        <div className="mt-10 text-center">
-          <p className="text-xl font-medium text-zinc-950">Still have a question?</p>
-          <Link to="/support" className="mt-4 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white transition hover:bg-[#b77e00]">Contact support</Link>
-        </div>
+  
       </div>
     </section>
   </main>;
