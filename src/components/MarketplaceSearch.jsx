@@ -273,7 +273,7 @@ export default function MarketplaceSearch() {
       {searchOpen && (
         <div
           id="marketplace-search-results"
-          className="absolute inset-x-0 top-[calc(100%+10px)] z-50 max-h-[460px] overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-2 text-left shadow-2xl shadow-zinc-950/15"
+          className="absolute inset-x-0 top-[calc(100%+8px)] z-50 max-h-[314px] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-1.5 text-left shadow-xl shadow-zinc-950/15"
         >
           {filteredGames.length ? (
             filteredGames.map((game) => {
