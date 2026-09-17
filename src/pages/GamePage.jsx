@@ -61,6 +61,18 @@ function ListingCard({ account, game, seller }) {
     </div>
     <div className="shop-listing-body flex flex-1 flex-col p-4">
       <h2 className="line-clamp-3 min-h-[60px] text-[15px] font-bold leading-5 tracking-[-0.02em] text-zinc-950"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
+      {accountStats.length > 0 && (
+  <p className="mt-2 text-[14px] font-semibold text-zinc-500">
+    {accountStats
+      .slice(0, 2)
+      .filter((stat) => stat.value && stat.value !== '—')
+      .map((stat) => {
+        const label = stat.label === 'Town Hall' ? 'TH' : stat.label;
+        return `${label} ${stat.value}`;
+      })
+      .join(' • ')}
+  </p>
+)}
       
       {type === 'item' && attributes.quantity && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Qty {attributes.quantity}</span></div>}
       {type === 'service' && attributes.estimated_days && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Delivery {attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span></div>}
@@ -73,9 +85,18 @@ function ListingCard({ account, game, seller }) {
 >
   Buy Now
 </Link>
-  <p className="shrink-0 text-xl font-black tracking-[-0.03em] text-zinc-950">
-    ₹{Number(account.price || 0).toLocaleString('en-IN')}
-  </p>
+  <p
+  className="shrink-0 leading-none text-zinc-950 sm:ml-auto"
+  style={{
+    fontFamily: 'Inter, system-ui, sans-serif',
+    fontWeight: 800,
+    fontSize: '24px',
+    transform: 'translateX(-25px) scaleX(0.95)',
+    transformOrigin: 'right center',
+  }}
+>
+  ${Number(account.price || 0).toFixed(0)}
+</p>
 </div>
     </div>
     
