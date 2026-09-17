@@ -225,7 +225,7 @@ export default function GamePage() {
 
   <div className="min-w-0">
     <h1 className="text-[28px] font-black tracking-[-0.04em] text-zinc-950 sm:text-[34px]">
-      {game.name} Marketplace
+      {game.name}
     </h1>
 
     <p className="mt-1.5 text-[15px] font-semibold text-zinc-500">
