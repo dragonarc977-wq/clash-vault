@@ -190,38 +190,151 @@ export default function GamePage() {
   if (!game) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">GAME NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This marketplace is unavailable.</h1><Link to="/#games" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">View all games</Link></div></main>;
 
   return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
-    <section className="border-b border-zinc-200 bg-white px-5 py-6 sm:px-8 sm:py-8">
+    <section className="bg-white px-5 py-6 sm:px-8 sm:py-8">
       <div className="mx-auto max-w-7xl">
-        <div className="flex items-center gap-2 text-[11px] font-semibold text-zinc-400"><Link to="/" className="hover:text-zinc-950">Home</Link><span>›</span><Link to="/#games" className="hover:text-zinc-950">Games</Link><span>›</span><span className="text-zinc-700">{game.name}</span></div>
-        <div className="mt-5 flex items-center gap-4"><img src={`/games/${gameId}.png`} alt="" className="h-14 w-14 rounded-2xl object-cover shadow-sm ring-1 ring-zinc-200 sm:h-16 sm:w-16" /><div><p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#a87300]">{game.short} marketplace</p><h1 className="mt-1 text-2xl font-black tracking-[-0.035em] sm:text-3xl">{game.name} marketplace</h1><p className="mt-1 text-sm text-zinc-500">{game.description}</p></div></div>
-        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">{listingTypes.map((item) => <button key={item} onClick={() => { setType(item); setCategory('All categories'); setLevel('All'); setServiceTime('Any duration'); setFullAccess(false); }} className={`shrink-0 rounded-full border px-5 py-2.5 text-xs font-black transition ${type === item ? 'border-zinc-950 bg-zinc-950 text-white shadow-sm' : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400'}`}>{item}</button>)}</div>
+        <div className="flex items-center gap-2 text-xs font-bold text-zinc-500"><Link to="/" className="hover:text-zinc-950">Home</Link><span>›</span><Link to="/#games" className="hover:text-zinc-950">Games</Link><span>›</span><span className="text-zinc-700">{game.name}</span></div>
+        <div className="mt-5 flex items-center gap-4">
+  <img
+    src={`/games/${gameId}.png`}
+    alt=""
+    className="h-14 w-14 rounded-xl object-cover ring-1 ring-zinc-200 sm:h-16 sm:w-16"
+  />
+
+  <div className="min-w-0">
+    <h1 className="text-[28px] font-black tracking-[-0.04em] text-zinc-950 sm:text-[34px]">
+      {game.name} Marketplace
+    </h1>
+
+    <p className="mt-1.5 text-[15px] font-semibold text-zinc-500">
+      {game.description}
+    </p>
+  </div>
+</div>
+        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+  {listingTypes.map((item) => (
+    <button
+      key={item}
+      type="button"
+      onClick={() => {
+        setType(item);
+        setCategory('All categories');
+        setLevel('All');
+        setServiceTime('Any duration');
+        setFullAccess(false);
+      }}
+      className={`shrink-0 rounded-lg border px-5 py-2.5 text-sm font-extrabold transition ${
+        type === item
+          ? 'border-zinc-950 bg-zinc-950 text-white'
+          : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-950'
+      }`}
+    >
+      {item}
+    </button>
+  ))}
+</div>
       </div>
     </section>
 
-    <section className="shop-search-strip border-b px-5 py-4 sm:px-8">
-      <div className="mx-auto flex max-w-7xl gap-3"><label className="shop-search-field flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-4 focus-within:ring-4"><span className="text-zinc-400"><SearchIcon /></span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Search ${game.name} listings...`} className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none" /></label><button onClick={() => setShowFilters(true)} className="relative inline-flex h-12 shrink-0 items-center gap-2 rounded-2xl border border-zinc-950 bg-zinc-950 px-4 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 sm:px-5"><FilterIcon /><span>Filters</span>{activeFilterCount > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-yellow-300 px-1 text-[10px] text-zinc-950">{activeFilterCount}</span>}</button></div>
-    </section>
+    <section className="bg-white px-5 py-4 sm:px-8">
+  <div className="mx-auto flex max-w-7xl flex-wrap gap-3">
+
+    {/* SEARCH */}
+    <label className="flex min-w-[260px] flex-1 items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 transition focus-within:border-zinc-400">
+      <span className="text-zinc-400">
+        <SearchIcon />
+      </span>
+
+      <input
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        placeholder="Search listings..."
+        className="h-12 min-w-0 flex-1 bg-transparent text-sm font-semibold text-zinc-950 outline-none placeholder:font-medium placeholder:text-zinc-400"
+      />
+    </label>
+
+    {/* LEVEL */}
+    {(type === 'All' || type === 'Accounts') && (
+      <select
+        value={level}
+        onChange={(event) => setLevel(event.target.value)}
+        className="h-12 min-w-[150px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 outline-none transition hover:border-zinc-400"
+      >
+        <option value="All">
+          {game.levelLabel}
+        </option>
+
+        {game.levels.map((item) => (
+          <option key={item} value={item}>
+            {game.levelLabel} {item}
+          </option>
+        ))}
+      </select>
+    )}
+
+    {/* PRICE */}
+    <button
+      type="button"
+      onClick={() => setShowFilters(true)}
+      className="h-12 min-w-[110px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-950"
+    >
+      Price
+      {price.length > 0 ? ` (${price.length})` : ' ▼'}
+    </button>
+
+    {/* MORE */}
+    <button
+      type="button"
+      onClick={() => setShowFilters(true)}
+      className="relative h-12 min-w-[105px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-950"
+    >
+      More ▼
+
+      {activeFilterCount > 0 && (
+        <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-950 px-1.5 text-[10px] font-black text-white">
+          {activeFilterCount}
+        </span>
+      )}
+    </button>
+
+  </div>
+</section>
 
     <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
       <div className="min-w-0">
-        <div className="mb-6"><h2 className="text-xl font-black sm:text-2xl">Available listings</h2><p className="mt-1 text-sm text-zinc-500">{loading ? 'Loading…' : `${filtered.length} results`}</p></div>
+       <div className="mb-6 flex items-end justify-between gap-4">
+  <h2 className="text-2xl font-black tracking-[-0.03em] text-zinc-950">
+    Available Accounts
+  </h2>
+
+  <p className="shrink-0 pb-0.5 text-sm font-semibold text-zinc-500">
+    {loading ? 'Loading…' : `${filtered.length} results`}
+  </p>
+</div>
         {loading ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{[1, 2, 3, 4, 5, 6, 7, 8].map((item) => <div key={item} className="h-[390px] animate-pulse rounded-[20px] bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
       </div>
     </section>
 
-    {showFilters && <div className="fixed inset-0 z-[100] flex items-end justify-end bg-zinc-950/25 backdrop-blur-sm sm:items-stretch" role="dialog" aria-modal="true" aria-label="Listing filters" onMouseDown={() => setShowFilters(false)}>
-      <aside className="flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[28px] border border-zinc-200 bg-white shadow-2xl sm:max-h-none sm:w-[420px] sm:rounded-none sm:border-y-0 sm:border-r-0" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-5 sm:px-7"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400">Refine results</p><h2 className="mt-1 text-2xl font-black">Filters</h2></div><button type="button" onClick={() => setShowFilters(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-full border border-zinc-200 text-2xl font-light text-zinc-600 transition hover:bg-zinc-100">×</button></div>
+    {showFilters && <div className="fixed inset-0 z-[1100] flex items-end justify-end bg-zinc-950/15 sm:top-16 sm:items-stretch" role="dialog" aria-modal="true" aria-label="Listing filters" onMouseDown={() => setShowFilters(false)}>
+      <aside className="flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-2xl border border-zinc-200 bg-white shadow-xl sm:h-full sm:max-h-none sm:w-[390px] sm:rounded-none sm:border-y-0 sm:border-r-0" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-5 sm:px-7"><div className="flex items-center gap-2">
+  <span className="text-zinc-950">
+    <FilterIcon />
+  </span>
+
+  <h2 className="text-xl font-black tracking-[-0.025em] text-zinc-950">
+    Filters
+  </h2>
+</div><button type="button" onClick={() => setShowFilters(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-full border border-zinc-200 text-2xl font-light text-zinc-600 transition hover:bg-zinc-100">×</button></div>
         <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-7">
           <div className="space-y-5">
-            {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
+            {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
             {type === 'Items' && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Item category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All item categories</option>{itemCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>}
             {type === 'Services' && <><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Service category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All service categories</option>{serviceCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Completion time</span><select value={serviceTime} onChange={(event) => setServiceTime(event.target.value)} className={selectClass}><option>Any duration</option><option>1 day</option><option>Up to 3 days</option><option>More than 3 days</option></select></label></>}
-            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-            <div><span className="mb-3 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Price</span><div className="grid gap-3 sm:grid-cols-2">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-zinc-950" />{range.label}</label>)}</div></div>
-            <div className="space-y-3 border-t border-zinc-100 pt-5"><label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={verifiedOnly} onChange={(event) => setVerifiedOnly(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Verified listings</label>{(type === 'All' || type === 'Accounts') && <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-zinc-700"><input type="checkbox" checked={fullAccess} onChange={(event) => setFullAccess(event.target.checked)} className="h-4 w-4 accent-zinc-950" />Full email access</label>}</div>
+            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
+            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
+            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            <div><span className="mb-3 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Price</span><div className="grid gap-3 sm:grid-cols-2">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-zinc-950" />{range.label}</label>)}</div></div>
+            
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 border-t border-zinc-200 bg-white px-5 py-4 sm:px-7"><button type="button" onClick={clearFilters} className="h-12 rounded-xl border border-zinc-200 text-sm font-bold text-zinc-700 transition hover:bg-zinc-50">Clear all</button><button type="button" onClick={() => setShowFilters(false)} className="h-12 rounded-xl bg-zinc-950 text-sm font-bold text-white transition hover:bg-zinc-800">Show {filtered.length} results</button></div>
