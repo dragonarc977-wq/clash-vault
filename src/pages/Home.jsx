@@ -1,3 +1,4 @@
+import MarketplaceSearch from '../components/MarketplaceSearch';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -47,6 +48,9 @@ export default function Home() {
       <p className="text-[13px] font-black uppercase tracking-[0.22em] text-[#b77e00]">Ultimate games marketplace</p>
       <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-black tracking-[-0.045em] text-zinc-950 sm:text-5xl">Built for the way you play.</h1>
       <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-500 sm:text-base">Accounts, items, top-ups and gaming services. All in one place.</p>
+      <div className="mx-auto mt-10 w-full max-w-3xl">
+  <MarketplaceSearch />
+</div>
     </section>
 
     <section id="games" className="mx-auto max-w-300 scroll-mt-20 px-5 py-9 sm:px-8 sm:py-12">
