@@ -1,0 +1,435 @@
+/* =========================================
+   BALANCE PAGE
+========================================= */
+
+.balance-page {
+  min-height: 100vh;
+  padding: 112px 20px 80px;
+  background: #fafafa;
+  color: #18181b;
+}
+
+.balance-container {
+  width: 100%;
+  max-width: 1152px;
+  margin: 0 auto;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.balance-loading-page {
+  min-height: 100vh;
+  padding: 112px 20px 0;
+  background: #fafafa;
+}
+
+.balance-loading {
+  max-width: 1152px;
+  margin: 0 auto;
+}
+
+.balance-loading-title {
+  width: 224px;
+  height: 44px;
+  border-radius: 12px;
+  background: #e4e4e7;
+}
+
+.balance-loading-card {
+  height: 256px;
+  margin-top: 32px;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.balance-loading-title,
+.balance-loading-card {
+  animation: balancePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes balancePulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.balance-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.balance-kicker {
+  margin: 0;
+  color: #b77e00;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.balance-title {
+  margin: 8px 0 0;
+  color: #18181b;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.balance-subtitle {
+  margin: 12px 0 0;
+  color: #71717a;
+  font-size: 14px;
+}
+
+.balance-settings-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 1px solid #e4e4e7;
+  border-radius: 999px;
+  background: #fff;
+  color: #27272a;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.balance-settings-link:hover {
+  border-color: #a1a1aa;
+  background: #fafafa;
+}
+
+
+/* =========================================
+   BALANCE CARDS
+========================================= */
+
+.balance-cards {
+  margin-top: 36px;
+  display: grid;
+  gap: 24px;
+}
+
+.balance-card {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: 24px;
+}
+
+.balance-card-dark {
+  background: #18181b;
+  color: #fff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16);
+}
+
+.balance-card-light {
+  border: 1px solid #e4e4e7;
+  background: #fff;
+  color: #18181b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.balance-card-glow {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 256px;
+  height: 256px;
+  border-radius: 50%;
+  background: rgba(253, 224, 71, 0.1);
+  filter: blur(32px);
+}
+
+.balance-card-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.balance-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+}
+
+.balance-icon-dark {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fde047;
+}
+
+.balance-icon-light {
+  background: #fef3c7;
+  color: #9a6a00;
+}
+
+.balance-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.balance-currency-badge,
+.balance-pending-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.balance-currency-badge {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #d4d4d8;
+}
+
+.balance-pending-badge {
+  background: #f4f4f5;
+  color: #71717a;
+}
+
+.balance-card-content {
+  position: relative;
+  margin-top: 40px;
+}
+
+.balance-card-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.balance-card-dark .balance-card-label {
+  color: #a1a1aa;
+}
+
+.balance-card-light .balance-card-label {
+  color: #71717a;
+}
+
+.balance-amount {
+  margin: 8px 0 0;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.balance-card-description {
+  max-width: 448px;
+  margin: 20px 0 0;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.balance-card-dark .balance-card-description {
+  color: #a1a1aa;
+}
+
+.balance-card-light .balance-card-description {
+  color: #71717a;
+}
+
+
+/* =========================================
+   BALANCE ACTIVITY
+========================================= */
+
+.balance-activity {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #e4e4e7;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.balance-activity-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f4f4f5;
+}
+
+.balance-section-title {
+  margin: 0;
+  color: #18181b;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.balance-section-subtitle {
+  margin: 4px 0 0;
+  color: #71717a;
+  font-size: 14px;
+}
+
+.balance-empty {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.balance-empty-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #f4f4f5;
+  color: #a1a1aa;
+}
+
+.balance-empty-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.balance-empty-title {
+  margin: 20px 0 0;
+  color: #18181b;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.balance-empty-text {
+  max-width: 448px;
+  margin: 8px auto 0;
+  color: #71717a;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+
+/* =========================================
+   SUPPORT CARD
+========================================= */
+
+.balance-support {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid #e4e4e7;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.balance-support-title {
+  margin: 0;
+  color: #18181b;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.balance-support-text {
+  margin: 4px 0 0;
+  color: #71717a;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.balance-support-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 1px solid #d4d4d8;
+  border-radius: 999px;
+  color: #27272a;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.balance-support-link:hover {
+  border-color: #18181b;
+  background: #18181b;
+  color: #fff;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (min-width: 640px) {
+  .balance-page {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .balance-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .balance-title {
+    font-size: 36px;
+  }
+
+  .balance-subtitle {
+    font-size: 16px;
+  }
+
+  .balance-card {
+    min-height: 288px;
+    padding: 36px;
+  }
+
+  .balance-amount {
+    font-size: 48px;
+  }
+
+  .balance-activity {
+    padding: 32px;
+  }
+
+  .balance-empty {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .balance-support {
+    flex-direction: row;
+    align-items: center;
+    padding: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .balance-cards {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
