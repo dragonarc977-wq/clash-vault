@@ -1,0 +1,486 @@
+/* =========================================
+   SELLER ONBOARDING
+========================================= */
+
+.seller-onboarding-page {
+  min-height: 100vh;
+  padding: 112px 20px 80px;
+  background: #fafafa;
+  color: #18181b;
+}
+
+.seller-onboarding-container {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.seller-onboarding-loading-page {
+  min-height: 100vh;
+  padding: 112px 20px 0;
+  background: #fafafa;
+}
+
+.seller-onboarding-loading-card {
+  width: 100%;
+  max-width: 896px;
+  height: 384px;
+  margin: 0 auto;
+  border-radius: 24px;
+  background: #fff;
+  animation: sellerOnboardingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sellerOnboardingPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+
+/* =========================================
+   PAGE INTRO
+========================================= */
+
+.seller-onboarding-kicker {
+  margin: 0;
+  color: #a87300;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.seller-onboarding-title {
+  margin: 8px 0 0;
+  color: #18181b;
+  font-size: 30px;
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.seller-onboarding-description {
+  max-width: 672px;
+  margin: 16px 0 0;
+  color: #71717a;
+  font-size: 14px;
+  line-height: 28px;
+}
+
+
+/* =========================================
+   REJECTED NOTICE
+========================================= */
+
+.seller-onboarding-rejected {
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.seller-onboarding-rejected strong {
+  font-weight: 900;
+}
+
+.seller-onboarding-rejected p {
+  margin: 4px 0 0;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.seller-onboarding-form {
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid #e4e4e7;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.seller-onboarding-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.seller-onboarding-field {
+  display: block;
+  color: #27272a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.seller-onboarding-field-wide {
+  grid-column: 1 / -1;
+}
+
+.seller-onboarding-field-spaced {
+  margin-top: 28px;
+}
+
+.seller-onboarding-input {
+  width: 100%;
+  height: 52px;
+  margin-top: 8px;
+  padding: 0 16px;
+  border: 1px solid #e4e4e7;
+  border-radius: 16px;
+  background: #fafafa;
+  color: #18181b;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.seller-onboarding-input::placeholder {
+  color: #a1a1aa;
+}
+
+.seller-onboarding-input:focus {
+  border-color: #18181b;
+  background: #fff;
+  box-shadow: 0 0 0 4px #f4f4f5;
+}
+
+.seller-onboarding-input[readonly] {
+  color: #71717a;
+  cursor: default;
+}
+
+.seller-onboarding-textarea {
+  height: auto;
+  min-height: 120px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  resize: vertical;
+}
+
+
+/* =========================================
+   CATEGORIES
+========================================= */
+
+.seller-onboarding-categories {
+  margin-top: 28px;
+}
+
+.seller-onboarding-section-label {
+  margin: 0;
+  color: #27272a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.seller-onboarding-category-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.seller-onboarding-category {
+  padding: 16px;
+  border: 1px solid #e4e4e7;
+  border-radius: 16px;
+  background: #fff;
+  color: #27272a;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.seller-onboarding-category:hover {
+  border-color: #a1a1aa;
+  transform: translateY(-1px);
+}
+
+.seller-onboarding-category.active {
+  border-color: #18181b;
+  background: #18181b;
+  color: #fff;
+}
+
+
+/* =========================================
+   AUTHORIZATION NOTICE
+========================================= */
+
+.seller-onboarding-rule {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  background: #fffbeb;
+  color: #78350f;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+.seller-onboarding-rule strong {
+  font-weight: 900;
+}
+
+
+/* =========================================
+   TERMS CHECKBOX
+========================================= */
+
+.seller-onboarding-consent {
+  margin-top: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #52525b;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.seller-onboarding-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  accent-color: #18181b;
+}
+
+.seller-onboarding-consent a {
+  color: #18181b;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.seller-onboarding-error {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================================
+   SUBMIT
+========================================= */
+
+.seller-onboarding-submit {
+  width: 100%;
+  margin-top: 28px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #18181b;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.seller-onboarding-submit:hover:not(:disabled) {
+  background: #b77e00;
+  transform: translateY(-1px);
+}
+
+.seller-onboarding-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+/* =========================================
+   APPLICATION STATUS
+========================================= */
+
+.seller-status-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 96px 20px 64px;
+  background: #fafafa;
+  color: #18181b;
+}
+
+.seller-status-card {
+  width: 100%;
+  max-width: 768px;
+  padding: 28px;
+  border: 1px solid #e4e4e7;
+  border-radius: 24px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.seller-status-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 24px;
+}
+
+.seller-status-icon-approved {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.seller-status-icon-pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.seller-status-icon-suspended {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.seller-status-kicker {
+  margin: 28px 0 0;
+  color: #a1a1aa;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.seller-status-title {
+  margin: 8px 0 0;
+  color: #18181b;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.seller-status-copy {
+  max-width: 576px;
+  margin: 16px auto 0;
+  color: #71717a;
+  font-size: 14px;
+  line-height: 28px;
+}
+
+.seller-status-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.seller-status-primary,
+.seller-status-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.seller-status-primary {
+  background: #18181b;
+  color: #fff;
+  font-weight: 900;
+}
+
+.seller-status-primary:hover {
+  background: #b77e00;
+}
+
+.seller-status-secondary {
+  border: 1px solid #d4d4d8;
+  background: #fff;
+  color: #27272a;
+  font-weight: 700;
+}
+
+.seller-status-secondary:hover {
+  background: #fafafa;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (min-width: 640px) {
+  .seller-onboarding-page {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .seller-onboarding-title {
+    font-size: 36px;
+  }
+
+  .seller-onboarding-form {
+    padding: 36px;
+  }
+
+  .seller-onboarding-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .seller-onboarding-category-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+  .seller-onboarding-submit {
+    width: auto;
+  }
+
+  .seller-status-card {
+    padding: 48px;
+  }
+
+  .seller-status-title {
+    font-size: 36px;
+  }
+
+  .seller-status-actions {
+    flex-direction: row;
+  }
+}
