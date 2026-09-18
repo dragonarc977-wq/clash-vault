@@ -14,6 +14,8 @@ const ArrowRight = ({ className = 'h-5 w-5' }) => <svg className={className} fil
 const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
 const ShieldIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m9 12 2 2 4-4" /></svg>;
 const ChatIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" /></svg>;
+const BoltIcon = () => <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2 4.5 13H11l-1 9 8.5-12H12l1-8Z" /></svg>;
+const UsersIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87m-2-11.9a4 4 0 0 1 0 7.75" /></svg>;
 
 export default function AccountDetail() {
   const { id } = useParams();
@@ -91,6 +93,12 @@ export default function AccountDetail() {
     navigate(`/checkout/${id}`);
   };
   const deliveryLabel = account.delivery_method === 'scheduled' ? 'Scheduled' : account.delivery_method === 'instant' ? 'Instant' : 'Seller delivery';
+  const paymentDeliveryText =
+    account.delivery_method === 'scheduled'
+      ? 'Scheduled delivery after payment'
+      : account.delivery_method === 'instant'
+        ? 'Instant delivery after payment'
+        : 'Seller delivery after payment';
   const stats = listingType === 'item' ? [
     { label: 'Item', value: attributes.item_name || title }, { label: 'Category', value: attributes.item_category || 'Item' }, { label: 'Quantity', value: attributes.quantity || 1 },
     { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
@@ -102,73 +110,188 @@ export default function AccountDetail() {
     { label: 'Access', value: attributes.access || (account.full_email_access ? 'Full email access' : 'Game login') },
     { label: 'Platform', value: account.platform || 'Any' }, { label: 'Region', value: account.region || 'Global' }, { label: 'Delivery', value: deliveryLabel },
   ];
+  const formattedPrice = Number(account.price || 0).toLocaleString('en-IN');
+  const hasOriginalPrice = Number(account.original_price) > Number(account.price);
 
-  return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
-    <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
-      <Link to={`/game/${account.game_id || 'clash-of-clans'}`} className="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 transition hover:text-zinc-950"><ArrowLeft className="h-4 w-4" />Back to {gameName}</Link>
+  return (
+    <main className="min-h-screen bg-white pb-24 pt-16 text-zinc-950">
+      <div className="mx-auto max-w-[1440px] px-5 py-7 sm:px-8 lg:px-14 lg:py-8">
+        <Link
+          to={`/game/${account.game_id || 'clash-of-clans'}`}
+          className="inline-flex items-center gap-2 text-sm font-bold text-zinc-600 transition hover:text-zinc-950"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to {gameName}
+        </Link>
 
-      <div className="mt-6 grid items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] xl:gap-10">
-        <section className="min-w-0">
-          <div className="relative flex h-[320px] items-center justify-center overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 shadow-sm sm:h-[430px]">
-            {images.length ? <img key={images[activeImage]} src={images[activeImage]} alt={`${title} image ${activeImage + 1}`} className="h-full w-full object-contain" loading="eager" decoding="async" /> : <div className="text-center text-zinc-400"><span className="text-6xl">🎮</span><p className="mt-3 text-sm font-bold">No image available</p></div>}
-            {images.length > 1 && <><button type="button" onClick={previousImage} aria-label="Previous image" className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:left-4"><ArrowLeft /></button><button type="button" onClick={nextImage} aria-label="Next image" className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/95 text-zinc-950 shadow-md transition hover:scale-105 sm:right-4"><ArrowRight /></button><span className="absolute bottom-3 right-3 rounded-full bg-zinc-950/80 px-3 py-1.5 text-[10px] font-bold text-white">{activeImage + 1} / {images.length}</span></>}
+        <nav className="mt-5 hidden items-center gap-2 text-xs font-medium text-zinc-400 md:flex" aria-label="Breadcrumb">
+          <Link to="/" className="transition hover:text-zinc-950">Home</Link><span>›</span>
+          <Link to="/" className="transition hover:text-zinc-950">All Games</Link><span>›</span>
+          <Link to={`/game/${account.game_id || 'clash-of-clans'}`} className="transition hover:text-zinc-950">{gameName}</Link><span>›</span>
+          <span>{typeLabel}s</span><span>›</span>
+          <span className="max-w-52 truncate text-zinc-500">{title}</span>
+        </nav>
+
+        <header className="mt-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-zinc-100 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-zinc-600">{gameName}</span>
+            <span className="rounded-full bg-blue-50 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-blue-600">{typeLabel}</span>
+            <span className={`rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-wide ${isAvailable ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}>{isAvailable ? 'Available' : 'Purchased'}</span>
           </div>
-          {images.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-2">{images.map((image, index) => <button key={`${image}-${index}`} type="button" onClick={() => setActiveImage(index)} className={`h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-zinc-100 transition ${activeImage === index ? 'border-zinc-950 opacity-100' : 'border-transparent opacity-55 hover:opacity-100'}`} aria-label={`Show image ${index + 1}`} aria-current={activeImage === index}><img src={thumbnails[index]} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" /></button>)}</div>}
-          <section className="mt-6 hidden lg:block">
-            <h2 className="text-base font-bold">Account description</h2>
-            <p className="mt-3 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
-          </section>
-        </section>
+          <h1 className="mt-4 max-w-6xl break-words text-[25px] font-black leading-[1.2] tracking-[-0.035em] sm:text-[30px] lg:text-[30px] xl:text-[32px]">{title}</h1>
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-600">
+            <span className="inline-flex items-center gap-2"><span className="text-emerald-500"><ShieldIcon /></span>Verified Seller</span>
+            <span className="h-5 w-px bg-zinc-300" />
+            <span className="inline-flex items-center gap-2 text-blue-600"><BoltIcon />{deliveryLabel}</span>
+          </div>
+        </header>
 
-        <section className="lg:sticky lg:top-20">
-          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-zinc-100 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-zinc-700">{gameName}</span><span className="rounded-full bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-blue-700">{typeLabel}</span><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-wider ${isAvailable ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}><span className={`h-1.5 w-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-zinc-400'}`} />{isAvailable ? 'Available' : 'Purchased'}</span></div>
-          <h1 className="mt-4 break-words text-[17px] font-bold leading-[1.25] tracking-[-0.02em] lg:text-[21px]">{title}</h1>
-
-          <div className="mt-5 overflow-hidden rounded-[22px] border border-violet-500/70 bg-zinc-50 p-4 shadow-[0_18px_40px_-28px_rgba(124,58,237,0.85)] lg:hidden">
-            <div className="flex items-center justify-between gap-4 border-b border-violet-500/40 pb-4">
-              <div className="min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-[0.12em] text-zinc-400">Price</p>
-                <div className="mt-0.5 flex items-baseline gap-2">
-                  <span className="text-[32px] font-black leading-none tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>
-                  {account.original_price > account.price && <span className="text-xs text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}
+        <div className="mt-7 grid min-h-[calc(100vh-15rem)] items-start gap-7 lg:grid-cols-[minmax(0,1.62fr)_minmax(360px,0.88fr)] xl:gap-9">
+          <section className="min-w-0">
+            <div className="relative flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm sm:h-[520px] lg:h-[500px] xl:h-[540px]">
+              {images.length ? (
+                <img
+                  key={images[activeImage]}
+                  src={images[activeImage]}
+                  alt={`${title} image ${activeImage + 1}`}
+                  className="h-full w-full object-contain"
+                  loading="eager"
+                  decoding="async"
+                />
+              ) : (
+                <div className="text-center text-zinc-400">
+                  <span className="text-6xl">🎮</span>
+                  <p className="mt-3 text-sm font-bold">No image available</p>
                 </div>
+              )}
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={previousImage}
+                    aria-label="Previous image"
+                    className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-zinc-950 shadow-md transition hover:scale-105"
+                  >
+                    <ArrowLeft />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextImage}
+                    aria-label="Next image"
+                    className="absolute right-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-zinc-950 shadow-md transition hover:scale-105"
+                  >
+                    <ArrowRight />
+                  </button>
+                  <span className="absolute bottom-4 right-4 rounded-full bg-zinc-950/80 px-4 py-2 text-xs font-bold text-white">
+                    {activeImage + 1} / {images.length}
+                  </span>
+                </>
+              )}
+            </div>
+
+            {images.length > 1 && (
+              <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+                {images.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    onClick={() => setActiveImage(index)}
+                    className={`h-24 w-36 shrink-0 overflow-hidden rounded-lg border-[3px] bg-zinc-100 transition ${
+                      activeImage === index
+                        ? 'border-yellow-400 opacity-100'
+                        : 'border-transparent opacity-80 hover:opacity-100'
+                    }`}
+                    aria-label={`Show image ${index + 1}`}
+                    aria-current={activeImage === index}
+                  >
+                    <img
+                      src={thumbnails[index]}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </button>
+                ))}
               </div>
-              <span className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-emerald-600"><ShieldIcon />Secure</span>
-            </div>
-
-            <div className="grid grid-cols-3 border-b border-violet-500/40 py-3">
-              {['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item, index) => <div key={item} className={`flex min-w-0 items-start gap-1.5 px-2 text-[9px] font-bold leading-3.5 text-zinc-600 ${index < 2 ? 'border-r border-violet-500/35' : ''}`}><span className="mt-px shrink-0 text-emerald-600"><CheckIcon /></span><span>{item}</span></div>)}
-            </div>
-
-            {purchaseError && <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700">{purchaseError}</p>}
-            <div className="mt-3 grid gap-2">
-              {isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Open my order</button>}
-              <button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button>
-            </div>
-          </div>
-
-          <div className="mt-5 hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-5 lg:block"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[9px] font-black uppercase tracking-wider text-zinc-400">Price</p><div className="mt-1 flex items-baseline gap-2"><span className="text-3xl font-black tracking-[-0.04em]">₹{Number(account.price || 0).toLocaleString('en-IN')}</span>{account.original_price > account.price && <span className="text-sm text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div><div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-emerald-700 ring-1 ring-zinc-200"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-zinc-700 ring-1 ring-zinc-200"><CheckIcon />Reviewed</span></div></div></div>
-
-          <section className="mt-5">
-            <h2 className="text-base font-bold">Account details</h2>
-            <div className="mt-3 grid grid-cols-3">{stats.map((stat, index) => {
-              const finalRowSize = stats.length % 3 || 3;
-              const isFinalRow = index >= stats.length - finalRowSize;
-              return <div key={stat.label} className={`min-w-0 py-3 pr-2 sm:pr-4 ${isFinalRow ? '' : 'border-b border-zinc-200'}`}><p className="truncate text-[10px] font-medium text-zinc-500" title={stat.label}>{stat.label}</p><p className="mt-1 break-words text-sm font-semibold leading-5 text-zinc-950">{stat.value}</p></div>;
-            })}</div>
+            )}
           </section>
 
-          <section className="mt-8 lg:hidden">
-            <h2 className="text-base font-bold">Account description</h2>
-            <p className="mt-3 whitespace-pre-wrap break-words text-[17px] leading-7 text-zinc-500">{account.description || 'A reviewed marketplace listing with clear details and support available throughout your purchase.'}</p>
+          <aside className="overflow-hidden rounded-[24px] border border-zinc-200 bg-white p-5 shadow-[0_22px_60px_-42px_rgba(24,24,27,0.55)] sm:p-7 lg:sticky lg:top-20">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div><p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-400">Price</p><div className="mt-2 flex items-baseline gap-2"><span className="text-[38px] font-black leading-none tracking-[-0.05em]">₹{formattedPrice}</span>{hasOriginalPrice && <span className="text-sm font-semibold text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div>
+              <div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 px-3 py-2 text-[11px] font-bold text-emerald-600"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 px-3 py-2 text-[11px] font-bold text-zinc-600"><CheckIcon />Reviewed</span></div>
+            </div>
+
+            {purchaseError && <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700">{purchaseError}</p>}
+            {isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} style={{ backgroundColor: '#f9c600', color: '#fff' }} className="mt-7 w-full rounded-xl px-6 py-4 text-base font-black shadow-[0_12px_28px_-16px_rgba(202,138,4,0.85)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="mt-7 w-full rounded-xl bg-zinc-950 px-6 py-4 text-base font-black text-white">Open my order</button>}
+            <button onClick={() => navigate('/support')} className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-300 bg-white px-6 py-4 text-base font-black transition hover:border-zinc-950"><ChatIcon />Ask a question</button>
+
+            <div className="mt-6 space-y-5 border-t border-zinc-200 pt-6 text-sm font-medium text-zinc-500">
+              <div className="flex items-center gap-4"><span className="text-blue-600"><BoltIcon /></span>{paymentDeliveryText}</div>
+              <div className="flex items-center gap-4"><span className="text-emerald-500"><ShieldIcon /></span>Safe and secure transactions</div>
+              <div className="flex items-center gap-4"><span className="text-zinc-500"><UsersIcon /></span>Private marketplace support</div>
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-16 border-t border-zinc-200 pt-12 sm:mt-20 sm:pt-16">
+          <section aria-labelledby="listing-details-heading">
+            <div className="max-w-2xl">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">
+                Listing information
+              </p>
+              <h2
+                id="listing-details-heading"
+                className="mt-2 text-3xl font-black tracking-[-0.04em]"
+              >
+                {typeLabel} details
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-zinc-500">
+                Review the important specifications before continuing to checkout.
+              </p>
+            </div>
+
+            <div className="mt-7 grid overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 sm:grid-cols-2 lg:grid-cols-3">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="min-w-0 border-b border-zinc-200 p-5 last:border-b-0 sm:border-r lg:p-6"
+                >
+                  <p
+                    className="truncate text-[11px] font-black uppercase tracking-[0.1em] text-zinc-400"
+                    title={stat.label}
+                  >
+                    {stat.label}
+                  </p>
+                  <p className="mt-2 break-words text-[16px] font-bold leading-6 text-zinc-950">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
           </section>
 
-          <div className="mt-5 hidden gap-2 lg:grid lg:grid-cols-1 xl:grid-cols-3">{['Details before payment', 'Private buyer support', 'Tracked delivery'].map((item) => <div key={item} className="flex items-center gap-2 rounded-xl bg-zinc-50 px-3 py-2.5 text-[10px] font-bold text-zinc-600"><span className="text-emerald-600"><CheckIcon /></span>{item}</div>)}</div>
-
-          {purchaseError && <p className="mt-7 hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 lg:block">{purchaseError}</p>}
-          <div className="mt-5 hidden gap-3 lg:grid lg:grid-cols-2">{isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="rounded-2xl bg-zinc-950 px-6 py-3.5 text-sm font-black text-white">Open my order</button>}<button onClick={() => navigate('/support')} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition hover:border-zinc-950"><ChatIcon />Ask a question</button></div>
-        </section>
+          <section
+            aria-labelledby="listing-description-heading"
+            className="mt-12 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:mt-16 sm:p-8"
+          >
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-pink-500">
+              Seller notes
+            </p>
+            <h2
+              id="listing-description-heading"
+              className="mt-2 text-2xl font-black tracking-[-0.035em]"
+            >
+              {typeLabel} description
+            </h2>
+            <p className="mt-4 max-w-4xl whitespace-pre-wrap break-words text-[16px] leading-8 text-zinc-600">
+              {account.description ||
+                'A reviewed marketplace listing with clear details and support available throughout your purchase.'}
+            </p>
+          </section>
+        </div>
       </div>
-    </div>
-  </main>;
+    </main>
+  );
 }
