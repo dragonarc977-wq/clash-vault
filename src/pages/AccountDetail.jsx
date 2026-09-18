@@ -1,3 +1,4 @@
+import '../styles/account-detail.css';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import supabase from '../lib/supabase';
@@ -114,183 +115,398 @@ export default function AccountDetail() {
   const hasOriginalPrice = Number(account.original_price) > Number(account.price);
 
   return (
-    <main className="min-h-screen bg-white pb-24 pt-16 text-zinc-950">
-      <div className="mx-auto max-w-[1440px] px-5 py-7 sm:px-8 lg:px-14 lg:py-8">
+  <main className="account-page">
+    <div className="account-page-container">
         <Link
-          to={`/game/${account.game_id || 'clash-of-clans'}`}
-          className="inline-flex items-center gap-2 text-sm font-bold text-zinc-600 transition hover:text-zinc-950"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to {gameName}
-        </Link>
+  to={`/game/${account.game_id || 'clash-of-clans'}`}
+  className="account-back-link"
+>
+  <ArrowLeft className="account-back-icon" />
+  Back to {gameName}
+</Link>
 
-        <nav className="mt-5 hidden items-center gap-2 text-xs font-medium text-zinc-400 md:flex" aria-label="Breadcrumb">
-          <Link to="/" className="transition hover:text-zinc-950">Home</Link><span>›</span>
-          <Link to="/" className="transition hover:text-zinc-950">All Games</Link><span>›</span>
-          <Link to={`/game/${account.game_id || 'clash-of-clans'}`} className="transition hover:text-zinc-950">{gameName}</Link><span>›</span>
-          <span>{typeLabel}s</span><span>›</span>
-          <span className="max-w-52 truncate text-zinc-500">{title}</span>
-        </nav>
+        <nav
+  className="account-breadcrumbs"
+  aria-label="Breadcrumb"
+>
+  <Link to="/">
+    Home
+  </Link>
 
-        <header className="mt-5">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-zinc-100 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-zinc-600">{gameName}</span>
-            <span className="rounded-full bg-blue-50 px-4 py-2 text-[10px] font-black uppercase tracking-wide text-blue-600">{typeLabel}</span>
-            <span className={`rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-wide ${isAvailable ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'}`}>{isAvailable ? 'Available' : 'Purchased'}</span>
-          </div>
-          <h1 className="mt-4 max-w-6xl break-words text-[25px] font-black leading-[1.2] tracking-[-0.035em] sm:text-[30px] lg:text-[30px] xl:text-[32px]">{title}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-600">
-            <span className="inline-flex items-center gap-2"><span className="text-emerald-500"><ShieldIcon /></span>Verified Seller</span>
-            <span className="h-5 w-px bg-zinc-300" />
-            <span className="inline-flex items-center gap-2 text-blue-600"><BoltIcon />{deliveryLabel}</span>
-          </div>
-        </header>
+  <span>›</span>
 
-        <div className="mt-7 grid min-h-[calc(100vh-15rem)] items-start gap-7 lg:grid-cols-[minmax(0,1.62fr)_minmax(360px,0.88fr)] xl:gap-9">
-          <section className="min-w-0">
-            <div className="relative flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm sm:h-[520px] lg:h-[500px] xl:h-[540px]">
-              {images.length ? (
-                <img
-                  key={images[activeImage]}
-                  src={images[activeImage]}
-                  alt={`${title} image ${activeImage + 1}`}
-                  className="h-full w-full object-contain"
-                  loading="eager"
-                  decoding="async"
-                />
-              ) : (
-                <div className="text-center text-zinc-400">
-                  <span className="text-6xl">🎮</span>
-                  <p className="mt-3 text-sm font-bold">No image available</p>
-                </div>
-              )}
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={previousImage}
-                    aria-label="Previous image"
-                    className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-zinc-950 shadow-md transition hover:scale-105"
-                  >
-                    <ArrowLeft />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={nextImage}
-                    aria-label="Next image"
-                    className="absolute right-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-zinc-950 shadow-md transition hover:scale-105"
-                  >
-                    <ArrowRight />
-                  </button>
-                  <span className="absolute bottom-4 right-4 rounded-full bg-zinc-950/80 px-4 py-2 text-xs font-bold text-white">
-                    {activeImage + 1} / {images.length}
-                  </span>
-                </>
-              )}
-            </div>
+  <Link to="/">
+    All Games
+  </Link>
+
+  <span>›</span>
+
+  <Link
+    to={`/game/${account.game_id || 'clash-of-clans'}`}
+  >
+    {gameName}
+  </Link>
+
+  <span>›</span>
+
+  <span>
+    {typeLabel}s
+  </span>
+
+  <span>›</span>
+
+  <span className="account-breadcrumb-title">
+    {title}
+  </span>
+</nav>
+
+        <header className="account-header">
+
+  {/* BADGES */}
+  <div className="account-badges">
+
+    <span className="account-badge account-badge-game">
+      {gameName}
+    </span>
+
+    <span className="account-badge account-badge-type">
+      {typeLabel}
+    </span>
+
+    <span
+      className={
+        isAvailable
+          ? 'account-badge account-badge-status available'
+          : 'account-badge account-badge-status'
+      }
+    >
+      {isAvailable ? 'Available' : 'Purchased'}
+    </span>
+
+  </div>
+
+
+  {/* TITLE */}
+  <h1 className="account-title">
+    {title}
+  </h1>
+
+
+  {/* VERIFIED + DELIVERY */}
+  <div className="account-meta">
+
+    <span className="account-meta-item">
+      <span className="account-meta-verified">
+        <ShieldIcon />
+      </span>
+
+      Verified Seller
+    </span>
+
+
+    <span className="account-meta-divider" />
+
+
+    <span className="account-meta-item account-meta-delivery">
+      <BoltIcon />
+
+      {deliveryLabel}
+    </span>
+
+  </div>
+
+</header>
+
+        <div className="account-main-grid">
+
+<section className="account-gallery-section">
+            <div className="account-gallery">
+
+  {images.length ? (
+    <img
+      key={images[activeImage]}
+      src={images[activeImage]}
+      alt={`${title} image ${activeImage + 1}`}
+      className="account-gallery-image"
+      loading="eager"
+      decoding="async"
+    />
+  ) : (
+    <div className="account-gallery-empty">
+
+      <span className="account-gallery-empty-icon">
+        🎮
+      </span>
+
+      <p className="account-gallery-empty-text">
+        No image available
+      </p>
+
+    </div>
+  )}
+
+
+  {images.length > 1 && (
+    <>
+
+      <button
+        type="button"
+        onClick={previousImage}
+        aria-label="Previous image"
+        className="account-gallery-nav previous"
+      >
+        <ArrowLeft />
+      </button>
+
+      <button
+        type="button"
+        onClick={nextImage}
+        aria-label="Next image"
+        className="account-gallery-nav next"
+      >
+        <ArrowRight />
+      </button>
+
+      <span className="account-gallery-count">
+        {activeImage + 1} / {images.length}
+      </span>
+
+    </>
+  )}
+
+</div>
 
             {images.length > 1 && (
-              <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-                {images.map((image, index) => (
-                  <button
-                    key={`${image}-${index}`}
-                    type="button"
-                    onClick={() => setActiveImage(index)}
-                    className={`h-24 w-36 shrink-0 overflow-hidden rounded-lg border-[3px] bg-zinc-100 transition ${
-                      activeImage === index
-                        ? 'border-yellow-400 opacity-100'
-                        : 'border-transparent opacity-80 hover:opacity-100'
-                    }`}
-                    aria-label={`Show image ${index + 1}`}
-                    aria-current={activeImage === index}
-                  >
-                    <img
-                      src={thumbnails[index]}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+  <div className="account-thumbnails">
+
+    {images.map((image, index) => (
+
+      <button
+        key={`${image}-${index}`}
+        type="button"
+        onClick={() => setActiveImage(index)}
+        className={
+          activeImage === index
+            ? 'account-thumbnail active'
+            : 'account-thumbnail'
+        }
+        aria-label={`Show image ${index + 1}`}
+        aria-current={activeImage === index}
+      >
+        <img
+          src={thumbnails[index]}
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+      </button>
+
+    ))}
+
+  </div>
+)}
           </section>
 
-          <aside className="overflow-hidden rounded-[24px] border border-zinc-200 bg-white p-5 shadow-[0_22px_60px_-42px_rgba(24,24,27,0.55)] sm:p-7 lg:sticky lg:top-20">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div><p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-400">Price</p><div className="mt-2 flex items-baseline gap-2"><span className="text-[38px] font-black leading-none tracking-[-0.05em]">₹{formattedPrice}</span>{hasOriginalPrice && <span className="text-sm font-semibold text-zinc-400 line-through">₹{Number(account.original_price).toLocaleString('en-IN')}</span>}</div></div>
-              <div className="flex gap-2"><span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 px-3 py-2 text-[11px] font-bold text-emerald-600"><ShieldIcon />Secure</span><span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 px-3 py-2 text-[11px] font-bold text-zinc-600"><CheckIcon />Reviewed</span></div>
-            </div>
+          <aside className="purchase-box">
 
-            {purchaseError && <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700">{purchaseError}</p>}
-            {isAvailable ? <button onClick={beginCheckout} disabled={checkingOut} style={{ backgroundColor: '#f9c600', color: '#fff' }} className="mt-7 w-full rounded-xl px-6 py-4 text-base font-black shadow-[0_12px_28px_-16px_rgba(202,138,4,0.85)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60">{checkingOut ? 'Checking availability…' : 'Buy now'}</button> : <button onClick={() => navigate('/my-orders')} className="mt-7 w-full rounded-xl bg-zinc-950 px-6 py-4 text-base font-black text-white">Open my order</button>}
-            <button onClick={() => navigate('/support')} className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-300 bg-white px-6 py-4 text-base font-black transition hover:border-zinc-950"><ChatIcon />Ask a question</button>
+  {/* PRICE */}
+  <div className="purchase-price-row">
 
-            <div className="mt-6 space-y-5 border-t border-zinc-200 pt-6 text-sm font-medium text-zinc-500">
-              <div className="flex items-center gap-4"><span className="text-blue-600"><BoltIcon /></span>{paymentDeliveryText}</div>
-              <div className="flex items-center gap-4"><span className="text-emerald-500"><ShieldIcon /></span>Safe and secure transactions</div>
-              <div className="flex items-center gap-4"><span className="text-zinc-500"><UsersIcon /></span>Private marketplace support</div>
-            </div>
-          </aside>
+    <div>
+      <p className="purchase-label">
+        Price
+      </p>
+
+      <div className="purchase-price-wrap">
+
+        <span className="purchase-price">
+          ₹{formattedPrice}
+        </span>
+
+        {hasOriginalPrice && (
+          <span className="purchase-original-price">
+            ₹
+            {Number(
+              account.original_price
+            ).toLocaleString('en-IN')}
+          </span>
+        )}
+
+      </div>
+    </div>
+
+
+    {/* SECURITY BADGES */}
+    <div className="purchase-badges">
+
+      <span className="purchase-badge purchase-badge-secure">
+        <ShieldIcon />
+        Secure
+      </span>
+
+      <span className="purchase-badge purchase-badge-reviewed">
+        <CheckIcon />
+        Reviewed
+      </span>
+
+    </div>
+
+  </div>
+
+
+  {/* ERROR */}
+  {purchaseError && (
+    <p className="purchase-error">
+      {purchaseError}
+    </p>
+  )}
+
+
+  {/* BUY BUTTON */}
+  {isAvailable ? (
+    <button
+      type="button"
+      onClick={beginCheckout}
+      disabled={checkingOut}
+      className="purchase-primary-button"
+    >
+      {checkingOut
+        ? 'Checking availability…'
+        : 'Buy now'}
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={() => navigate('/my-orders')}
+      className="purchase-order-button"
+    >
+      Open my order
+    </button>
+  )}
+
+
+  {/* ASK QUESTION */}
+  <button
+    type="button"
+    onClick={() => navigate('/support')}
+    className="purchase-question-button"
+  >
+    <ChatIcon />
+    Ask a question
+  </button>
+
+
+  {/* TRUST INFORMATION */}
+  <div className="purchase-trust-list">
+
+    <div className="purchase-trust-item">
+      <span className="purchase-trust-blue">
+        <BoltIcon />
+      </span>
+
+      {paymentDeliveryText}
+    </div>
+
+
+    <div className="purchase-trust-item">
+      <span className="purchase-trust-green">
+        <ShieldIcon />
+      </span>
+
+      Safe and secure transactions
+    </div>
+
+
+    <div className="purchase-trust-item">
+      <span className="purchase-trust-gray">
+        <UsersIcon />
+      </span>
+
+      Private marketplace support
+    </div>
+
+  </div>
+
+</aside>
         </div>
 
-        <div className="mt-16 border-t border-zinc-200 pt-12 sm:mt-20 sm:pt-16">
-          <section aria-labelledby="listing-details-heading">
-            <div className="max-w-2xl">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">
-                Listing information
-              </p>
-              <h2
-                id="listing-details-heading"
-                className="mt-2 text-3xl font-black tracking-[-0.04em]"
-              >
-                {typeLabel} details
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-zinc-500">
-                Review the important specifications before continuing to checkout.
-              </p>
-            </div>
+        <div className="account-details-area">
 
-            <div className="mt-7 grid overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 sm:grid-cols-2 lg:grid-cols-3">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="min-w-0 border-b border-zinc-200 p-5 last:border-b-0 sm:border-r lg:p-6"
-                >
-                  <p
-                    className="truncate text-[11px] font-black uppercase tracking-[0.1em] text-zinc-400"
-                    title={stat.label}
-                  >
-                    {stat.label}
-                  </p>
-                  <p className="mt-2 break-words text-[16px] font-bold leading-6 text-zinc-950">
-                    {stat.value}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
+  {/* ACCOUNT DETAILS */}
+  <section aria-labelledby="listing-details-heading">
 
-          <section
-            aria-labelledby="listing-description-heading"
-            className="mt-12 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:mt-16 sm:p-8"
+    <div className="account-details-intro">
+
+      <p className="account-details-label">
+        Listing information
+      </p>
+
+      <h2
+        id="listing-details-heading"
+        className="account-details-title"
+      >
+        {typeLabel} details
+      </h2>
+
+      <p className="account-details-subtitle">
+        Review the important specifications before continuing to checkout.
+      </p>
+
+    </div>
+
+
+    <div className="account-details-grid">
+
+      {stats.map((stat) => (
+        <div
+          key={stat.label}
+          className="account-detail-item"
+        >
+
+          <p
+            className="account-detail-label"
+            title={stat.label}
           >
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-pink-500">
-              Seller notes
-            </p>
-            <h2
-              id="listing-description-heading"
-              className="mt-2 text-2xl font-black tracking-[-0.035em]"
-            >
-              {typeLabel} description
-            </h2>
-            <p className="mt-4 max-w-4xl whitespace-pre-wrap break-words text-[16px] leading-8 text-zinc-600">
-              {account.description ||
-                'A reviewed marketplace listing with clear details and support available throughout your purchase.'}
-            </p>
-          </section>
+            {stat.label}
+          </p>
+
+          <p className="account-detail-value">
+            {stat.value}
+          </p>
+
         </div>
+      ))}
+
+    </div>
+
+  </section>
+
+
+  {/* DESCRIPTION */}
+  <section
+    aria-labelledby="listing-description-heading"
+    className="account-description"
+  >
+
+    <p className="account-description-label">
+      Seller notes
+    </p>
+
+    <h2
+      id="listing-description-heading"
+      className="account-description-title"
+    >
+      {typeLabel} description
+    </h2>
+
+    <p className="account-description-text">
+      {account.description ||
+        'A reviewed marketplace listing with clear details and support available throughout your purchase.'}
+    </p>
+
+  </section>
+
+</div>
       </div>
     </main>
   );

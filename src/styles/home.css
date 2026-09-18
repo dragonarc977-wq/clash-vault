@@ -1,0 +1,510 @@
+/* =========================================
+   ALLGAMERSMARKET HOME PAGE
+========================================= */
+
+
+/* ---------- WHOLE PAGE ---------- */
+
+.home-page {
+  min-height: 100vh;
+  padding-top: 64px;
+
+  background: #ffffff;
+  color: #09090b;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.home-hero {
+  padding: 56px 20px 36px;
+
+  text-align: center;
+
+  border-bottom: 1px solid rgba(228, 228, 231, 0.7);
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(161, 161, 170, 0.16),
+      rgba(255, 255, 255, 0) 55%
+    );
+}
+
+.home-hero-label {
+  margin: 0;
+
+  color: #b77e00;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+.home-hero-title {
+  max-width: 768px;
+
+  margin: 20px auto 0;
+
+  color: #09090b;
+
+  font-size: 36px;
+  font-weight: 900;
+
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+.home-hero-description {
+  max-width: 576px;
+
+  margin: 20px auto 0;
+
+  color: #71717a;
+
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.home-search {
+  width: 100%;
+  max-width: 768px;
+
+  margin: 40px auto 0;
+}
+
+
+/* =========================================
+   EXPLORE GAMES
+========================================= */
+
+.games-section {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 36px 20px;
+
+  scroll-margin-top: 80px;
+}
+
+.games-heading-container {
+  margin-bottom: 20px;
+}
+
+.games-heading {
+  margin: 0;
+
+  color: #4ade80;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  letter-spacing: -0.025em;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+
+/* ---------- GAME CARD ---------- */
+
+.game-tile {
+  position: relative;
+
+  height: 224px;
+
+  display: block;
+
+  overflow: hidden;
+
+  background: #18181b;
+
+  border-radius: 16px;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.game-tile:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.game-tile-image {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  opacity: 0.8;
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.game-tile-image-bright {
+  opacity: 1;
+}
+
+.game-tile:hover .game-tile-image {
+  transform: scale(1.05);
+  opacity: 0.95;
+}
+
+.game-tile:hover .game-tile-image-bright {
+  opacity: 1;
+}
+
+.game-tile-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      #09090b,
+      rgba(9, 9, 11, 0.2),
+      transparent
+    );
+}
+
+.game-tile-badge {
+  position: absolute;
+
+  top: 12px;
+  left: 12px;
+
+  padding: 4px 10px;
+
+  background: rgba(9, 9, 11, 0.75);
+
+  border-radius: 999px;
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+.game-tile-content {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 16px;
+}
+
+.game-tile-title {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.game-tile-detail {
+  margin: 4px 0 0;
+
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   BENEFITS
+========================================= */
+
+.home-benefits {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 8px 20px 56px;
+}
+
+.home-benefits-grid {
+  display: grid;
+
+  gap: 1px;
+
+  overflow: hidden;
+
+  background: #e4e4e7;
+
+  border: 1px solid #e4e4e7;
+  border-radius: 16px;
+}
+
+.home-benefit-card {
+  padding: 24px;
+
+  background: #ffffff;
+}
+
+.home-benefit-title {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.home-benefit-text {
+  margin: 8px 0 0;
+
+  color: #71717a;
+
+  font-size: 16px;
+  line-height: 24px;
+}
+
+
+/* =========================================
+   FAQ
+========================================= */
+
+.faq-section {
+  padding: 64px 20px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #f4f4f5;
+}
+
+.faq-container {
+  max-width: 768px;
+
+  margin: 0 auto;
+}
+
+.faq-header {
+  margin-bottom: 40px;
+
+  text-align: center;
+}
+
+.faq-title {
+  margin: 4px 0 0;
+
+  color: #09090b;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  letter-spacing: -0.035em;
+}
+
+.faq-subtitle {
+  margin: 12px 0 0;
+
+  color: #09090b;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  line-height: 24px;
+}
+
+.faq-list {
+  border-top: 1px solid #e4e4e7;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.faq-item + .faq-item {
+  border-top: 1px solid #e4e4e7;
+}
+
+
+/* ---------- FAQ QUESTION ---------- */
+
+.faq-question {
+  width: 100%;
+
+  padding: 20px 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #09090b;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.faq-question:hover {
+  color: #b74300;
+}
+
+.faq-question-text {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.faq-icon {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  color: #b74300;
+
+  transition: transform 0.3s ease;
+}
+
+.faq-icon-open {
+  transform: rotate(180deg);
+}
+
+
+/* ---------- FAQ ANSWER ---------- */
+
+.faq-answer-wrapper {
+  display: grid;
+
+  grid-template-rows: 0fr;
+
+  opacity: 0;
+
+  transition:
+    grid-template-rows 0.3s ease-out,
+    opacity 0.3s ease-out;
+}
+
+.faq-answer-open {
+  grid-template-rows: 1fr;
+
+  opacity: 1;
+}
+
+.faq-answer-inner {
+  overflow: hidden;
+}
+
+.faq-answer {
+  max-width: 672px;
+
+  margin: 0;
+
+  padding: 0 40px 20px 0;
+
+  color: #09090b;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  line-height: 32px;
+}
+
+
+/* =========================================
+   TABLET / DESKTOP
+========================================= */
+
+@media (min-width: 640px) {
+  .home-hero {
+    padding:
+      64px 32px
+      48px;
+  }
+
+  .home-hero-title {
+    font-size: 48px;
+  }
+
+  .games-section {
+    padding: 48px 32px;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+  }
+
+  .game-tile {
+    height: 256px;
+  }
+
+  .game-tile-title {
+    font-size: 18px;
+  }
+
+  .home-benefits {
+    padding:
+      8px 32px
+      80px;
+  }
+
+  .home-benefits-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .faq-section {
+    padding: 96px 32px;
+  }
+
+  .faq-header {
+    margin-bottom: 48px;
+  }
+
+  .faq-question {
+    padding: 24px 0;
+  }
+
+  .faq-question-text {
+    font-size: 16px;
+  }
+
+  .faq-answer {
+    padding-bottom: 24px;
+  }
+
+  .faq-subtitle {
+    font-size: 16px;
+  }
+}
+
+
+/* =========================================
+   LARGE DESKTOP
+========================================= */
+
+@media (min-width: 1024px) {
+  .games-grid {
+    gap: 16px;
+  }
+}

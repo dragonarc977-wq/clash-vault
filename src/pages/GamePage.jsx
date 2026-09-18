@@ -1,3 +1,4 @@
+import '../styles/game-page.css';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import supabase from '../lib/supabase';
@@ -32,7 +33,7 @@ const SearchIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentCol
 const FilterIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 6h16M7 12h10m-7 6h4" /></svg>;
 const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
 
-function ListingCard({ account, game, seller }) {
+function ListingCard({ account, game }) {
   const navigate = useNavigate();
   const title = account.title || account.name || `${game.name} Account`;
   const type = String(account.listing_type || account.category || 'account').replace(/s$/, '').toLowerCase();
@@ -53,54 +54,138 @@ function ListingCard({ account, game, seller }) {
     { label: 'Heroes', value: attributes.heroes_count || attributes.brawlers_count },
   ].filter((stat) => stat.value !== null && stat.value !== undefined && stat.value !== '');
 
-  return <article onClick={() => navigate(`/account/${account.id}`)} className="shop-listing-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white transition duration-200 hover:-translate-y-1">
-    <div className="shop-listing-media relative h-48 shrink-0 overflow-hidden bg-zinc-100 sm:h-52">
-      {(account.thumbnail_url || account.image_url) ? <img src={account.thumbnail_url || account.image_url} alt={title} className="h-full w-full object-cover transition duration-200 group-hover:scale-[1.035]" loading="lazy" decoding="async" /> : <img src={`/games/${account.game_id}.png`} alt="" className="h-full w-full object-cover opacity-80 transition duration-200 group-hover:scale-[1.035]" loading="lazy" decoding="async" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/55 via-transparent to-zinc-950/5" />
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3"><span className="rounded-full border border-white/50 bg-white/90 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-zinc-700 shadow-sm backdrop-blur-md">{category}</span>{discount > 0 && <span className="rounded-full bg-zinc-950 px-2.5 py-1 text-[9px] font-semibold text-white shadow-sm">-{discount}%</span>}</div>
+  return (
+  <article
+    onClick={() => navigate(`/account/${account.id}`)}
+    className="listing-card"
+  >
+
+    {/* IMAGE */}
+    <div className="listing-card-media">
+
+      {account.thumbnail_url || account.image_url ? (
+        <img
+          src={account.thumbnail_url || account.image_url}
+          alt={title}
+          className="listing-card-image"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <img
+          src={`/games/${account.game_id}.png`}
+          alt=""
+          className="listing-card-image listing-card-image-fallback"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+
+      <div className="listing-card-image-overlay" />
+
+
+      {/* BADGES */}
+      <div className="listing-card-badges">
+
+        <span className="listing-card-category">
+          {category}
+        </span>
+
+        {discount > 0 && (
+          <span className="listing-card-discount">
+            -{discount}%
+          </span>
+        )}
+
+      </div>
+
     </div>
-    <div className="shop-listing-body flex flex-1 flex-col p-4">
-      <h2 className="line-clamp-3 min-h-[60px] text-[15px] font-bold leading-5 tracking-[-0.02em] text-zinc-950"><Link to={`/account/${account.id}`} onClick={(event) => event.stopPropagation()} className="rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-950">{title}</Link></h2>
+
+
+    {/* CARD CONTENT */}
+    <div className="listing-card-body">
+
+      <h2 className="listing-card-title">
+        <Link
+          to={`/account/${account.id}`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {title}
+        </Link>
+      </h2>
+
+
+      {/* ACCOUNT STATS */}
       {accountStats.length > 0 && (
-  <p className="mt-2 text-[14px] font-semibold text-zinc-500">
-    {accountStats
-      .slice(0, 2)
-      .filter((stat) => stat.value && stat.value !== '—')
-      .map((stat) => {
-        const label = stat.label === 'Town Hall' ? 'TH' : stat.label;
-        return `${label} ${stat.value}`;
-      })
-      .join(' • ')}
-  </p>
-)}
-      
-      {type === 'item' && attributes.quantity && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Qty {attributes.quantity}</span></div>}
-      {type === 'service' && attributes.estimated_days && <div className="mt-3"><span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-normal text-zinc-600 shadow-sm">Delivery {attributes.estimated_days} day{Number(attributes.estimated_days) === 1 ? '' : 's'}</span></div>}
-      <div className="mt-4 flex items-center justify-between gap-4 border-t border-zinc-100 pt-3">
-  <Link
-  to={`/account/${account.id}`}
-  onClick={(event) => event.stopPropagation()}
-  style={{ backgroundColor: '#34234a' }}
-  className="inline-flex h-10 items-center justify-center rounded-full px-6 text-[13px] font-black uppercase tracking-[0.04em] text-white font-semibold transition hover:opacity-90"
->
-  Buy Now
-</Link>
-  <p
-  className="shrink-0 leading-none text-zinc-950 sm:ml-auto"
-  style={{
-    fontFamily: 'Inter, system-ui, sans-serif',
-    fontWeight: 800,
-    fontSize: '24px',
-    transform: 'translateX(-25px) scaleX(0.95)',
-    transformOrigin: 'right center',
-  }}
->
-  ${Number(account.price || 0).toFixed(0)}
-</p>
-</div>
+        <p className="listing-card-stats">
+          {accountStats
+            .slice(0, 2)
+            .filter(
+              (stat) =>
+                stat.value &&
+                stat.value !== '—'
+            )
+            .map((stat) => {
+              const label =
+                stat.label === 'Town Hall'
+                  ? 'TH'
+                  : stat.label;
+
+              return `${label} ${stat.value}`;
+            })
+            .join(' • ')}
+        </p>
+      )}
+
+
+      {/* ITEM QUANTITY */}
+      {type === 'item' &&
+        attributes.quantity && (
+          <div className="listing-extra">
+            <span className="listing-extra-badge">
+              Qty {attributes.quantity}
+            </span>
+          </div>
+        )}
+
+
+      {/* SERVICE DELIVERY */}
+      {type === 'service' &&
+        attributes.estimated_days && (
+          <div className="listing-extra">
+            <span className="listing-extra-badge">
+              Delivery {attributes.estimated_days}{' '}
+              day
+              {Number(attributes.estimated_days) === 1
+                ? ''
+                : 's'}
+            </span>
+          </div>
+        )}
+
+
+      {/* BUY + PRICE */}
+      <div className="listing-card-footer">
+
+        <Link
+          to={`/account/${account.id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="listing-buy-button"
+        >
+          Buy Now
+        </Link>
+
+
+        <p className="listing-price">
+          ${Number(account.price || 0).toFixed(0)}
+        </p>
+
+      </div>
+
     </div>
-    
-  </article>;
+
+  </article>
+);
 }
 
 export default function GamePage() {
@@ -208,160 +293,596 @@ export default function GamePage() {
 
   const activeFilterCount = [type !== 'All', level !== 'All', platform !== 'All platforms', region !== 'All regions', delivery !== 'All delivery', category !== 'All categories', serviceTime !== 'Any duration', verifiedOnly, fullAccess, price.length > 0].filter(Boolean).length;
   const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
-  const selectClass = 'h-12 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-700 outline-none transition focus:border-[#c68d00] focus:ring-4 focus:ring-yellow-100';
+  
 
   if (!game) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">GAME NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This marketplace is unavailable.</h1><Link to="/#games" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">View all games</Link></div></main>;
 
   return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
-    <section className="bg-white px-5 py-6 sm:px-8 sm:py-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex items-center gap-2 text-xs font-bold text-zinc-500"><Link to="/" className="hover:text-zinc-950">Home</Link><span>›</span><Link to="/#games" className="hover:text-zinc-950">Games</Link><span>›</span><span className="text-zinc-700">{game.name}</span></div>
-        <div className="mt-5 flex items-center gap-4">
-  <img
-    src={`/games/${gameId}.png`}
-    alt=""
-    className="h-14 w-14 rounded-xl object-cover ring-1 ring-zinc-200 sm:h-16 sm:w-16"
-  />
+    <section className="game-header">
+  <div className="game-header-inner">
 
-  <div className="min-w-0">
-    <h1 className="text-[28px] font-black tracking-[-0.04em] text-zinc-950 sm:text-[34px]">
-      {game.name}
-    </h1>
+    {/* BREADCRUMBS */}
+    <div className="game-breadcrumbs">
 
-    <p className="mt-1.5 text-[15px] font-semibold text-zinc-500">
-      {game.description}
-    </p>
-  </div>
-</div>
-        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
-  {listingTypes.map((item) => (
-    <button
-      key={item}
-      type="button"
-      onClick={() => {
-        setType(item);
-        setCategory('All categories');
-        setLevel('All');
-        setServiceTime('Any duration');
-        setFullAccess(false);
-      }}
-      className={`shrink-0 rounded-lg border px-5 py-2.5 text-sm font-extrabold transition ${
-        type === item
-          ? 'border-zinc-950 bg-zinc-950 text-white'
-          : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-950'
-      }`}
-    >
-      {item}
-    </button>
-  ))}
-</div>
+      <Link to="/">
+        Home
+      </Link>
+
+      <span>›</span>
+
+      <Link to="/#games">
+        Games
+      </Link>
+
+      <span>›</span>
+
+      <span className="game-breadcrumb-current">
+        {game.name}
+      </span>
+
+    </div>
+
+
+    {/* GAME NAME + IMAGE */}
+    <div className="game-identity">
+
+      <img
+        src={`/games/${gameId}.png`}
+        alt=""
+        className="game-icon"
+      />
+
+      <div className="game-identity-text">
+
+        <h1 className="game-title">
+          {game.name}
+        </h1>
+
+        <p className="game-description">
+          {game.description}
+        </p>
+
       </div>
-    </section>
 
-    <section className="bg-white px-5 py-4 sm:px-8">
-  <div className="mx-auto flex max-w-7xl flex-wrap gap-3">
+    </div>
+
+
+    {/* LISTING TYPE TABS */}
+    <div className="game-tabs">
+
+      {listingTypes.map((item) => (
+        <button
+          key={item}
+          type="button"
+          onClick={() => {
+            setType(item);
+            setCategory('All categories');
+            setLevel('All');
+            setServiceTime('Any duration');
+            setFullAccess(false);
+          }}
+          className={
+            type === item
+              ? 'game-tab active'
+              : 'game-tab'
+          }
+        >
+          {item}
+        </button>
+      ))}
+
+    </div>
+
+  </div>
+</section>
+
+    <section className="game-filter-bar">
+
+  <div className="game-filter-inner">
 
     {/* SEARCH */}
-    <label className="flex min-w-[260px] flex-1 items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 transition focus-within:border-zinc-400">
-      <span className="text-zinc-400">
+    <label className="game-filter-search">
+
+      <span className="game-filter-search-icon">
         <SearchIcon />
       </span>
 
       <input
         value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={(event) =>
+          setSearch(event.target.value)
+        }
         placeholder="Search listings..."
-        className="h-12 min-w-0 flex-1 bg-transparent text-sm font-semibold text-zinc-950 outline-none placeholder:font-medium placeholder:text-zinc-400"
+        className="game-filter-search-input"
       />
+
     </label>
+
 
     {/* LEVEL */}
     {(type === 'All' || type === 'Accounts') && (
       <select
         value={level}
-        onChange={(event) => setLevel(event.target.value)}
-        className="h-12 min-w-[150px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 outline-none transition hover:border-zinc-400"
+        onChange={(event) =>
+          setLevel(event.target.value)
+        }
+        className="game-filter-select"
       >
+
         <option value="All">
           {game.levelLabel}
         </option>
 
         {game.levels.map((item) => (
-          <option key={item} value={item}>
+          <option
+            key={item}
+            value={item}
+          >
             {game.levelLabel} {item}
           </option>
         ))}
+
       </select>
     )}
+
 
     {/* PRICE */}
     <button
       type="button"
       onClick={() => setShowFilters(true)}
-      className="h-12 min-w-[110px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-950"
+      className="game-filter-button"
     >
       Price
-      {price.length > 0 ? ` (${price.length})` : ' ▼'}
+      {price.length > 0
+        ? ` (${price.length})`
+        : ' ▼'}
     </button>
+
 
     {/* MORE */}
     <button
       type="button"
       onClick={() => setShowFilters(true)}
-      className="relative h-12 min-w-[105px] rounded-xl border border-zinc-200 bg-white px-4 text-sm font-bold text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-950"
+      className="game-filter-button game-filter-more"
     >
       More ▼
 
       {activeFilterCount > 0 && (
-        <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-950 px-1.5 text-[10px] font-black text-white">
+        <span className="game-filter-count">
           {activeFilterCount}
         </span>
       )}
+
     </button>
 
   </div>
+
 </section>
 
-    <section className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
-      <div className="min-w-0">
-       <div className="mb-6 flex items-end justify-between gap-4">
-  <h2 className="text-2xl font-black tracking-[-0.03em] text-zinc-950">
-    Available Accounts
-  </h2>
+    <section className="listings-section">
 
-  <p className="shrink-0 pb-0.5 text-sm font-semibold text-zinc-500">
-    {loading ? 'Loading…' : `${filtered.length} results`}
-  </p>
-</div>
-        {loading ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{[1, 2, 3, 4, 5, 6, 7, 8].map((item) => <div key={item} className="h-[390px] animate-pulse rounded-[20px] bg-zinc-100" />)}</div> : error ? <div className="rounded-3xl border border-red-200 bg-red-50 p-7 text-sm font-semibold text-red-700">{error}</div> : filtered.length ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{filtered.map((account) => <ListingCard key={account.id} account={account} game={game} seller={sellers[account.seller_id]} />)}</div> : <div className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-20 text-center"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm"><SearchIcon /></span><h2 className="mt-5 text-xl font-black">No listings found</h2><p className="mt-2 text-sm text-zinc-500">Try removing some filters or check again soon.</p>{activeFilterCount > 0 && <button onClick={clearFilters} className="mt-6 rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Clear filters</button>}</div>}
+  <div className="listings-section-inner">
+
+    {/* HEADING */}
+    <div className="listings-header">
+
+      <h2 className="listings-title">
+        Available Accounts
+      </h2>
+
+      <p className="listings-result-count">
+        {loading
+          ? 'Loading…'
+          : `${filtered.length} results`}
+      </p>
+
+    </div>
+
+
+    {/* LOADING */}
+    {loading ? (
+
+      <div className="listings-grid">
+
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(
+          (item) => (
+            <div
+              key={item}
+              className="listing-skeleton"
+            />
+          )
+        )}
+
       </div>
-    </section>
 
-    {showFilters && <div className="fixed inset-0 z-[1100] flex items-end justify-end bg-zinc-950/15 sm:top-16 sm:items-stretch" role="dialog" aria-modal="true" aria-label="Listing filters" onMouseDown={() => setShowFilters(false)}>
-      <aside className="flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-2xl border border-zinc-200 bg-white shadow-xl sm:h-full sm:max-h-none sm:w-[390px] sm:rounded-none sm:border-y-0 sm:border-r-0" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-5 sm:px-7"><div className="flex items-center gap-2">
-  <span className="text-zinc-950">
-    <FilterIcon />
-  </span>
+    ) : error ? (
 
-  <h2 className="text-xl font-black tracking-[-0.025em] text-zinc-950">
-    Filters
-  </h2>
-</div><button type="button" onClick={() => setShowFilters(false)} aria-label="Close filters" className="grid h-11 w-11 place-items-center rounded-full border border-zinc-200 text-2xl font-light text-zinc-600 transition hover:bg-zinc-100">×</button></div>
-        <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-7">
-          <div className="space-y-5">
-            {(type === 'All' || type === 'Accounts') && <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">{game.levelLabel}</span><select value={level} onChange={(event) => setLevel(event.target.value)} className={selectClass}><option>All</option>{game.levels.map((item) => <option key={item}>{item}</option>)}</select></label>}
-            {type === 'Items' && <label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Item category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All item categories</option>{itemCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label>}
-            {type === 'Services' && <><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Service category</span><select value={category} onChange={(event) => setCategory(event.target.value)} className={selectClass}><option value="All categories">All service categories</option>{serviceCategories.slice(1).map((item) => <option key={item}>{item}</option>)}</select></label><label className="block"><span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-zinc-400">Completion time</span><select value={serviceTime} onChange={(event) => setServiceTime(event.target.value)} className={selectClass}><option>Any duration</option><option>1 day</option><option>Up to 3 days</option><option>More than 3 days</option></select></label></>}
-            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Platform</span><select value={platform} onChange={(event) => setPlatform(event.target.value)} className={selectClass}>{platforms.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Region</span><select value={region} onChange={(event) => setRegion(event.target.value)} className={selectClass}>{regions.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label className="block"><span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Delivery</span><select value={delivery} onChange={(event) => setDelivery(event.target.value)} className={selectClass}>{deliveryMethods.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-            <div><span className="mb-3 block text-xs font-extrabold uppercase tracking-[0.08em] text-zinc-600">Price</span><div className="grid gap-3 sm:grid-cols-2">{priceRanges.map((range) => <label key={range.id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm font-semibold text-zinc-600"><input type="checkbox" checked={price.includes(range.id)} onChange={() => setPrice((current) => current.includes(range.id) ? current.filter((item) => item !== range.id) : [...current, range.id])} className="h-4 w-4 accent-zinc-950" />{range.label}</label>)}</div></div>
-            
-          </div>
+      /* ERROR */
+      <div className="listings-error">
+        {error}
+      </div>
+
+    ) : filtered.length ? (
+
+      /* LISTINGS */
+      <div className="listings-grid">
+
+        {filtered.map((account) => (
+          <ListingCard
+            key={account.id}
+            account={account}
+            game={game}
+            seller={sellers[account.seller_id]}
+          />
+        ))}
+
+      </div>
+
+    ) : (
+
+      /* EMPTY STATE */
+      <div className="listings-empty">
+
+        <span className="listings-empty-icon">
+          <SearchIcon />
+        </span>
+
+        <h2 className="listings-empty-title">
+          No listings found
+        </h2>
+
+        <p className="listings-empty-text">
+          Try removing some filters or check again soon.
+        </p>
+
+        {activeFilterCount > 0 && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="listings-clear-button"
+          >
+            Clear filters
+          </button>
+        )}
+
+      </div>
+
+    )}
+
+  </div>
+
+</section>
+
+    {showFilters && (
+  <div
+    className="filter-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Listing filters"
+    onMouseDown={() => setShowFilters(false)}
+  >
+
+    <aside
+      className="filter-drawer"
+      onMouseDown={(event) =>
+        event.stopPropagation()
+      }
+    >
+
+      {/* HEADER */}
+      <div className="filter-drawer-header">
+
+        <div className="filter-drawer-title-area">
+
+          <span className="filter-drawer-title-icon">
+            <FilterIcon />
+          </span>
+
+          <h2 className="filter-drawer-title">
+            Filters
+          </h2>
+
         </div>
-        <div className="grid grid-cols-2 gap-3 border-t border-zinc-200 bg-white px-5 py-4 sm:px-7"><button type="button" onClick={clearFilters} className="h-12 rounded-xl border border-zinc-200 text-sm font-bold text-zinc-700 transition hover:bg-zinc-50">Clear all</button><button type="button" onClick={() => setShowFilters(false)} className="h-12 rounded-xl bg-zinc-950 text-sm font-bold text-white transition hover:bg-zinc-800">Show {filtered.length} results</button></div>
-      </aside>
-    </div>}
+
+
+        <button
+          type="button"
+          onClick={() => setShowFilters(false)}
+          aria-label="Close filters"
+          className="filter-close-button"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      {/* FILTER CONTENT */}
+      <div className="filter-drawer-content">
+
+        <div className="filter-fields">
+
+
+          {/* ACCOUNT LEVEL */}
+          {(type === 'All' || type === 'Accounts') && (
+            <label className="filter-field">
+
+              <span className="filter-label">
+                {game.levelLabel}
+              </span>
+
+              <select
+                value={level}
+                onChange={(event) =>
+                  setLevel(event.target.value)
+                }
+                className="filter-select"
+              >
+                <option>
+                  All
+                </option>
+
+                {game.levels.map((item) => (
+                  <option key={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+
+            </label>
+          )}
+
+
+          {/* ITEM CATEGORY */}
+          {type === 'Items' && (
+            <label className="filter-field">
+
+              <span className="filter-label filter-label-small">
+                Item category
+              </span>
+
+              <select
+                value={category}
+                onChange={(event) =>
+                  setCategory(event.target.value)
+                }
+                className="filter-select"
+              >
+                <option value="All categories">
+                  All item categories
+                </option>
+
+                {itemCategories
+                  .slice(1)
+                  .map((item) => (
+                    <option key={item}>
+                      {item}
+                    </option>
+                  ))}
+              </select>
+
+            </label>
+          )}
+
+
+          {/* SERVICE FILTERS */}
+          {type === 'Services' && (
+            <>
+
+              <label className="filter-field">
+
+                <span className="filter-label filter-label-small">
+                  Service category
+                </span>
+
+                <select
+                  value={category}
+                  onChange={(event) =>
+                    setCategory(event.target.value)
+                  }
+                  className="filter-select"
+                >
+                  <option value="All categories">
+                    All service categories
+                  </option>
+
+                  {serviceCategories
+                    .slice(1)
+                    .map((item) => (
+                      <option key={item}>
+                        {item}
+                      </option>
+                    ))}
+                </select>
+
+              </label>
+
+
+              <label className="filter-field">
+
+                <span className="filter-label filter-label-small">
+                  Completion time
+                </span>
+
+                <select
+                  value={serviceTime}
+                  onChange={(event) =>
+                    setServiceTime(event.target.value)
+                  }
+                  className="filter-select"
+                >
+                  <option>
+                    Any duration
+                  </option>
+
+                  <option>
+                    1 day
+                  </option>
+
+                  <option>
+                    Up to 3 days
+                  </option>
+
+                  <option>
+                    More than 3 days
+                  </option>
+                </select>
+
+              </label>
+
+            </>
+          )}
+
+
+          {/* PLATFORM */}
+          <label className="filter-field">
+
+            <span className="filter-label">
+              Platform
+            </span>
+
+            <select
+              value={platform}
+              onChange={(event) =>
+                setPlatform(event.target.value)
+              }
+              className="filter-select"
+            >
+              {platforms.map((item) => (
+                <option key={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+
+          </label>
+
+
+          {/* REGION */}
+          <label className="filter-field">
+
+            <span className="filter-label">
+              Region
+            </span>
+
+            <select
+              value={region}
+              onChange={(event) =>
+                setRegion(event.target.value)
+              }
+              className="filter-select"
+            >
+              {regions.map((item) => (
+                <option key={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+
+          </label>
+
+
+          {/* DELIVERY */}
+          <label className="filter-field">
+
+            <span className="filter-label">
+              Delivery
+            </span>
+
+            <select
+              value={delivery}
+              onChange={(event) =>
+                setDelivery(event.target.value)
+              }
+              className="filter-select"
+            >
+              {deliveryMethods.map(
+                ([value, label]) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+
+          </label>
+
+
+          {/* PRICE */}
+          <div className="filter-field">
+
+            <span className="filter-label">
+              Price
+            </span>
+
+            <div className="filter-price-grid">
+
+              {priceRanges.map((range) => (
+                <label
+                  key={range.id}
+                  className="filter-price-option"
+                >
+
+                  <input
+                    type="checkbox"
+                    checked={price.includes(range.id)}
+                    onChange={() =>
+                      setPrice((current) =>
+                        current.includes(range.id)
+                          ? current.filter(
+                              (item) =>
+                                item !== range.id
+                            )
+                          : [
+                              ...current,
+                              range.id,
+                            ]
+                      )
+                    }
+                    className="filter-checkbox"
+                  />
+
+                  {range.label}
+
+                </label>
+              ))}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      {/* FOOTER */}
+      <div className="filter-drawer-footer">
+
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="filter-clear-button"
+        >
+          Clear all
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowFilters(false)}
+          className="filter-results-button"
+        >
+          Show {filtered.length} results
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+)}
   </main>;
 }
