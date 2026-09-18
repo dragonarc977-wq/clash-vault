@@ -1,0 +1,326 @@
+/* =========================================
+   SITE FOOTER
+========================================= */
+
+.site-footer {
+  padding: 48px 20px;
+  border-top: 1px solid #e4e4e7;
+  background: #fff;
+  color: #27272a;
+}
+
+.site-footer-grid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 40px;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.site-footer-brand-name {
+  margin: 0;
+  color: #2563eb;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.025em;
+}
+
+.site-footer-brand-market {
+  color: #ec4899;
+}
+
+.site-footer-description {
+  max-width: 448px;
+  margin: 20px 0 0;
+  color: #000;
+  font-size: 18px;
+  line-height: 40px;
+}
+
+
+/* =========================================
+   DISCORD
+========================================= */
+
+.site-footer-discord {
+  height: 64px;
+  margin-top: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 40px;
+  border-radius: 16px;
+  background: #5865f2;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow:
+    0 10px 25px rgba(88, 101, 242, 0.15);
+}
+
+.site-footer-discord-logo {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+
+/* =========================================
+   SOCIAL ICONS
+========================================= */
+
+.site-footer-socials {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-footer-social-coming {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #18181b;
+  transition: color 0.18s ease;
+}
+
+.site-footer-social-coming:hover {
+  color: #ec4899;
+}
+
+.site-footer-social-icon {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+.site-footer-social-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.site-footer-social-reddit {
+  transform: translateX(-4px) scale(1.25);
+}
+
+.site-footer-coming-tooltip {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  display: none;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #fff;
+  color: #18181b;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.site-footer-social-coming:hover .site-footer-coming-tooltip {
+  display: block;
+}
+
+
+/* =========================================
+   HIDDEN EMAIL ICON
+========================================= */
+
+.site-footer-email-icon-link {
+  display: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid #3f3f46;
+  border-radius: 50%;
+  color: #a1a1aa;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.site-footer-email-icon-link:hover {
+  border-color: #fde047;
+  background: #fde047;
+  color: #18181b;
+}
+
+.site-footer-email-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.site-footer-email-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* =========================================
+   CONTACT
+========================================= */
+
+.site-footer-contact {
+  margin: 32px 0 0;
+  color: #000;
+  font-size: 20px;
+}
+
+.site-footer-contact-link {
+  color: #ec4899;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.site-footer-contact-link:hover {
+  color: #ec4899;
+}
+
+
+/* =========================================
+   NAV COLUMNS
+========================================= */
+
+.site-footer-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  font-size: 20px;
+}
+
+.site-footer-help-nav {
+  gap: 12px;
+}
+
+.site-footer-nav-title {
+  margin: 0 0 4px;
+  color: #18181b;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.site-footer-help-nav .site-footer-nav-title {
+  letter-spacing: 0.16em;
+}
+
+.site-footer-link,
+.site-footer-cookie-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.site-footer-link:hover,
+.site-footer-cookie-button:hover {
+  color: #2563eb;
+}
+
+
+/* =========================================
+   COPYRIGHT
+========================================= */
+
+.site-footer-bottom {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-top: 1px solid #27272a;
+  color: #71717a;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.site-footer-spacer {
+  height: 8px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (min-width: 640px) {
+  .site-footer {
+    padding: 56px 32px;
+  }
+
+  .site-footer-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer-brand-name {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-footer-grid {
+    grid-template-columns:
+      1.7fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-footer-discord {
+    width: 100%;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  .site-footer-socials {
+    gap: 4px;
+  }
+
+  .site-footer-social-coming {
+    width: 60px;
+    height: 60px;
+  }
+
+  .site-footer-social-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .site-footer-description {
+    font-size: 16px;
+    line-height: 32px;
+  }
+
+  .site-footer-contact {
+    font-size: 17px;
+  }
+}

@@ -1,6 +1,15 @@
-import discordLogo from "../assets/Discord-Symbol-White.svg";
+import discordLogo from '../assets/Discord-Symbol-White.svg';
+
+import '../styles/site-footer.css';
+
+
 const openCookieSettings = () =>
-  window.dispatchEvent(new Event("agm:open-cookie-settings"));
+  window.dispatchEvent(
+    new Event(
+      'agm:open-cookie-settings'
+    )
+  );
+
 
 const socialIcons = {
   instagram: (
@@ -10,11 +19,32 @@ const socialIcons = {
       stroke="currentColor"
       aria-hidden="true"
     >
-      <rect x="3" y="3" width="18" height="18" rx="5" strokeWidth="1.8" />
-      <circle cx="12" cy="12" r="4" strokeWidth="1.8" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        strokeWidth="1.8"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="4"
+        strokeWidth="1.8"
+      />
+
+      <circle
+        cx="17.5"
+        cy="6.5"
+        r="1"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   ),
+
   youtube: (
     <svg
       viewBox="0 0 24 24"
@@ -26,9 +56,15 @@ const socialIcons = {
         d="M21 8.1a3 3 0 0 0-2.1-2.12C17.05 5.5 12 5.5 12 5.5s-5.05 0-6.9.48A3 3 0 0 0 3 8.1 31 31 0 0 0 2.5 12 31 31 0 0 0 3 15.9a3 3 0 0 0 2.1 2.12c1.85.48 6.9.48 6.9.48s5.05 0 6.9-.48A3 3 0 0 0 21 15.9a31 31 0 0 0 .5-3.9 31 31 0 0 0-.5-3.9Z"
         strokeWidth="1.7"
       />
-      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none" />
+
+      <path
+        d="m10 9 5 3-5 3V9Z"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   ),
+
   discord: (
     <svg
       viewBox="0 0 24 24"
@@ -42,18 +78,38 @@ const socialIcons = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="9" cy="12.2" r="1.2" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="12.2" r="1.2" fill="currentColor" stroke="none" />
+
+      <circle
+        cx="9"
+        cy="12.2"
+        r="1.2"
+        fill="currentColor"
+        stroke="none"
+      />
+
+      <circle
+        cx="15"
+        cy="12.2"
+        r="1.2"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   ),
+
   twitter: (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.24l-4.89-6.39L6.48 22H3.36l7.25-8.29L2.96 2H9.36l4.42 5.84L18.9 2Zm-1.1 17.84h1.73L8.42 4.05H6.57L17.8 19.84Z" />
     </svg>
   ),
+
   reddit: (
     <svg
-      className="scale-125 -translate-x-1"
+      className="site-footer-social-reddit"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -65,6 +121,7 @@ const socialIcons = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+
       <path
         d="M8.5 13h.01M15.5 13h.01M10 17c.8.5 3.2.5 4 0"
         strokeWidth="2"
@@ -72,6 +129,7 @@ const socialIcons = {
       />
     </svg>
   ),
+
   email: (
     <svg
       viewBox="0 0 24 24"
@@ -79,7 +137,15 @@ const socialIcons = {
       stroke="currentColor"
       aria-hidden="true"
     >
-      <rect x="3" y="5" width="18" height="14" rx="3" strokeWidth="1.8" />
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="3"
+        strokeWidth="1.8"
+      />
+
       <path
         d="m5 8 7 5 7-5"
         strokeWidth="1.8"
@@ -90,135 +156,274 @@ const socialIcons = {
   ),
 };
 
-const SoonIcon = ({ name, icon }) => (
+
+const SoonIcon = ({
+  name,
+  icon,
+}) => (
   <span
     title={`${name} coming soon`}
     aria-label={`${name} coming soon`}
-    className="group relative inline-flex h-20 w-20 items-center justify-center text-zinc-950 transition hover:text-pink-500"
+    className="site-footer-social-coming"
   >
-    <span className="h-10 w-10">{socialIcons[icon]}</span>
-    <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-2 py-1 text-[9px] font-black uppercase tracking-wider text-zinc-950 shadow-lg group-hover:block">
+
+    <span className="site-footer-social-icon">
+      {socialIcons[icon]}
+    </span>
+
+
+    <span className="site-footer-coming-tooltip">
       Coming soon
     </span>
+
   </span>
 );
 
+
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-zinc-200 bg-white px-5 py-12 text-zinc-800 sm:px-8 sm:py-14">
-      <div className="mx-auto grid max-w-300 gap-10 sm:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1fr]">
+    <footer className="site-footer">
+
+      <div className="site-footer-grid">
+
+
+        {/* BRAND */}
+
         <div>
-          <div className="flex items-center gap-3">
-            <p className="text-xl font-black tracking-wide text-blue-600 sm:text-lg">
-              ALLGAMERS<span className="text-pink-500">MARKET</span>
-            </p>
-          </div>
-          <p className="mt-5 max-w-md text-lg leading-10 text-black">
-            A Digital marketplace for permitted digital gaming products and
-            services. AllGamersMarket is independent Gaming Accounts
+
+          <p className="site-footer-brand-name">
+
+            ALLGAMERS
+
+            <span className="site-footer-brand-market">
+              MARKET
+            </span>
+
+          </p>
+
+
+          <p className="site-footer-description">
+            A Digital marketplace for
+            permitted digital gaming
+            products and services.
+            AllGamersMarket is
+            independent Gaming Accounts
             Marketplace.
           </p>
+
+
+          {/* DISCORD */}
+
           <span
             title="Discord link coming soon"
-            className="mt-12 inline-flex h-16 items-center gap-7 rounded-2xl bg-[#5865f2] px-10 text-lg font-black text-white shadow-lg shadow-[#5865f2]/15"
+            className="site-footer-discord"
           >
-            <span className="h-9 w-9 text-white">
-              <img
-                src={discordLogo}
-                alt=""
-                className="h-9 w-9 object-contain"
-              />
+
+            <img
+              src={discordLogo}
+              alt=""
+              className="site-footer-discord-logo"
+            />
+
+
+            <span>
+              Join our Discord
             </span>
-            <span>Join our Discord</span>
-            <span className="rounded-full bg-white/15 px-2 py-0.5 text-[9px] uppercase tracking-wider"></span>
+
           </span>
+
+
+          {/* SOCIALS */}
+
           <div
-            className="mt-5 flex items-center gap-3"
+            className="site-footer-socials"
             aria-label="Social and contact links"
           >
-            <SoonIcon name="Instagram" icon="instagram" />
-            <SoonIcon name="YouTube" icon="youtube" />
-            <SoonIcon name="X / Twitter" icon="twitter" />
-            <SoonIcon name="Reddit" icon="reddit" />
+
+            <SoonIcon
+              name="Instagram"
+              icon="instagram"
+            />
+
+            <SoonIcon
+              name="YouTube"
+              icon="youtube"
+            />
+
+            <SoonIcon
+              name="X / Twitter"
+              icon="twitter"
+            />
+
+            <SoonIcon
+              name="Reddit"
+              icon="reddit"
+            />
+
+
             <a
               href="mailto:support@allgamersmarket.com"
               title="Email support@allgamersmarket.com"
               aria-label="Email support@allgamersmarket.com"
-              className="hidden h-11 w-11 place-items-center rounded-full border border-zinc-700 text-zinc-400 transition hover:border-yellow-300 hover:bg-yellow-300 hover:text-zinc-950"
+              className="site-footer-email-icon-link"
             >
-              <span className="h-5 w-5">{socialIcons.email}</span>
+
+              <span className="site-footer-email-icon">
+                {socialIcons.email}
+              </span>
+
             </a>
+
           </div>
-          <p className="mt-8 text-xl text-black">
-            Contact us:{" "}
+
+
+          {/* CONTACT */}
+
+          <p className="site-footer-contact">
+
+            Contact us:{' '}
+
             <a
               href="mailto:support@allgamersmarket.com"
-              className="font-semibold text-pink-500 transition hover:text-pink-500"
+              className="site-footer-contact-link"
             >
               support@allgamersmarket.com
             </a>
+
           </p>
+
         </div>
+
+
+        {/* POLICIES */}
+
         <nav
-          className="flex flex-col items-start gap-5 text-xl"
+          className="site-footer-nav"
           aria-label="Legal policies"
         >
-          <p className="mb-1 text-base font-black uppercase tracking-[0.18em] text-zinc-950">
+
+          <p className="site-footer-nav-title">
             Policies
           </p>
-          <a href="/terms" className="transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/terms"
+            className="site-footer-link"
+          >
             Terms of Service
           </a>
-          <a href="/privacy" className="transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/privacy"
+            className="site-footer-link"
+          >
             Privacy Policy
           </a>
-          <a href="/cookies" className="transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/cookies"
+            className="site-footer-link"
+          >
             Cookie Policy
           </a>
-          <a href="/refund-policy" className="transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/refund-policy"
+            className="site-footer-link"
+          >
             Refund Policy
           </a>
-          <a href="/marketplace-rules" className="transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/marketplace-rules"
+            className="site-footer-link"
+          >
             Marketplace Rules
           </a>
+
+
           <a
             href="/account-transfer-risks"
-            className="transition hover:text-[#2563eb]"
+            className="site-footer-link"
           >
             Transfer Risks
           </a>
+
         </nav>
+
+
+        {/* HELP */}
+
         <nav
-          className="flex flex-col items-start gap-3 text-sm"
+          className="site-footer-nav site-footer-help-nav"
           aria-label="Help and resources"
         >
-          <p className="mb-1 text-base font-black uppercase tracking-[0.16em] text-zinc-950">
+
+          <p className="site-footer-nav-title">
             Help & resources
           </p>
-          <a href="/support" className=" text-xl transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/support"
+            className="site-footer-link"
+          >
             Support
           </a>
-          <a href="/faq" className=" text-xl transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/faq"
+            className="site-footer-link"
+          >
             FAQ
           </a>
-          <a href="/blog" className=" text-xl transition hover:text-[#2563eb]">
+
+
+          <a
+            href="/blog"
+            className="site-footer-link"
+          >
             Blog
           </a>
+
+
           <button
             type="button"
-            onClick={openCookieSettings}
-            className=" text-xl transition hover:text-[#2563eb]"
+            onClick={
+              openCookieSettings
+            }
+            className="site-footer-cookie-button"
           >
             Cookie settings
           </button>
+
         </nav>
+
       </div>
-      <div className="mx-auto mt-10 flex max-w-300 flex-col items-center gap-1 border-t border-zinc-800 pt-6 text-center text-base leading-6 text-zinc-500">
+
+
+      {/* COPYRIGHT */}
+
+      <div className="site-footer-bottom">
+
         <span>
-          © {new Date().getFullYear()} AllGamersMarket. All rights reserved.
+          ©{' '}
+          {new Date().getFullYear()}
+          {' '}AllGamersMarket. All
+          rights reserved.
         </span>
+
       </div>
-      <div className="h-2"></div>
+
+
+      <div className="site-footer-spacer" />
+
     </footer>
   );
 }
