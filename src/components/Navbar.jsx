@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import ProfileDropdown from './ProfileDropdown';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [user, setUser] = useState(null);
   const [loginRedirecting, setLoginRedirecting] = useState(false);
@@ -30,17 +31,21 @@ export default function Navbar() {
   }, []);
 
   const openLogin = () => {
-    if (loginRedirecting) return;
+  if (loginRedirecting) return;
 
-    setLoginRedirecting(true);
+  setLoginRedirecting(true);
 
-    window.setTimeout(() => {
-      navigate('/login');
-      setLoginRedirecting(false);
-    }, 800);
-  };
+  window.setTimeout(() => {
+    navigate('/login');
+    setLoginRedirecting(false);
+  }, 800);
+};
 
-  return (
+if (location.pathname === '/login') {
+  return null;
+}
+
+return (
     <nav className="fixed inset-x-0 top-0 z-[1000] border-b border-zinc-200 bg-white">
       <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-3 sm:px-7 lg:px-10">
 
