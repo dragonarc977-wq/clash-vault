@@ -10,13 +10,128 @@ const gameNames = {
   'mobile-legends': 'Mobile Legends', 'free-fire': 'Free Fire', 'hay-day': 'Hay Day', 'squad-busters': 'Squad Busters',
 };
 
-const ArrowLeft = ({ className = 'h-5 w-5' }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m15 18-6-6 6-6" /></svg>;
-const ArrowRight = ({ className = 'h-5 w-5' }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m9 18 6-6-6-6" /></svg>;
-const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
-const ShieldIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m9 12 2 2 4-4" /></svg>;
-const ChatIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z" /></svg>;
-const BoltIcon = () => <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2 4.5 13H11l-1 9 8.5-12H12l1-8Z" /></svg>;
-const UsersIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87m-2-11.9a4 4 0 0 1 0 7.75" /></svg>;
+const ArrowLeft = ({
+  className = 'account-icon-20',
+}) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="m15 18-6-6 6-6"
+    />
+  </svg>
+);
+
+
+const ArrowRight = ({
+  className = 'account-icon-20',
+}) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="m9 18 6-6-6-6"
+    />
+  </svg>
+);
+
+
+const CheckIcon = () => (
+  <svg
+    className="account-icon-16"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2.2"
+      d="m5 12 4 4L19 6"
+    />
+  </svg>
+);
+
+
+const ShieldIcon = () => (
+  <svg
+    className="account-icon-20"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"
+    />
+
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="m9 12 2 2 4-4"
+    />
+  </svg>
+);
+
+
+const ChatIcon = () => (
+  <svg
+    className="account-icon-20"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9Z"
+    />
+  </svg>
+);
+
+
+const BoltIcon = () => (
+  <svg
+    className="account-icon-20"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path d="M13 2 4.5 13H11l-1 9 8.5-12H12l1-8Z" />
+  </svg>
+);
+
+
+const UsersIcon = () => (
+  <svg
+    className="account-icon-20"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87m-2-11.9a4 4 0 0 1 0 7.75"
+    />
+  </svg>
+);
 
 export default function AccountDetail() {
   const { id } = useParams();
@@ -61,9 +176,51 @@ export default function AccountDetail() {
     return images.map((image, index) => gallery[index] || image);
   }, [account, images]);
 
-  if (loading) return <main className="min-h-screen bg-white px-5 pb-20 pt-24"><div className="mx-auto max-w-6xl animate-pulse"><div className="h-5 w-28 rounded bg-zinc-100" /><div className="mt-7 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]"><div className="h-[430px] rounded-3xl bg-zinc-100" /><div className="h-[430px] rounded-3xl bg-zinc-100" /></div></div></main>;
+  if (loading) {
+  return (
+    <main className="account-detail-loading-page">
+      <div className="account-detail-loading">
 
-  if (!account) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">LISTING NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This listing is unavailable.</h1><Link to="/" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">Back to games</Link></div></main>;
+        <div className="account-detail-loading-back" />
+
+        <div className="account-detail-loading-grid">
+
+          <div className="account-detail-loading-card" />
+
+          <div className="account-detail-loading-card" />
+
+        </div>
+
+      </div>
+    </main>
+  );
+}
+  if (!account) {
+  return (
+    <main className="account-detail-not-found">
+
+      <div>
+
+        <p className="account-detail-not-found-kicker">
+          LISTING NOT FOUND
+        </p>
+
+        <h1 className="account-detail-not-found-title">
+          This listing is unavailable.
+        </h1>
+
+        <Link
+          to="/"
+          className="account-detail-not-found-link"
+        >
+          Back to games
+        </Link>
+
+      </div>
+
+    </main>
+  );
+}
 
   const gameName = gameNames[account.game_id] || 'Game account';
   const isAvailable = account.status === 'available';

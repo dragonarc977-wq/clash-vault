@@ -927,3 +927,119 @@
       repeat(3, minmax(0, 1fr));
   }
 }
+/* =========================================
+   ACCOUNT DETAIL — FALLBACK STATES
+========================================= */
+
+.account-icon-20 {
+  width: 20px;
+  height: 20px;
+}
+
+.account-icon-16 {
+  width: 16px;
+  height: 16px;
+}
+
+
+/* Loading */
+
+.account-detail-loading-page {
+  min-height: 100vh;
+  padding: 96px 20px 80px;
+  background: #fff;
+}
+
+.account-detail-loading {
+  width: 100%;
+  max-width: 1152px;
+  margin: 0 auto;
+  animation: accountDetailPulse 1.5s ease-in-out infinite;
+}
+
+.account-detail-loading-back {
+  width: 112px;
+  height: 20px;
+  border-radius: 4px;
+  background: #f4f4f5;
+}
+
+.account-detail-loading-grid {
+  margin-top: 28px;
+  display: grid;
+  gap: 32px;
+}
+
+.account-detail-loading-card {
+  height: 430px;
+  border-radius: 24px;
+  background: #f4f4f5;
+}
+
+@keyframes accountDetailPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+
+/* Listing not found */
+
+.account-detail-not-found {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 64px 20px 0;
+  background: #fff;
+  text-align: center;
+}
+
+.account-detail-not-found-kicker {
+  margin: 0;
+  color: #b77e00;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.account-detail-not-found-title {
+  margin: 12px 0 0;
+  color: #18181b;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.account-detail-not-found-link {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: #09090b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.account-detail-not-found-link:hover {
+  background: #27272a;
+  transform: translateY(-1px);
+}
+
+
+@media (min-width: 1024px) {
+  .account-detail-loading-grid {
+    grid-template-columns:
+      1.05fr 0.95fr;
+  }
+}

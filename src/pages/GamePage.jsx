@@ -29,9 +29,39 @@ const priceRanges = [
   { id: '15000plus', label: '₹15,000+', matches: (price) => price > 15000 },
 ];
 
-const SearchIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m21 21-4.4-4.4M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>;
-const FilterIcon = () => <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 6h16M7 12h10m-7 6h4" /></svg>;
-const CheckIcon = () => <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="m5 12 4 4L19 6" /></svg>;
+const SearchIcon = () => (
+  <svg
+    className="game-ui-icon-20"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="m21 21-4.4-4.4M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z"
+    />
+  </svg>
+);
+
+
+const FilterIcon = () => (
+  <svg
+    className="game-ui-icon-20"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      d="M4 6h16M7 12h10m-7 6h4"
+    />
+  </svg>
+);
+
 
 function ListingCard({ account, game }) {
   const navigate = useNavigate();
@@ -295,9 +325,35 @@ export default function GamePage() {
   const clearFilters = () => { setType('All'); setLevel('All'); setPlatform('All platforms'); setRegion('All regions'); setDelivery('All delivery'); setCategory('All categories'); setServiceTime('Any duration'); setPrice([]); setVerifiedOnly(false); setFullAccess(false); setSearch(''); };
   
 
-  if (!game) return <main className="grid min-h-screen place-items-center bg-white px-5 pt-16 text-center"><div><p className="text-sm font-black text-[#b77e00]">GAME NOT FOUND</p><h1 className="mt-3 text-4xl font-black">This marketplace is unavailable.</h1><Link to="/#games" className="mt-7 inline-flex rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white">View all games</Link></div></main>;
+  if (!game) {
+  return (
+    <main className="game-not-found">
 
-  return <main className="min-h-screen bg-white pb-20 pt-16 text-zinc-950">
+      <div>
+
+        <p className="game-not-found-kicker">
+          GAME NOT FOUND
+        </p>
+
+        <h1 className="game-not-found-title">
+          This marketplace is unavailable.
+        </h1>
+
+        <Link
+          to="/#games"
+          className="game-not-found-link"
+        >
+          View all games
+        </Link>
+
+      </div>
+
+    </main>
+  );
+}
+
+  return (
+  <main className="game-page">
     <section className="game-header">
   <div className="game-header-inner">
 
@@ -884,5 +940,6 @@ export default function GamePage() {
 
   </div>
 )}
-  </main>;
+        </main>
+  );
 }
