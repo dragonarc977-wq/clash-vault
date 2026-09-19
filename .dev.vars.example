@@ -1,0 +1,17 @@
+# Copy this file to .dev.vars for local Cloudflare preview only.
+# Never commit real credentials.
+NEXTJS_ENV=development
+
+# Public values (also required during the Next.js build)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_replace_me
+NEXT_PUBLIC_SITE_URL=http://localhost:8787
+
+# Server-only runtime value (the key ID is an identifier, not a secret)
+RAZORPAY_KEY_ID=rzp_test_replace_me
+
+# Server-only secrets (set with `wrangler secret put NAME` in production)
+SUPABASE_SERVICE_ROLE_KEY=replace-me
+RAZORPAY_KEY_SECRET=replace-me
+RAZORPAY_WEBHOOK_SECRET=replace-me

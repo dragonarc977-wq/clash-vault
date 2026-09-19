@@ -6,10 +6,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview": "npm run build:cloudflare && opennextjs-cloudflare preview",
+    "deploy": "npm run build:cloudflare && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "lint": "eslint .",
     "start": "next start"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.6",
     "@stripe/react-stripe-js": "^6.8.2",
     "@stripe/stripe-js": "^9.15.0",
     "@supabase/ssr": "^0.12.7",
@@ -26,6 +31,7 @@
     "eslint": "^10.9.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.11.0",
-    "postcss": "^8.5.28"
+    "postcss": "^8.5.28",
+    "wrangler": "^4.135.0"
   }
 }
