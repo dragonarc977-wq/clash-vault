@@ -7,7 +7,7 @@ import {
   Link,
 } from 'react-router-dom';
 
-import '../styles/cookie-banner.css';
+import './styles/cookie-banner.css';
 
 
 const STORAGE_KEY =
