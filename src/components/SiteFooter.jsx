@@ -1,6 +1,7 @@
-import discordLogo from '../assets/Discord-Symbol-White.svg';
+'use client';
 
-import '../styles/site-footer.css';
+const discordLogo = '/Discord-Symbol-White.svg';
+
 
 
 const openCookieSettings = () =>

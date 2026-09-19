@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useCallback,
   useEffect,
@@ -8,11 +10,10 @@ import {
   Link,
   useNavigate,
   useSearchParams,
-} from 'react-router-dom';
+} from './lib/navigation';
 
 import supabase from './lib/supabase';
 
-import './styles/my-orders.css';
 
 
 const PackageIcon = () => (

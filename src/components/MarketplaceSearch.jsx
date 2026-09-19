@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useCallback,
   useEffect,
@@ -6,11 +8,10 @@ import {
   useState,
 } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../lib/navigation';
 
 import supabase from '../lib/supabase';
 
-import '../styles/search.css';
 
 
 const SEARCH_GAMES = [

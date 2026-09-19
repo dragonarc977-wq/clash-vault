@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import { Link } from './lib/navigation';
 import PolicyPage, { Section } from './components/PolicyPage';
 
 export default function Privacy() {

@@ -1,6 +1,7 @@
-import './styles/login.css';
+'use client';
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from './lib/navigation';
 import supabase from './lib/supabase';
 
 const GoogleLogo = () => (
@@ -43,6 +44,10 @@ const COPY = {
 };
 
 function getSafeLoginDestination() {
+  if (typeof window === 'undefined') {
+    return '/';
+  }
+
   const requestedPath = new URLSearchParams(window.location.search).get('next');
 
   if (!requestedPath?.startsWith('/') || requestedPath.startsWith('//') || requestedPath.includes('\\')) {
@@ -76,6 +81,10 @@ export default function Login() {
 
 
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('recovery') === '1') {
+      queueMicrotask(() => setMode('reset'));
+    }
+
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setMode('reset');
@@ -111,7 +120,7 @@ export default function Login() {
         provider: 'google',
 
         options: {
-          redirectTo: `${window.location.origin}${loginDestination}`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(loginDestination)}`,
         },
       });
 
@@ -165,7 +174,7 @@ export default function Login() {
 
             options: {
               emailRedirectTo:
-                `${window.location.origin}/`,
+                `${window.location.origin}/auth/callback?next=${encodeURIComponent('/')}`,
             },
           });
 
@@ -195,7 +204,7 @@ export default function Login() {
             email,
             {
               redirectTo:
-                `${window.location.origin}/login`,
+                `${window.location.origin}/auth/callback?next=${encodeURIComponent('/login?recovery=1')}`,
             }
           );
 

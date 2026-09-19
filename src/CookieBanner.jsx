@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useEffect,
   useState,
@@ -5,9 +7,8 @@ import {
 
 import {
   Link,
-} from 'react-router-dom';
+} from './lib/navigation';
 
-import './styles/cookie-banner.css';
 
 
 const STORAGE_KEY =

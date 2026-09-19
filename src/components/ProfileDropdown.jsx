@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../lib/navigation';
 
 import supabase from '../lib/supabase';
 import {
@@ -9,7 +11,6 @@ import {
   MARKETPLACE_THEMES,
 } from '../lib/theme';
 
-import '../styles/profile-dropdown.css';
 
 
 const DashboardIcon = () => (

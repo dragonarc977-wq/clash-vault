@@ -1,3 +1,5 @@
+'use client';
+
 import PolicyPage, { Section } from './components/PolicyPage';
 
 export default function TransferRisks() {

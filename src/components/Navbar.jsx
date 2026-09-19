@@ -1,10 +1,11 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from '../lib/navigation';
 
 import supabase from '../lib/supabase';
 import ProfileDropdown from './ProfileDropdown';
 
-import '../styles/navbar.css';
 
 export default function Navbar() {
   const navigate = useNavigate();

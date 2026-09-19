@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+'use client';
 
-import '../styles/policy-page.css';
+import { Link } from '../lib/navigation';
+
 
 
 export default function PolicyPage({

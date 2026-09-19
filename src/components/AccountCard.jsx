@@ -1,6 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
 
-import '../styles/account-card.css';
+import { useNavigate } from '../lib/navigation';
+
 
 
 export default function AccountCard({ account }) {

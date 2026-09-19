@@ -1,11 +1,12 @@
+'use client';
+
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from './lib/navigation';
 import supabase from './lib/supabase';
 import { MAX_LISTING_IMAGES, optimizeListingImage, validateListingFiles } from './lib/imageProcessing';
 import { accountFieldValue, clashHeroSummary, getAccountFields } from './lib/listingOptions';
-import AdminSupport from './pages/AdminSupport';
-import AdminSellers from './pages/AdminSellers';
-import './styles/admin.css';
+import AdminSupport from './views/AdminSupport';
+import AdminSellers from './views/AdminSellers';
 const games = [
   ['clash-of-clans', 'Clash of Clans'], ['brawl-stars', 'Brawl Stars'], ['valorant', 'Valorant'],
   ['clash-royale', 'Clash Royale'], ['fortnite', 'Fortnite'], ['pokemon-go', 'Pokémon GO'],
