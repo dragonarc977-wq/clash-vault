@@ -65,10 +65,10 @@ async function uploadListingImage(file, gameId) {
   };
 }
 
-export default function Admin() {
+export default function Admin({ initialAdmin = null, initialAuthorized = null }) {
   const navigate = useNavigate();
-  const [admin, setAdmin] = useState(null);
-  const [authorized, setAuthorized] = useState(null);
+  const [admin, setAdmin] = useState(initialAdmin);
+  const [authorized, setAuthorized] = useState(initialAuthorized);
   const [accounts, setAccounts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
@@ -87,6 +87,16 @@ export default function Admin() {
   useEffect(() => {
     let active = true;
     const boot = async () => {
+      if (initialAuthorized === true) {
+        await fetchData();
+        return;
+      }
+
+      if (initialAuthorized === false) {
+        setLoading(false);
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!active) return;
       if (!session?.user) {
@@ -105,7 +115,7 @@ export default function Admin() {
     };
     boot();
     return () => { active = false; };
-  }, [navigate]);
+  }, [initialAuthorized, navigate]);
 
   async function fetchData() {
     setLoading(true);
@@ -294,6 +304,8 @@ export default function Admin() {
     setNotice('Listing updated successfully.');
     await fetchData();
   }
+
+  if (authorized === null) return <main className="admin-denied" aria-busy="true" aria-label="Checking admin access" />;
 
   if (authorized === false) return <main className="admin-denied"><div className="admin-denied-card"><span className="admin-denied-icon"><Icon name="customers" /></span><h1 className="admin-denied-title">Admin access required</h1><p className="admin-denied-text">This account is not authorized to open AllGamersMarket administration.</p><Link to="/" className="admin-denied-home">Return home</Link></div></main>;
 
