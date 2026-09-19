@@ -1,178 +1,1177 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import {
+  useNavigate,
+} from 'react-router-dom';
+
 import supabase from '../lib/supabase';
 
-const formatTime = (value) => new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(value));
-const ChatIcon = ({ className = 'h-6 w-6' }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h13v12Z" /></svg>;
+import '../styles/support.css';
+
+
+const formatTime = (
+  value
+) =>
+  new Intl.DateTimeFormat(
+    undefined,
+    {
+      hour: 'numeric',
+      minute: '2-digit',
+    }
+  ).format(
+    new Date(value)
+  );
+
+
+const ChatIcon = ({
+  className = 'support-icon-24',
+}) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.7"
+      d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h13v12Z"
+    />
+  </svg>
+);
+
 
 export default function Support() {
-  const navigate = useNavigate();
-  const bottomRef = useRef(null);
-  const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState('');
-  const [tickets, setTickets] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [activeTicket, setActiveTicket] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [text, setText] = useState('');
-  const [subject, setSubject] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [notice, setNotice] = useState('');
+  const navigate =
+    useNavigate();
 
-  const active = useMemo(() => tickets.find((ticket) => ticket.id === activeTicket) || null, [tickets, activeTicket]);
+  const bottomRef =
+    useRef(null);
+
+
+  const [
+    user,
+    setUser,
+  ] = useState(null);
+
+  const [
+    accessToken,
+    setAccessToken,
+  ] = useState('');
+
+  const [
+    tickets,
+    setTickets,
+  ] = useState([]);
+
+  const [
+    orders,
+    setOrders,
+  ] = useState([]);
+
+  const [
+    activeTicket,
+    setActiveTicket,
+  ] = useState(null);
+
+  const [
+    messages,
+    setMessages,
+  ] = useState([]);
+
+  const [
+    text,
+    setText,
+  ] = useState('');
+
+  const [
+    subject,
+    setSubject,
+  ] = useState('');
+
+  const [
+    selectedOrder,
+    setSelectedOrder,
+  ] = useState('');
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
+
+  const [
+    showModal,
+    setShowModal,
+  ] = useState(false);
+
+  const [
+    creating,
+    setCreating,
+  ] = useState(false);
+
+  const [
+    sending,
+    setSending,
+  ] = useState(false);
+
+  const [
+    notice,
+    setNotice,
+  ] = useState('');
+
+
+  const active =
+    useMemo(
+      () =>
+        tickets.find(
+          (ticket) =>
+            ticket.id ===
+            activeTicket
+        ) || null,
+      [
+        tickets,
+        activeTicket,
+      ]
+    );
+
 
   useEffect(() => {
     let channel;
-    const boot = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const currentUser = session?.user;
-      if (!currentUser) {
-        navigate('/login');
-        return;
-      }
-      setUser(currentUser);
-      setAccessToken(session.access_token);
-      const [{ data: ticketData }, { data: orderData }] = await Promise.all([
-        supabase.from('support_tickets').select('*').eq('buyer_id', currentUser.id).order('last_message_at', { ascending: false }),
-        supabase.from('orders').select('id, amount, status, accounts(town_hall)').eq('buyer_id', currentUser.id).order('created_at', { ascending: false }),
-      ]);
-      const nextTickets = ticketData || [];
-      setTickets(nextTickets);
-      setOrders(orderData || []);
-      setActiveTicket(nextTickets[0]?.id || null);
-      setLoading(false);
-      channel = supabase.channel(`buyer-support-${currentUser.id}`).on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets', filter: `buyer_id=eq.${currentUser.id}` }, () => refreshTickets(currentUser.id)).subscribe();
-    };
+
+
+    const boot =
+      async () => {
+        const {
+          data: {
+            session,
+          },
+        } =
+          await supabase.auth.getSession();
+
+
+        const currentUser =
+          session?.user;
+
+
+        if (!currentUser) {
+          navigate('/login');
+
+          return;
+        }
+
+
+        setUser(
+          currentUser
+        );
+
+
+        setAccessToken(
+          session.access_token
+        );
+
+
+        const [
+          {
+            data:
+              ticketData,
+          },
+          {
+            data:
+              orderData,
+          },
+        ] =
+          await Promise.all([
+            supabase
+              .from(
+                'support_tickets'
+              )
+              .select('*')
+              .eq(
+                'buyer_id',
+                currentUser.id
+              )
+              .order(
+                'last_message_at',
+                {
+                  ascending:
+                    false,
+                }
+              ),
+
+            supabase
+              .from(
+                'orders'
+              )
+              .select(
+                'id, amount, status, accounts(town_hall)'
+              )
+              .eq(
+                'buyer_id',
+                currentUser.id
+              )
+              .order(
+                'created_at',
+                {
+                  ascending:
+                    false,
+                }
+              ),
+          ]);
+
+
+        const nextTickets =
+          ticketData || [];
+
+
+        setTickets(
+          nextTickets
+        );
+
+
+        setOrders(
+          orderData || []
+        );
+
+
+        setActiveTicket(
+          nextTickets[0]
+            ?.id ||
+            null
+        );
+
+
+        setLoading(false);
+
+
+        channel =
+          supabase
+            .channel(
+              `buyer-support-${currentUser.id}`
+            )
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema:
+                  'public',
+                table:
+                  'support_tickets',
+                filter:
+                  `buyer_id=eq.${currentUser.id}`,
+              },
+              () =>
+                refreshTickets(
+                  currentUser.id
+                )
+            )
+            .subscribe();
+      };
+
+
     boot();
-    return () => { if (channel) supabase.removeChannel(channel); };
+
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(
+          channel
+        );
+      }
+    };
   }, [navigate]);
+
 
   useEffect(() => {
     if (!activeTicket) {
       return undefined;
     }
+
+
     let channel;
-    const loadMessages = async () => {
-      const { data } = await supabase.from('support_messages').select('*').eq('ticket_id', activeTicket).order('created_at');
-      setMessages(data || []);
-      channel = supabase.channel(`support-messages-${activeTicket}`).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages', filter: `ticket_id=eq.${activeTicket}` }, (payload) => {
-        setMessages((current) => current.some((message) => message.id === payload.new.id) ? current : [...current, payload.new]);
-        refreshTickets(user?.id);
-      }).subscribe();
-    };
+
+
+    const loadMessages =
+      async () => {
+        const {
+          data,
+        } =
+          await supabase
+            .from(
+              'support_messages'
+            )
+            .select('*')
+            .eq(
+              'ticket_id',
+              activeTicket
+            )
+            .order(
+              'created_at'
+            );
+
+
+        setMessages(
+          data || []
+        );
+
+
+        channel =
+          supabase
+            .channel(
+              `support-messages-${activeTicket}`
+            )
+            .on(
+              'postgres_changes',
+              {
+                event:
+                  'INSERT',
+                schema:
+                  'public',
+                table:
+                  'support_messages',
+                filter:
+                  `ticket_id=eq.${activeTicket}`,
+              },
+              (payload) => {
+                setMessages(
+                  (
+                    current
+                  ) =>
+                    current.some(
+                      (
+                        message
+                      ) =>
+                        message.id ===
+                        payload.new
+                          .id
+                    )
+                      ? current
+                      : [
+                          ...current,
+                          payload.new,
+                        ]
+                );
+
+
+                refreshTickets(
+                  user?.id
+                );
+              }
+            )
+            .subscribe();
+      };
+
+
     loadMessages();
-    return () => { if (channel) supabase.removeChannel(channel); };
-  }, [activeTicket, user?.id]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  async function refreshTickets(buyerId) {
-    if (!buyerId) return;
-    const { data } = await supabase.from('support_tickets').select('*').eq('buyer_id', buyerId).order('last_message_at', { ascending: false });
+    return () => {
+      if (channel) {
+        supabase.removeChannel(
+          channel
+        );
+      }
+    };
+  }, [
+    activeTicket,
+    user?.id,
+  ]);
+
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior:
+        'smooth',
+    });
+  }, [messages]);
+
+
+  async function refreshTickets(
+    buyerId
+  ) {
+    if (!buyerId) {
+      return;
+    }
+
+
+    const {
+      data,
+    } =
+      await supabase
+        .from(
+          'support_tickets'
+        )
+        .select('*')
+        .eq(
+          'buyer_id',
+          buyerId
+        )
+        .order(
+          'last_message_at',
+          {
+            ascending:
+              false,
+          }
+        );
+
+
     if (data) {
-      setTickets(data);
-      setActiveTicket((current) => current || data[0]?.id || null);
+      setTickets(
+        data
+      );
+
+
+      setActiveTicket(
+        (current) =>
+          current ||
+          data[0]?.id ||
+          null
+      );
     }
   }
 
-  async function createTicket(event) {
+
+  async function createTicket(
+    event
+  ) {
     event.preventDefault();
-    if (!subject.trim() || !user) return;
+
+
+    if (
+      !subject.trim() ||
+      !user
+    ) {
+      return;
+    }
+
+
     setCreating(true);
+
     setNotice('');
+
+
     try {
-      if (!accessToken) throw new Error('Your session has expired. Please sign in again.');
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`, {
-        method: 'POST',
-        headers: { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY, Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-        body: JSON.stringify({ buyer_id: user.id, buyer_email: user.email, subject: subject.trim(), order_id: selectedOrder || null }),
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok) throw new Error((await response.text()) || 'Unable to create this conversation.');
-      await refreshTickets(user.id);
+      if (!accessToken) {
+        throw new Error(
+          'Your session has expired. Please sign in again.'
+        );
+      }
+
+
+      const response =
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`,
+          {
+            method:
+              'POST',
+
+            headers: {
+              apikey:
+                import.meta.env.VITE_SUPABASE_ANON_KEY,
+
+              Authorization:
+                `Bearer ${accessToken}`,
+
+              'Content-Type':
+                'application/json',
+
+              Prefer:
+                'return=minimal',
+            },
+
+            body:
+              JSON.stringify({
+                buyer_id:
+                  user.id,
+
+                buyer_email:
+                  user.email,
+
+                subject:
+                  subject.trim(),
+
+                order_id:
+                  selectedOrder ||
+                  null,
+              }),
+
+            signal:
+              AbortSignal.timeout(
+                15000
+              ),
+          }
+        );
+
+
+      if (!response.ok) {
+        throw new Error(
+          (
+            await response.text()
+          ) ||
+            'Unable to create this conversation.'
+        );
+      }
+
+
+      await refreshTickets(
+        user.id
+      );
+
+
       setSubject('');
+
       setSelectedOrder('');
+
       setShowModal(false);
     } catch (error) {
-      setNotice(error.name === 'TimeoutError' ? 'Support is taking too long to respond. Please try again.' : error.message);
+      setNotice(
+        error.name ===
+          'TimeoutError'
+          ? 'Support is taking too long to respond. Please try again.'
+          : error.message
+      );
     } finally {
       setCreating(false);
     }
   }
 
-  async function sendMessage(event) {
+
+  async function sendMessage(
+    event
+  ) {
     event.preventDefault();
-    if (!text.trim() || !activeTicket || !user) return;
-    setSending(true);
-    setNotice('');
-    const body = text.trim();
-    setText('');
-    const { error } = await supabase.from('support_messages').insert({ ticket_id: activeTicket, sender_id: user.id, sender_role: 'buyer', body });
-    if (error) {
-      setText(body);
-      setNotice(error.message);
+
+
+    if (
+      !text.trim() ||
+      !activeTicket ||
+      !user
+    ) {
+      return;
     }
+
+
+    setSending(true);
+
+    setNotice('');
+
+
+    const body =
+      text.trim();
+
+
+    setText('');
+
+
+    const {
+      error,
+    } =
+      await supabase
+        .from(
+          'support_messages'
+        )
+        .insert({
+          ticket_id:
+            activeTicket,
+
+          sender_id:
+            user.id,
+
+          sender_role:
+            'buyer',
+
+          body,
+        });
+
+
+    if (error) {
+      setText(
+        body
+      );
+
+      setNotice(
+        error.message
+      );
+    }
+
+
     setSending(false);
   }
 
-  return <main className="h-[100dvh] overflow-hidden bg-zinc-50 px-3 pt-16 text-zinc-950 sm:px-6 lg:px-8">
-    <div className="support-page-shell mx-auto flex h-full max-w-6xl min-h-0 flex-col py-3 sm:py-4">
-      <header className="flex shrink-0 items-center justify-between gap-3">
-        <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#b77e00]">AllGamersMarket care</p><a href="mailto:support@allgamersmarket.com" className="mt-1 block text-[10px] font-semibold text-zinc-500 transition hover:text-zinc-950">support@allgamersmarket.com</a></div>
-        <div className="flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] font-bold text-emerald-700"><span className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-[3px] ring-emerald-100" />Support team online</div>
-      </header>
 
-      {notice && <div className="mt-2 shrink-0 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-800">{notice}</div>}
+  return (
+    <main className="support-page">
 
-      {loading ? <div className="mt-3 min-h-0 flex-1 animate-pulse rounded-2xl border border-zinc-200 bg-white" /> : <div className="support-workspace mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm lg:grid lg:grid-cols-[280px_1fr]">
-        <aside className="shrink-0 border-b border-zinc-200 bg-white p-3 lg:min-h-0 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:p-4">
-          <button onClick={() => setShowModal(true)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#b77e00]"><span className="text-base leading-none">+</span> Start a conversation</button>
-          <div className="mt-3 flex items-center justify-between px-1 lg:mt-4"><p className="text-[9px] font-black uppercase tracking-[0.16em] text-zinc-400">Your conversations</p><span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[9px] font-bold text-zinc-500">{tickets.length}</span></div>
-          <div className="mt-2 flex gap-2 overflow-x-auto pb-0.5 lg:block lg:space-y-2 lg:overflow-visible">
-            {tickets.length ? tickets.map((ticket) => <button key={ticket.id} onClick={() => setActiveTicket(ticket.id)} className={`min-w-[205px] rounded-xl border px-3 py-2.5 text-left transition lg:w-full lg:min-w-0 ${activeTicket === ticket.id ? 'border-yellow-300 bg-yellow-50' : 'border-transparent bg-zinc-50 hover:border-zinc-200'}`}>
-              <span className="block truncate text-sm font-bold text-zinc-900">{ticket.subject}</span>
-              <span className="mt-1 flex items-center justify-between gap-2 text-[10px] text-zinc-500"><span className={`font-bold capitalize ${ticket.status === 'open' ? 'text-emerald-600' : 'text-zinc-500'}`}>{ticket.status}</span><span>{formatTime(ticket.last_message_at)}</span></span>
-            </button>) : <p className="px-2 py-5 text-sm text-zinc-500">No conversations yet.</p>}
+      <div className="support-page-shell">
+
+
+        {/* HEADER */}
+
+        <header className="support-header">
+
+          <div>
+
+            <p className="support-brand-kicker">
+              AllGamersMarket care
+            </p>
+
+
+            <a
+              href="mailto:support@allgamersmarket.com"
+              className="support-email-link"
+            >
+              support@allgamersmarket.com
+            </a>
+
           </div>
-        </aside>
 
-        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
-          {active ? <>
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3 sm:px-5">
-              <div className="min-w-0"><h2 className="truncate text-sm font-bold sm:text-base">{active.subject}</h2><p className="mt-0.5 text-[10px] text-zinc-500">{active.status === 'open' ? 'Our team will reply here.' : 'This conversation is resolved.'}</p></div>
-              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ring-1 ${active.status === 'open' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-zinc-100 text-zinc-600 ring-zinc-200'}`}>{active.status}</span>
-            </div>
-            <div className="support-chat-canvas min-h-0 flex-1 overscroll-contain overflow-y-auto p-4 sm:p-5">
-              {messages.length === 0 && <div className="mx-auto flex h-full max-w-xs flex-col items-center justify-center text-center"><span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-zinc-500 shadow-sm ring-1 ring-zinc-200"><ChatIcon className="h-5 w-5" /></span><h3 className="mt-3 text-base font-bold">How can we help?</h3><p className="mt-1.5 text-xs leading-5 text-zinc-500">Send a message and our support team will respond here.</p></div>}
-              {messages.map((message) => <div key={message.id} className={`mb-3 flex max-w-[88%] flex-col sm:max-w-[72%] ${message.sender_role === 'buyer' ? 'ml-auto items-end' : 'items-start'}`}>
-                <div className={`support-message ${message.sender_role === 'buyer' ? 'support-message-buyer' : 'support-message-agent'}`}>{message.body}</div>
-                <small className="support-message-meta mt-1 px-1 text-[9px]">{message.sender_role === 'buyer' ? 'You' : 'AllGamersMarket Support'} · {formatTime(message.created_at)}</small>
-              </div>)}
-              <div ref={bottomRef} />
-            </div>
-            <form onSubmit={sendMessage} className="support-chat-composer flex shrink-0 gap-2 border-t border-zinc-200 bg-white p-2.5 sm:p-3">
-              <input value={text} onChange={(event) => setText(event.target.value)} placeholder={active.status === 'open' ? 'Write a message…' : 'This conversation is resolved'} maxLength="2000" disabled={active.status !== 'open'} className="h-10 min-w-0 flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 text-xs outline-none transition placeholder:text-zinc-400 focus:border-[#c68d00] focus:bg-white focus:ring-2 focus:ring-yellow-100 disabled:cursor-not-allowed" />
-              <button disabled={sending || active.status !== 'open'} className="h-10 rounded-xl bg-yellow-300 px-4 text-xs font-bold text-zinc-950 transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6">{sending ? 'Sending…' : 'Send'}</button>
-            </form>
-          </> : <div className="m-auto max-w-xs px-5 py-8 text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-zinc-100 text-zinc-500"><ChatIcon className="h-5 w-5" /></span><h2 className="mt-3 text-lg font-bold">Need help?</h2><p className="mt-1.5 text-xs leading-5 text-zinc-500">Start a conversation about an order or account.</p><button onClick={() => setShowModal(true)} className="mt-4 rounded-xl bg-yellow-300 px-5 py-2.5 text-xs font-bold transition hover:bg-yellow-400">Start a conversation</button></div>}
-        </section>
-      </div>}
-    </div>
 
-    {showModal && <div className="fixed inset-0 z-[3000] grid place-items-center bg-zinc-950/50 p-4 backdrop-blur-sm" onMouseDown={() => setShowModal(false)}>
-      <form onSubmit={createTicket} onMouseDown={(event) => event.stopPropagation()} className="relative w-full max-w-md rounded-3xl bg-white p-6 text-zinc-950 shadow-2xl sm:p-8">
-        <button type="button" onClick={() => setShowModal(false)} aria-label="Close" className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full border border-zinc-200 text-xl text-zinc-500 transition hover:bg-zinc-50">×</button>
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b77e00]">New conversation</p>
-        <h2 className="mt-2 text-2xl font-black tracking-tight">Tell us what you need</h2>
-        <p className="mt-2 pr-8 text-sm leading-6 text-zinc-500">Your message and purchase details stay private.</p>
-        <label className="mt-6 block text-sm font-bold">Subject<input value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Example: Help with my delivery" maxLength="120" autoFocus className="mt-2 h-14 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-sm outline-none transition focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100" /></label>
-        <label className="mt-5 block text-sm font-bold">Related order<select value={selectedOrder} onChange={(event) => setSelectedOrder(event.target.value)} className="mt-2 h-14 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-sm outline-none transition focus:border-[#c68d00] focus:bg-white focus:ring-4 focus:ring-yellow-100"><option value="">General question</option>{orders.map((order) => <option value={order.id} key={order.id}>TH{order.accounts?.town_hall || '?'} · ₹{order.amount} · #{order.id.slice(0, 8)}</option>)}</select></label>
-        <button disabled={creating} className="mt-6 w-full rounded-2xl bg-zinc-950 px-5 py-4 text-sm font-black text-white transition hover:bg-[#b77e00] disabled:cursor-not-allowed disabled:opacity-60">{creating ? 'Creating…' : 'Create conversation'}</button>
-      </form>
-    </div>}
-  </main>;
+          <div className="support-online-badge">
+
+            <span className="support-online-dot" />
+
+            Support team online
+
+          </div>
+
+        </header>
+
+
+        {/* NOTICE */}
+
+        {notice && (
+
+          <div className="support-notice">
+            {notice}
+          </div>
+
+        )}
+
+
+        {/* WORKSPACE */}
+
+        {loading ? (
+
+          <div className="support-loading" />
+
+        ) : (
+
+          <div className="support-workspace">
+
+
+            {/* SIDEBAR */}
+
+            <aside className="support-sidebar">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowModal(
+                    true
+                  )
+                }
+                className="support-new-ticket-button"
+              >
+
+                <span className="support-new-ticket-plus">
+                  +
+                </span>
+
+                Start a conversation
+
+              </button>
+
+
+              <div className="support-conversation-heading">
+
+                <p className="support-conversation-title">
+                  Your conversations
+                </p>
+
+
+                <span className="support-ticket-count">
+                  {tickets.length}
+                </span>
+
+              </div>
+
+
+              <div className="support-ticket-list">
+
+                {tickets.length ? (
+
+                  tickets.map(
+                    (
+                      ticket
+                    ) => {
+
+                      const selected =
+                        activeTicket ===
+                        ticket.id;
+
+
+                      return (
+                        <button
+                          key={
+                            ticket.id
+                          }
+                          type="button"
+                          onClick={() =>
+                            setActiveTicket(
+                              ticket.id
+                            )
+                          }
+                          className={
+                            selected
+                              ? 'support-ticket-button support-ticket-button-active'
+                              : 'support-ticket-button'
+                          }
+                        >
+
+                          <span className="support-ticket-subject">
+                            {ticket.subject}
+                          </span>
+
+
+                          <span className="support-ticket-meta">
+
+                            <span
+                              className={
+                                ticket.status ===
+                                'open'
+                                  ? 'support-ticket-status support-ticket-status-open'
+                                  : 'support-ticket-status support-ticket-status-closed'
+                              }
+                            >
+                              {ticket.status}
+                            </span>
+
+
+                            <span>
+                              {formatTime(
+                                ticket.last_message_at
+                              )}
+                            </span>
+
+                          </span>
+
+                        </button>
+                      );
+                    }
+                  )
+
+                ) : (
+
+                  <p className="support-no-tickets">
+                    No conversations yet.
+                  </p>
+
+                )}
+
+              </div>
+
+            </aside>
+
+
+            {/* CHAT */}
+
+            <section className="support-chat">
+
+              {active ? (
+                <>
+
+
+                  {/* CHAT HEADER */}
+
+                  <div className="support-chat-header">
+
+                    <div className="support-chat-header-info">
+
+                      <h2 className="support-chat-title">
+                        {active.subject}
+                      </h2>
+
+
+                      <p className="support-chat-subtitle">
+
+                        {active.status ===
+                        'open'
+                          ? 'Our team will reply here.'
+                          : 'This conversation is resolved.'}
+
+                      </p>
+
+                    </div>
+
+
+                    <span
+                      className={
+                        active.status ===
+                        'open'
+                          ? 'support-status-badge support-status-open'
+                          : 'support-status-badge support-status-resolved'
+                      }
+                    >
+                      {active.status}
+                    </span>
+
+                  </div>
+
+
+                  {/* MESSAGES */}
+
+                  <div className="support-chat-canvas">
+
+                    {messages.length ===
+                      0 && (
+
+                      <div className="support-empty-chat">
+
+                        <span className="support-empty-chat-icon">
+
+                          <ChatIcon className="support-icon-20" />
+
+                        </span>
+
+
+                        <h3 className="support-empty-chat-title">
+                          How can we help?
+                        </h3>
+
+
+                        <p className="support-empty-chat-text">
+                          Send a message and
+                          our support team
+                          will respond here.
+                        </p>
+
+                      </div>
+
+                    )}
+
+
+                    {messages.map(
+                      (
+                        message
+                      ) => {
+
+                        const fromBuyer =
+                          message.sender_role ===
+                          'buyer';
+
+
+                        return (
+                          <div
+                            key={
+                              message.id
+                            }
+                            className={
+                              fromBuyer
+                                ? 'support-message-row support-message-row-buyer'
+                                : 'support-message-row support-message-row-agent'
+                            }
+                          >
+
+                            <div
+                              className={
+                                fromBuyer
+                                  ? 'support-message support-message-buyer'
+                                  : 'support-message support-message-agent'
+                              }
+                            >
+                              {message.body}
+                            </div>
+
+
+                            <small className="support-message-meta">
+
+                              {fromBuyer
+                                ? 'You'
+                                : 'AllGamersMarket Support'}
+
+                              {' · '}
+
+                              {formatTime(
+                                message.created_at
+                              )}
+
+                            </small>
+
+                          </div>
+                        );
+                      }
+                    )}
+
+
+                    <div
+                      ref={
+                        bottomRef
+                      }
+                    />
+
+                  </div>
+
+
+                  {/* COMPOSER */}
+
+                  <form
+                    onSubmit={
+                      sendMessage
+                    }
+                    className="support-chat-composer"
+                  >
+
+                    <input
+                      value={
+                        text
+                      }
+                      onChange={(
+                        event
+                      ) =>
+                        setText(
+                          event.target.value
+                        )
+                      }
+                      placeholder={
+                        active.status ===
+                        'open'
+                          ? 'Write a message…'
+                          : 'This conversation is resolved'
+                      }
+                      maxLength="2000"
+                      disabled={
+                        active.status !==
+                        'open'
+                      }
+                      className="support-message-input"
+                    />
+
+
+                    <button
+                      type="submit"
+                      disabled={
+                        sending ||
+                        active.status !==
+                          'open'
+                      }
+                      className="support-send-button"
+                    >
+                      {sending
+                        ? 'Sending…'
+                        : 'Send'}
+                    </button>
+
+                  </form>
+
+                </>
+
+              ) : (
+
+                <div className="support-no-active">
+
+                  <span className="support-no-active-icon">
+
+                    <ChatIcon className="support-icon-20" />
+
+                  </span>
+
+
+                  <h2 className="support-no-active-title">
+                    Need help?
+                  </h2>
+
+
+                  <p className="support-no-active-text">
+                    Start a conversation
+                    about an order or
+                    account.
+                  </p>
+
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowModal(
+                        true
+                      )
+                    }
+                    className="support-no-active-button"
+                  >
+                    Start a conversation
+                  </button>
+
+                </div>
+
+              )}
+
+            </section>
+
+          </div>
+
+        )}
+
+      </div>
+
+
+      {/* NEW CONVERSATION MODAL */}
+
+      {showModal && (
+
+        <div
+          className="support-modal-overlay"
+          onMouseDown={() =>
+            setShowModal(
+              false
+            )
+          }
+        >
+
+          <form
+            onSubmit={
+              createTicket
+            }
+            onMouseDown={(
+              event
+            ) =>
+              event.stopPropagation()
+            }
+            className="support-modal"
+          >
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowModal(
+                  false
+                )
+              }
+              aria-label="Close"
+              className="support-modal-close"
+            >
+              ×
+            </button>
+
+
+            <p className="support-modal-kicker">
+              New conversation
+            </p>
+
+
+            <h2 className="support-modal-title">
+              Tell us what you need
+            </h2>
+
+
+            <p className="support-modal-description">
+              Your message and purchase
+              details stay private.
+            </p>
+
+
+            <label className="support-modal-field">
+
+              Subject
+
+              <input
+                value={
+                  subject
+                }
+                onChange={(
+                  event
+                ) =>
+                  setSubject(
+                    event.target.value
+                  )
+                }
+                placeholder="Example: Help with my delivery"
+                maxLength="120"
+                autoFocus
+                className="support-modal-input"
+              />
+
+            </label>
+
+
+            <label className="support-modal-field">
+
+              Related order
+
+              <select
+                value={
+                  selectedOrder
+                }
+                onChange={(
+                  event
+                ) =>
+                  setSelectedOrder(
+                    event.target.value
+                  )
+                }
+                className="support-modal-select"
+              >
+
+                <option value="">
+                  General question
+                </option>
+
+
+                {orders.map(
+                  (
+                    order
+                  ) => (
+
+                    <option
+                      value={
+                        order.id
+                      }
+                      key={
+                        order.id
+                      }
+                    >
+                      TH
+                      {order.accounts
+                        ?.town_hall ||
+                        '?'}
+                      {' · ₹'}
+                      {order.amount}
+                      {' · #'}
+                      {order.id.slice(
+                        0,
+                        8
+                      )}
+                    </option>
+
+                  )
+                )}
+
+              </select>
+
+            </label>
+
+
+            <button
+              type="submit"
+              disabled={
+                creating
+              }
+              className="support-modal-submit"
+            >
+              {creating
+                ? 'Creating…'
+                : 'Create conversation'}
+            </button>
+
+          </form>
+
+        </div>
+
+      )}
+
+    </main>
+  );
 }
