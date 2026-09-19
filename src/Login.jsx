@@ -42,8 +42,26 @@ const COPY = {
   },
 };
 
+function getSafeLoginDestination() {
+  const requestedPath = new URLSearchParams(window.location.search).get('next');
+
+  if (!requestedPath?.startsWith('/') || requestedPath.startsWith('//') || requestedPath.includes('\\')) {
+    return '/';
+  }
+
+  const destination = new URL(requestedPath, window.location.origin);
+
+  if (destination.origin !== window.location.origin) {
+    return '/';
+  }
+
+  return `${destination.pathname}${destination.search}${destination.hash}`;
+}
+
 
 export default function Login() {
+  const loginDestination = getSafeLoginDestination();
+
   const [mode, setMode] = useState('signin');
 
   const [email, setEmail] = useState('');
@@ -93,7 +111,7 @@ export default function Login() {
         provider: 'google',
 
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}${loginDestination}`,
         },
       });
 
@@ -129,7 +147,7 @@ export default function Login() {
           throw signInError;
         }
 
-        window.location.href = '/';
+        window.location.href = loginDestination;
 
         return;
       }

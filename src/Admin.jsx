@@ -89,7 +89,7 @@ export default function Admin() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!active) return;
       if (!session?.user) {
-        navigate('/login');
+        navigate('/login?next=/admin', { replace: true });
         return;
       }
       const { data: isAdmin, error: roleError } = await supabase.rpc('is_admin');
