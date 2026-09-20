@@ -5,7 +5,6 @@
 @import '../src/styles/profile-dropdown.css';
 @import '../src/styles/site-footer.css';
 @import '../src/styles/search.css';
-@import '../src/styles/account-card.css';
 @import '../src/styles/policy-page.css';
 @import '../src/styles/home.css';
 @import '../src/styles/game-page.css';
@@ -14,7 +13,6 @@
 @import '../src/styles/checkout.css';
 @import '../src/styles/my-orders.css';
 @import '../src/styles/support.css';
-@import '../src/styles/support-inbox.css';
 @import '../src/styles/dashboard.css';
 @import '../src/styles/notifications.css';
 @import '../src/styles/balance.css';

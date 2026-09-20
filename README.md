@@ -57,4 +57,4 @@ Deploy the repository to a platform that supports Next.js App Router and Node.js
 - `allgamersmarket.com`
 - `www.allgamersmarket.com`
 
-If Cloudflare remains the host, use its current supported Next.js/OpenNext deployment path rather than the former Vite Pages Functions setup. Keep Cloudflare DNS, HTTPS and DNSSEC enabled.
+Cloudflare Workers deployment uses `@opennextjs/cloudflare` through the repository's `build:cloudflare`, `preview`, and `deploy` scripts. Keep Cloudflare DNS, HTTPS and DNSSEC enabled.
