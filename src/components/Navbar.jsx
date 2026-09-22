@@ -1,5 +1,9 @@
 'use client';
 
+import LoginModal from './LoginModal';
+import {
+  LuBellPlus,
+} from 'react-icons/lu';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from '../lib/navigation';
 
@@ -12,7 +16,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const [user, setUser] = useState(null);
-  const [loginRedirecting, setLoginRedirecting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+const [authModalMode, setAuthModalMode] = useState('signin');
 
   useEffect(() => {
     const loadUser = async () => {
@@ -27,25 +32,23 @@ export default function Navbar() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user || null);
+
+      if (event === 'PASSWORD_RECOVERY') {
+        setAuthModalMode('reset');
+        setShowAuthModal(true);
+      }
     });
 
     return () => {
       subscription.unsubscribe();
     };
   }, []);
-
   const openLogin = () => {
-    if (loginRedirecting) return;
-
-    setLoginRedirecting(true);
-
-    window.setTimeout(() => {
-      navigate('/login');
-      setLoginRedirecting(false);
-    }, 800);
-  };
+  setAuthModalMode('signin');
+  setShowAuthModal(true);
+};
 
   // Hide navbar on login page
   if (location.pathname === '/login') {
@@ -53,6 +56,7 @@ export default function Navbar() {
   }
 
   return (
+  <>
     <nav className="navbar">
       <div className="navbar-inner">
 
@@ -72,6 +76,17 @@ export default function Navbar() {
 
         {/* LOGIN / PROFILE */}
         <div className="navbar-actions">
+          {user && location.pathname !== '/login' && (
+          <Link
+  to="/notifications"
+  className="navbar-notification-button"
+  aria-label="Notifications"
+>
+  <LuBellPlus
+    size={22}
+  />
+</Link>
+ )}
           {user ? (
             <ProfileDropdown
               user={user}
@@ -94,33 +109,17 @@ export default function Navbar() {
 
       </div>
 
-      {/* LOGIN LOADING SCREEN */}
-      {loginRedirecting && (
-        <div
-          className="navbar-loading-overlay"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="navbar-loading-box">
+      
+        </nav>
 
-            <span
-              className="navbar-spinner"
-              aria-hidden="true"
-            />
-
-            <div>
-              <p className="navbar-loading-title">
-                Opening your account
-              </p>
-
-              <p className="navbar-loading-text">
-                Just a moment…
-              </p>
-            </div>
-
-          </div>
-        </div>
-      )}
-    </nav>
-  );
+    {showAuthModal && (
+      <LoginModal
+        key={authModalMode}
+        isOpen={true}
+        initialMode={authModalMode}
+        onClose={() => setShowAuthModal(false)}
+      />
+    )}
+  </>
+);
 }

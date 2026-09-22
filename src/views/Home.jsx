@@ -134,7 +134,7 @@ export default function Home() {
             </p>
 
             <p className="home-benefit-text">
-              Deals in popular mobile game accounts.
+              Deals in popular Games accounts.
             </p>
           </div>
 
@@ -150,11 +150,11 @@ export default function Home() {
 
           <div className="home-benefit-card">
             <p className="home-benefit-title">
-              24/7 Support
+              Live Support
             </p>
 
             <p className="home-benefit-text">
-              Helpful people when you need an answer.
+              Helpful for the people when you need an answer.
             </p>
           </div>
 
@@ -168,7 +168,7 @@ export default function Home() {
 
           <div className="faq-header">
             <h2 className="faq-title">
-              FAQ
+              Have a doubt?
             </h2>
 
             <p className="faq-subtitle">

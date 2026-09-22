@@ -3,6 +3,7 @@
 import {
   useEffect,
   useState,
+  useSyncExternalStore,
 } from 'react';
 
 import {
@@ -10,17 +11,23 @@ import {
 } from './lib/navigation';
 
 
-
 const STORAGE_KEY =
   'agm_cookie_consent_v1';
 
+const CONSENT_EVENT =
+  'agm:cookie-consent';
 
-function readChoice() {
+
+function readStoredConsent() {
+  if (
+    typeof window === 'undefined'
+  ) {
+    return null;
+  }
+
   try {
-    return JSON.parse(
-      localStorage.getItem(
-        STORAGE_KEY
-      )
+    return localStorage.getItem(
+      STORAGE_KEY,
     );
   } catch {
     return null;
@@ -28,13 +35,58 @@ function readChoice() {
 }
 
 
-export default function CookieBanner() {
-  const [
-    choice,
-    setChoice,
-  ] = useState(
-    readChoice
+function subscribe(callback) {
+  if (
+    typeof window === 'undefined'
+  ) {
+    return () => {};
+  }
+
+  const update = () => {
+    callback();
+  };
+
+  window.addEventListener(
+    CONSENT_EVENT,
+    update,
   );
+
+  window.addEventListener(
+    'storage',
+    update,
+  );
+
+  return () => {
+    window.removeEventListener(
+      CONSENT_EVENT,
+      update,
+    );
+
+    window.removeEventListener(
+      'storage',
+      update,
+    );
+  };
+}
+
+
+function getSnapshot() {
+  return readStoredConsent();
+}
+
+
+function getServerSnapshot() {
+  return null;
+}
+
+
+export default function CookieBanner() {
+  const storedConsent =
+    useSyncExternalStore(
+      subscribe,
+      getSnapshot,
+      getServerSnapshot,
+    );
 
   const [
     manage,
@@ -43,28 +95,25 @@ export default function CookieBanner() {
 
 
   useEffect(() => {
-    const open =
-      () =>
-        setManage(true);
-
+    const open = () => {
+      setManage(true);
+    };
 
     window.addEventListener(
       'agm:open-cookie-settings',
-      open
+      open,
     );
 
-
-    return () =>
+    return () => {
       window.removeEventListener(
         'agm:open-cookie-settings',
-        open
+        open,
       );
+    };
   }, []);
 
 
-  const save = (
-    optional
-  ) => {
+  function save(optional) {
     const next = {
       necessary: true,
       optional,
@@ -74,35 +123,49 @@ export default function CookieBanner() {
     };
 
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(next)
-    );
-
-
-    localStorage.removeItem(
-      'cookiesAccepted'
-    );
-
-
-    setChoice(next);
-
+    /*
+     * Close the settings immediately.
+     * Even if storage fails,
+     * the click itself still works.
+     */
     setManage(false);
+
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(next),
+      );
+
+      localStorage.removeItem(
+        'cookiesAccepted',
+      );
+    } catch (error) {
+      console.error(
+        'Unable to save cookie consent:',
+        error,
+      );
+    }
 
 
     window.dispatchEvent(
       new CustomEvent(
-        'agm:cookie-consent',
+        CONSENT_EVENT,
         {
           detail: next,
-        }
-      )
+        },
+      ),
     );
-  };
+  }
 
 
+  /*
+   * Consent already exists.
+   * Keep banner hidden unless
+   * Cookie Settings was opened.
+   */
   if (
-    choice &&
+    storedConsent &&
     !manage
   ) {
     return null;
@@ -172,7 +235,7 @@ export default function CookieBanner() {
               onClick={() =>
                 setManage(
                   (value) =>
-                    !value
+                    !value,
                 )
               }
               className="cookie-banner-button cookie-banner-manage"

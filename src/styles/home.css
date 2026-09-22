@@ -19,18 +19,22 @@
 ========================================= */
 
 .home-hero {
-  padding: 56px 20px 36px;
+  padding: 80px 20px 36px 20px;
 
   text-align: center;
 
-  border-bottom: 1px solid rgba(228, 228, 231, 0.7);
+  border-bottom: none;
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      rgba(161, 161, 170, 0.16),
-      rgba(255, 255, 255, 0) 55%
-    );
+      ellipse at 50% 35%,
+      rgba(250, 204, 21, 0.18) 0%,
+      rgba(250, 204, 21, 0.08) 30%,
+      rgba(255, 255, 255, 0) 65%
+    ),
+    #ffffff;
+
+  
 }
 
 .home-hero-label {
@@ -45,8 +49,7 @@
   letter-spacing: 0.22em;
 }
 
-.home-hero-title {
-  max-width: 768px;
+.home-hero-title {max-width: 768px;
 
   margin: 20px auto 0;
 
@@ -72,12 +75,12 @@
 
 .home-search {
   width: 100%;
-  max-width: 768px;
+  max-width: 760px;
 
-  margin: 40px auto 0;
+  margin: 36px auto 0;
+
+  box-sizing: border-box;
 }
-
-
 /* =========================================
    EXPLORE GAMES
 ========================================= */
@@ -93,18 +96,18 @@
 }
 
 .games-heading-container {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .games-heading {
   margin: 0;
 
-  color: #4ade80;
+  color: #deb74a;
 
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 900;
 
-  letter-spacing: -0.025em;
+  letter-spacing: -0.015em;
 }
 
 .games-grid {
@@ -507,4 +510,18 @@
   .games-grid {
     gap: 16px;
   }
+}
+.home-hero {
+  padding: 80px 20px 60px;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(250, 204, 21, 0.20) 0%,
+      rgba(250, 204, 21, 0.10) 25%,
+      rgba(255, 255, 255, 0) 58%
+    ),
+    #ffffff;
 }
